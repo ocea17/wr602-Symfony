@@ -44,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $photo = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $favorite_color = null;
+    private ?string $favoritecolor = null;
 
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $phone = null;
@@ -170,14 +170,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getFavoriteColor(): ?string
+    public function getFavoritecolor(): ?string
     {
-        return $this->favorite_color;
+        return $this->favoritecolor;
     }
 
-    public function setFavoriteColor(?string $favorite_color): static
+    public function setFavoritecolor(?string $favoritecolor): static
     {
-        $this->favorite_color = $favorite_color;
+        $this->favoritecolor = $favoritecolor;
 
         return $this;
     }

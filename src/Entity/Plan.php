@@ -20,6 +20,9 @@ class Plan
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $limitGeneration = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
@@ -30,22 +33,19 @@ class Plan
     private ?float $price = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $special_price = null;
+    private ?float $specialPrice = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $special_price_from = null;
+    private ?\DateTime $specialPriceFrom = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $special_price_to = null;
+    private ?\DateTime $specialPriceTo = null;
 
     #[ORM\Column]
     private ?bool $active = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $created_at = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $limitGeneration = null;
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
@@ -72,6 +72,18 @@ class Plan
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getLimitGeneration(): ?int
+    {
+        return $this->limitGeneration;
+    }
+
+    public function setLimitGeneration(?int $limitGeneration): static
+    {
+        $this->limitGeneration = $limitGeneration;
 
         return $this;
     }
@@ -114,36 +126,36 @@ class Plan
 
     public function getSpecialPrice(): ?float
     {
-        return $this->special_price;
+        return $this->specialPrice;
     }
 
-    public function setSpecialPrice(?float $special_price): static
+    public function setSpecialPrice(?float $specialPrice): static
     {
-        $this->special_price = $special_price;
+        $this->specialPrice = $specialPrice;
 
         return $this;
     }
 
     public function getSpecialPriceFrom(): ?\DateTime
     {
-        return $this->special_price_from;
+        return $this->specialPriceFrom;
     }
 
-    public function setSpecialPriceFrom(?\DateTime $special_price_from): static
+    public function setSpecialPriceFrom(?\DateTime $specialPriceFrom): static
     {
-        $this->special_price_from = $special_price_from;
+        $this->specialPriceFrom = $specialPriceFrom;
 
         return $this;
     }
 
     public function getSpecialPriceTo(): ?\DateTime
     {
-        return $this->special_price_to;
+        return $this->specialPriceTo;
     }
 
-    public function setSpecialPriceTo(?\DateTime $special_price_to): static
+    public function setSpecialPriceTo(?\DateTime $specialPriceTo): static
     {
-        $this->special_price_to = $special_price_to;
+        $this->specialPriceTo = $specialPriceTo;
 
         return $this;
     }
@@ -162,24 +174,12 @@ class Plan
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->created_at = $created_at;
-
-        return $this;
-    }
-
-    public function getLimitGeneration(): ?int
-    {
-        return $this->limitGeneration;
-    }
-
-    public function setLimitGeneration(?int $limitGeneration): static
-    {
-        $this->limitGeneration = $limitGeneration;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
