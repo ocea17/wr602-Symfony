@@ -44,6 +44,9 @@ class Plan
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $limitGeneration = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -165,6 +168,18 @@ class Plan
     public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getLimitGeneration(): ?int
+    {
+        return $this->limitGeneration;
+    }
+
+    public function setLimitGeneration(?int $limitGeneration): static
+    {
+        $this->limitGeneration = $limitGeneration;
 
         return $this;
     }
