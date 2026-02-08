@@ -23,7 +23,7 @@ class UserContact
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $firstname = null;
+    private ?string $firstame = null;
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
@@ -68,14 +68,14 @@ class UserContact
         return $this;
     }
 
-    public function getFirstname(): ?string
+    public function getFirstame(): ?string
     {
-        return $this->firstname;
+        return $this->firstame;
     }
 
-    public function setFirstname(string $firstname): static
+    public function setFirstame(string $firstame): static
     {
-        $this->firstname = $firstname;
+        $this->firstame = $firstame;
 
         return $this;
     }

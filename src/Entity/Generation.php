@@ -23,7 +23,7 @@ class Generation
     private ?string $file = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $created_at = null;
+    private ?\DateTimeImmutable $creatAt = null;
 
     /**
      * @var Collection<int, UserContact>
@@ -65,14 +65,14 @@ class Generation
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatAt(): ?\DateTimeImmutable
     {
-        return $this->created_at;
+        return $this->creatAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    public function setCreatAt(\DateTimeImmutable $creatAt): static
     {
-        $this->created_at = $created_at;
+        $this->creatAt = $creatAt;
 
         return $this;
     }
