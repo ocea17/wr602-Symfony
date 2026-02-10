@@ -1,1 +1,41 @@
-<?php
+{# templates/pdf/generate_pdf.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Générer un PDF{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Générer un PDF</h1>
+
+    {# Affichage des messages flash (erreurs) #}
+    {% for message in app.flashes('error') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {# Affichage des messages de succès #}
+    {% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    <div class="form-container">
+        {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_label(form.url, 'URL de la page à convertir') }}
+            {{ form_widget(form.url, {'attr': {'class': 'form-control', 'placeholder': 'https://example.com'}}) }}
+            {{ form_errors(form.url) }}
+            <small class="form-text text-muted">
+                Entrez l'URL complète de la page web que vous souhaitez convertir en PDF
+            </small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Générer le PDF
+        </button>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
