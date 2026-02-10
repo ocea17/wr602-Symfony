@@ -1,28 +1,33 @@
 <?php
 
-// src/Controller/GeneratePdfController.php
-
 namespace App\Controller;
 
 use App\Service\PdfGeneratorService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class GeneratePdfController extends AbstractController
 {
-    private $pdfService;
+    private PdfGeneratorService $pdfService;
 
     public function __construct(PdfGeneratorService $pdfService)
     {
         $this->pdfService = $pdfService;
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
+    #[Route('/pdf/generate', name: 'app_pdf_generate', methods: ['GET', 'POST'])]
     public function generatePdf(Request $request): Response
     {
         // Créer le formulaire
         $form = $this->createFormBuilder()
-            ->add('url', null, ['required' => true])
+            ->add('url', null, ['required' => true, 'label' => 'URL du site'])
             ->getForm();
 
         // Gérer la soumission du formulaire
@@ -30,15 +35,26 @@ class GeneratePdfController extends AbstractController
 
         // Si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer l'URL saisie à partir des données du formulaire
-            $url = $form->getData()['url'];
+            try {
+                // Récupérer l'URL saisie
+                $url = $form->getData()['url'];
 
-            // Faites appel à votre service pour générer le PDF
-            $pdf = $this->pdfService->generatePdfFromUrl($url);
+                // Générer le PDF via le service
+                $pdfContent = $this->pdfService->generatePdf($url);
 
-            // Rediriger ou afficher une réponse appropriée
-            // Par exemple, rediriger vers une page de confirmation
-            return $this->redirectToRoute('pdf_generated_success');
+                // Retourner le PDF directement au navigateur
+                return new Response(
+                    $pdfContent,
+                    Response::HTTP_OK,
+                    [
+                        'Content-Type' => 'application/pdf',
+                        'Content-Disposition' => 'inline; filename="generated.pdf"'
+                    ]
+                );
+            } catch (Exception $e) {
+                // En cas d'erreur, afficher un message
+                $this->addFlash('error', 'Erreur lors de la génération du PDF : ' . $e->getMessage());
+            }
         }
 
         // Afficher le formulaire

@@ -363,6 +363,9 @@
     <service id="App\Entity" class="App\Entity" abstract="true">
       <tag name="container.excluded" source="in &quot;config/services.yaml&quot;"/>
     </service>
+    <service id="App\Controller\PdfController" class="App\Controller\PdfController" autowire="true" autoconfigure="true">
+      <tag name="container.error" message="The autoloader expected class &quot;App\Controller\PdfController&quot; to be defined in file &quot;/home/lou/wr602-Symfony/www/vendor/composer/../../src/Controller/PdfController.php&quot;. The file was found but the class was not in it, the class name or namespace probably has a typo."/>
+    </service>
     <service id="App\DataFixtures\PlanFixtures" class="App\DataFixtures\PlanFixtures" autowire="true" autoconfigure="true">
       <tag name="doctrine.fixture.orm"/>
     </service>
