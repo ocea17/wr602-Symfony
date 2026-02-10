@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Service\PdfGeneratorService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,14 +21,23 @@ class GeneratePdfController extends AbstractController
     }
 
     /**
-     * @throws TransportExceptionInterface
+     * Génère un PDF à partir d'une URL soumise via formulaire
+     *
+     * @throws TransportExceptionInterface Si la génération du PDF échoue
      */
     #[Route('/pdf/generate', name: 'app_pdf_generate', methods: ['GET', 'POST'])]
     public function generatePdf(Request $request): Response
     {
-        // Créer le formulaire
+        // Créer le formulaire avec plus de paramètres
         $form = $this->createFormBuilder()
-            ->add('url', null, ['required' => true, 'label' => 'URL du site'])
+            ->add('url', TextType::class, [
+                'required' => true,
+                'label' => 'URL de la page',
+                'attr' => [
+                    'placeholder' => 'https://example.com',
+                    'class' => 'form-control'
+                ]
+            ])
             ->getForm();
 
         // Gérer la soumission du formulaire
