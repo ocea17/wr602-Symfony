@@ -7,3 +7,15 @@ controllers:
 app_login:
   path: /login
   controller: App\Controller\SecurityController::login
+
+app_home:
+  path: /
+  controller: App\Controller\HomeController::index
+
+app_forgot_password:
+  path: /forgot-password
+  controller: App\Controller\PasswordResetController::forgotPassword
+
+app_reset_password:
+  path: /reset-password/{token}
+  controller: App\Controller\PasswordResetController::resetPassword
