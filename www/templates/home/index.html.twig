@@ -1,20 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Accueil{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div style="max-width: 800px; margin: 50px auto; padding: 20px;">
+        <h1>Bienvenue sur votre espace PDF</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        {% if app.user %}
+            <p>Bonjour <strong>{{ app.user.firstname }} {{ app.user.lastname }}</strong> !</p>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/var/www/src/Controller/HomeController.php</code></li>
-        <li>Your template at <code>/var/www/templates/home/index.html.twig</code></li>
-    </ul>
-</div>
+            <p>
+                Votre abonnement actuel :
+                <strong style="color: #007bff;">{{ app.user.plan.name }}</strong>
+            </p>
+
+            <div style="margin-top: 30px;">
+                <a href="{{ path('app_subscription_change') }}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 3px;">
+                    Gérer mon abonnement
+                </a>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <a href="{{ path('app_logout') }}" style="color: #dc3545;">Se déconnecter</a>
+            </div>
+        {% else %}
+            <p>Vous n'êtes pas connecté.</p>
+            <a href="{{ path('app_login') }}">Se connecter</a>
+        {% endif %}
+    </div>
 {% endblock %}

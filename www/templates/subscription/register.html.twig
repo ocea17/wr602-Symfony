@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Changer d'abonnement{% endblock %}
+
+{% block body %}
+    <div style="max-width: 900px; margin: 50px auto; padding: 20px;">
+        <h1>Gérer mon abonnement</h1>
+
+        {% for message in app.flashes('success') %}
+            <div style="padding: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 3px; margin-bottom: 15px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 3px; margin-bottom: 15px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <p style="margin-bottom: 30px;">
+            <strong>Votre abonnement actuel :</strong>
+            <span style="color: #007bff; font-size: 1.2em;">{{ current_plan.name }}</span>
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            {% for plan in plans %}
+                <div style="border: {{ plan.id == current_plan.id ? '3px solid #007bff' : '1px solid #ddd' }}; border-radius: 8px; padding: 20px; background-color: {{ plan.id == current_plan.id ? '#f0f8ff' : 'white' }};">
+
+                    {% if plan.id == current_plan.id %}
+                        <div style="background-color: #007bff; color: white; padding: 5px 10px; border-radius: 3px; display: inline-block; margin-bottom: 10px; font-size: 0.9em;">
+                            Abonnement actuel
+                        </div>
+                    {% endif %}
+
+                    <h2 style="margin-top: 10px; color: #333;">{{ plan.name }}</h2>
+
+                    <p style="font-size: 2em; margin: 15px 0; color: #28a745;">
+                        {% if plan.price == 0 %}
+                            Gratuit
+                        {% else %}
+                            {{ plan.price }}€<span style="font-size: 0.5em; color: #666;">/mois</span>
+                        {% endif %}
+                    </p>
+
+                    <p style="color: #666; margin-bottom: 20px;">
+                        {{ plan.description }}
+                    </p>
+
+                    <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                        <li style="padding: 5px 0;">
+                            ✓
+                            {% if plan.limitGeneration is null %}
+                                Génération illimitée de PDFs
+                            {% else %}
+                                {{ plan.limitGeneration }} PDFs par jour
+                            {% endif %}
+                        </li>
+                    </ul>
+
+                    {% if plan.id != current_plan.id %}
+                        <form method="post" data-turbo="false">
+                            <input type="hidden" name="plan_id" value="{{ plan.id }}">
+                            <button type="submit" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 1em;">
+                                Choisir ce plan
+                            </button>
+                        </form>
+                    {% else %}
+                        <button disabled style="width: 100%; padding: 10px; background-color: #6c757d; color: white; border: none; border-radius: 3px; cursor: not-allowed; font-size: 1em;">
+                            Plan actuel
+                        </button>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="{{ path('app_home') }}" style="color: #007bff;">← Retour à l'accueil</a>
+        </div>
+    </div>
+{% endblock %}
