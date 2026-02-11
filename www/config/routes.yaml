@@ -26,3 +26,8 @@ app_register:
 app_home:
   path: /
   controller: App\Controller\HomeController::index
+
+app_subscription_change:
+  path: /subscription/change
+  controller: App\Controller\SubscriptionController::change
+  methods: ['GET', 'POST']
