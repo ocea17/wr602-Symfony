@@ -31,3 +31,23 @@ app_subscription_change:
   path: /subscription/change
   controller: App\Controller\SubscriptionController::change
   methods: ['GET', 'POST']
+
+app_pdf_index:
+  path: /pdf
+  controller: App\Controller\GeneratePdfController::index
+  methods: ['GET']
+
+app_pdf_generate_url:
+  path: /pdf/generate/url
+  controller: App\Controller\GeneratePdfController::generateFromUrl
+  methods: ['GET', 'POST']
+
+app_pdf_generate_file:
+  path: /pdf/generate/file
+  controller: App\Controller\GeneratePdfController::generateFromFile
+  methods: ['GET', 'POST']
+
+app_pdf_generate_wysiwyg:
+  path: /pdf/generate/wysiwyg
+  controller: App\Controller\GeneratePdfController::generateFromWysiwyg
+  methods: ['GET', 'POST']

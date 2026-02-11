@@ -2,73 +2,72 @@
 
 namespace App\Service;
 
-use RuntimeException;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 
 class PdfGeneratorService
 {
+    private HttpClientInterface $httpClient;
     private string $gotenbergUrl;
 
-    public function __construct(
-        private readonly HttpClientInterface $httpClient
-    ) {
+    public function __construct(HttpClientInterface $httpClient)
+    {
+        $this->httpClient = $httpClient;
         $this->gotenbergUrl = $_ENV['GOTENBERG_URL'] ?? 'http://gotenberg:3000';
     }
 
     /**
-     * Génère un PDF à partir d'une URL
-     *
-     * @param string $url L'URL de la page à convertir en PDF
-     * @return string Le contenu du PDF généré
      * @throws TransportExceptionInterface
-     * @throws RuntimeException
      */
-    public function generatePdf(string $url): string
+    public function generatePdfFromUrl(string $url): string
     {
-        // Récupérer le contenu HTML de l'URL
-        $htmlContent = file_get_contents($url);
+        $formData = new FormDataPart([
+            'url' => $url
+        ]);
 
-        // Si l'URL ne peut pas être récupérée
-        if ($htmlContent === false) {
-            throw new RuntimeException("Impossible de récupérer le contenu de l'URL : $url");
-        }
+        $response = $this->httpClient->request('POST', $this->gotenbergUrl . '/forms/chromium/convert/url', [
+            'headers' => $formData->getPreparedHeaders()->toArray(),
+            'body' => $formData->bodyToIterable()
+        ]);
 
-
-        return $this->generateFromHtml($htmlContent);
+        return $response->getContent();
     }
 
     /**
-     * Génère un PDF à partir de contenu HTML
-     *
-     * @param string $htmlContent Le contenu HTML à convertir
-     * @return string Le contenu du PDF généré
      * @throws TransportExceptionInterface
      */
     public function generateFromHtml(string $htmlContent): string
     {
-        // Créer un fichier temporaire avec le contenu HTML
-        $tmpFile = tempnam(sys_get_temp_dir(), 'pdf_') . '.html';
+        $tmpFile = tempnam(sys_get_temp_dir(), 'html_') . '.html';
         file_put_contents($tmpFile, $htmlContent);
 
-        try {
+        $formData = new FormDataPart([
+            'files' => DataPart::fromPath($tmpFile, 'index.html', 'text/html')
+        ]);
 
-            $response = $this->httpClient->request('POST', $this->gotenbergUrl . '/forms/chromium/convert/html', [
-                'headers' => [
-                    'Content-Type' => 'multipart/form-data'
-                ],
-                'body' => [
-                    'files' => fopen($tmpFile, 'r')
-                ]
-            ]);
+        $response = $this->httpClient->request('POST', $this->gotenbergUrl . '/forms/chromium/convert/html', [
+            'headers' => $formData->getPreparedHeaders()->toArray(),
+            'body' => $formData->bodyToIterable()
+        ]);
 
+        $content = $response->getContent();
+        unlink($tmpFile);
 
-            return $response->getContent();
-        } finally {
+        return $content;
+    }
 
-            if (file_exists($tmpFile)) {
-                unlink($tmpFile);
-            }
+    public function savePdf(string $pdfContent, string $filename): string
+    {
+        $directory = 'uploads/pdfs/';
+        $fullPath = __DIR__ . '/../../public/' . $directory;
+
+        if (!is_dir($fullPath)) {
+            mkdir($fullPath, 0777, true);
         }
+
+        file_put_contents($fullPath . $filename, $pdfContent);
+        return $directory . $filename;
     }
 }
