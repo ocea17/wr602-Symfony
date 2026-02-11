@@ -2,74 +2,107 @@
 
 namespace App\Controller;
 
+use App\Entity\Generation;
 use App\Service\PdfGeneratorService;
-use Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class GeneratePdfController extends AbstractController
 {
     private PdfGeneratorService $pdfService;
+    private EntityManagerInterface $em;
 
-    public function __construct(PdfGeneratorService $pdfService)
+    public function __construct(PdfGeneratorService $pdfService, EntityManagerInterface $em)
     {
         $this->pdfService = $pdfService;
+        $this->em = $em;
     }
 
-    /**
-     * Génère un PDF à partir d'une URL soumise via formulaire
-     *
-     * @throws TransportExceptionInterface Si la génération du PDF échoue
-     */
-    #[Route('/pdf/generate', name: 'app_pdf_generate', methods: ['GET', 'POST'])]
-    public function generatePdf(Request $request): Response
+    public function index(): Response
     {
-        // Créer le formulaire avec plus de paramètres
-        $form = $this->createFormBuilder()
-            ->add('url', TextType::class, [
-                'required' => true,
-                'label' => 'URL de la page',
-                'attr' => [
-                    'placeholder' => 'https://example.com',
-                    'class' => 'form-control'
-                ]
-            ])
-            ->getForm();
+        return $this->render('pdf/index.html.twig');
+    }
 
-        // Gérer la soumission du formulaire
-        $form->handleRequest($request);
+    public function generateFromUrl(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            $url = $request->request->get('url');
 
-        // Si le formulaire est soumis et valide
-        if ($form->isSubmitted() && $form->isValid()) {
             try {
-                // Récupérer l'URL saisie
-                $url = $form->getData()['url'];
+                $pdfContent = $this->pdfService->generatePdfFromUrl($url);
+                $filename = 'pdf_' . time() . '.pdf';
+                $filepath = $this->pdfService->savePdf($pdfContent, $filename);
 
-                // Générer le PDF via le service
-                $pdfContent = $this->pdfService->generatePdf($url);
+                $generation = new Generation();
+                $generation->setUser($this->getUser());
+                $generation->setFile($filepath);
+                $generation->setCreatedAt(new \DateTimeImmutable());
+                $this->em->persist($generation);
+                $this->em->flush();
 
-                // Retourner le PDF directement au navigateur
-                return new Response(
-                    $pdfContent,
-                    Response::HTTP_OK,
-                    [
-                        'Content-Type' => 'application/pdf',
-                        'Content-Disposition' => 'inline; filename="generated.pdf"'
-                    ]
-                );
-            } catch (Exception $e) {
-                // En cas d'erreur, afficher un message
-                $this->addFlash('error', 'Erreur lors de la génération du PDF : ' . $e->getMessage());
+                return $this->file(__DIR__ . '/../../public/' . $filepath);
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Erreur : ' . $e->getMessage());
             }
         }
 
-        // Afficher le formulaire
-        return $this->render('pdf/generate_pdf.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        return $this->render('pdf/generate_url.html.twig');
+    }
+
+    public function generateFromFile(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            $file = $request->files->get('file');
+
+            if ($file) {
+                try {
+                    $content = file_get_contents($file->getPathname());
+                    $pdfContent = $this->pdfService->generateFromHtml($content);
+                    $filename = 'pdf_' . time() . '.pdf';
+                    $filepath = $this->pdfService->savePdf($pdfContent, $filename);
+
+                    $generation = new Generation();
+                    $generation->setUser($this->getUser());
+                    $generation->setFile($filepath);
+                    $generation->setCreatedAt(new \DateTimeImmutable());
+                    $this->em->persist($generation);
+                    $this->em->flush();
+
+                    return $this->file(__DIR__ . '/../../public/' . $filepath);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Erreur : ' . $e->getMessage());
+                }
+            }
+        }
+
+        return $this->render('pdf/generate_file.html.twig');
+    }
+
+    public function generateFromWysiwyg(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            $html = $request->request->get('html_content');
+
+            try {
+                $pdfContent = $this->pdfService->generateFromHtml($html);
+                $filename = 'pdf_' . time() . '.pdf';
+                $filepath = $this->pdfService->savePdf($pdfContent, $filename);
+
+                $generation = new Generation();
+                $generation->setUser($this->getUser());
+                $generation->setFile($filepath);
+                $generation->setCreatedAt(new \DateTimeImmutable());
+                $this->em->persist($generation);
+                $this->em->flush();
+
+                return $this->file(__DIR__ . '/../../public/' . $filepath);
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Erreur : ' . $e->getMessage());
+            }
+        }
+
+        return $this->render('pdf/generate_wysiwyg.html.twig');
     }
 }
