@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes contacts{% endblock %}
+
+{% block body %}
+    <div style="max-width: 1000px; margin: 50px auto; padding: 20px;">
+        <h1>Mes contacts</h1>
+
+        {% for message in app.flashes('success') %}
+            <div style="padding: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 3px; margin-bottom: 15px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 3px; margin-bottom: 15px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <div style="margin-bottom: 20px;">
+            <a href="{{ path('app_contact_add') }}" style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px;">
+                ➕ Ajouter un contact
+            </a>
+        </div>
+
+        {% if contacts|length > 0 %}
+            <p>Total : <strong>{{ contacts|length }}</strong> contact(s)</p>
+
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <thead>
+                <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                    <th style="padding: 12px; text-align: left;">Nom</th>
+                    <th style="padding: 12px; text-align: left;">Prénom</th>
+                    <th style="padding: 12px; text-align: left;">Email</th>
+                    <th style="padding: 12px; text-align: center;">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for contact in contacts %}
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 12px;">{{ contact.lastname }}</td>
+                        <td style="padding: 12px;">{{ contact.firstname }}</td>
+                        <td style="padding: 12px;">{{ contact.email }}</td>
+                        <td style="padding: 12px; text-align: center;">
+                            <a href="{{ path('app_contact_delete', {id: contact.id}) }}"
+                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce contact ?')"
+                               style="display: inline-block; padding: 5px 15px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 3px;">
+                                🗑️ Supprimer
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="text-align: center; padding: 50px; background-color: #f8f9fa; border-radius: 5px; margin-top: 30px;">
+                <p style="font-size: 1.2em; color: #6c757d;">Vous n'avez pas encore de contacts</p>
+                <a href="{{ path('app_contact_add') }}" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px;">
+                    Ajouter mon premier contact
+                </a>
+            </div>
+        {% endif %}
+
+        <div style="margin-top: 30px;">
+            <a href="{{ path('app_home') }}">← Retour à l'accueil</a>
+        </div>
+    </div>
+{% endblock %}

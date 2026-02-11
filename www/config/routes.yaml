@@ -61,3 +61,18 @@ app_history_download:
   path: /history/download/{id}
   controller: App\Controller\HistoryController::download
   methods: ['GET']
+
+app_contact_index:
+  path: /contacts
+  controller: App\Controller\ContactController::index
+  methods: ['GET']
+
+app_contact_add:
+  path: /contacts/add
+  controller: App\Controller\ContactController::add
+  methods: ['GET', 'POST']
+
+app_contact_delete:
+  path: /contacts/delete/{id}
+  controller: App\Controller\ContactController::delete
+  methods: ['GET']
