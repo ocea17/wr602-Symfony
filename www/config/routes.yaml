@@ -51,3 +51,13 @@ app_pdf_generate_wysiwyg:
   path: /pdf/generate/wysiwyg
   controller: App\Controller\GeneratePdfController::generateFromWysiwyg
   methods: ['GET', 'POST']
+
+app_history:
+  path: /history
+  controller: App\Controller\HistoryController::index
+  methods: ['GET']
+
+app_history_download:
+  path: /history/download/{id}
+  controller: App\Controller\HistoryController::download
+  methods: ['GET']

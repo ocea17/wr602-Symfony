@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des PDFs{% endblock %}
+
+{% block body %}
+    <div style="max-width: 1000px; margin: 50px auto; padding: 20px;">
+        <h1>Historique de mes PDFs</h1>
+
+        {% for message in app.flashes('error') %}
+            <div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 3px; margin-bottom: 15px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% if generations|length > 0 %}
+            <p>Total : <strong>{{ generations|length }}</strong> PDF(s) généré(s)</p>
+
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <thead>
+                <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                    <th style="padding: 12px; text-align: left;">#</th>
+                    <th style="padding: 12px; text-align: left;">Date de création</th>
+                    <th style="padding: 12px; text-align: left;">Fichier</th>
+                    <th style="padding: 12px; text-align: center;">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for generation in generations %}
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 12px;">{{ generation.id }}</td>
+                        <td style="padding: 12px;">{{ generation.createdAt|date('d/m/Y à H:i') }}</td>
+                        <td style="padding: 12px; font-family: monospace; font-size: 0.9em;">
+                            {{ generation.file|split('/')|last }}
+                        </td>
+                        <td style="padding: 12px; text-align: center;">
+                            <a href="{{ path('app_history_download', {id: generation.id}) }}"
+                               style="display: inline-block; padding: 5px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 3px;">
+                                📥 Télécharger
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="text-align: center; padding: 50px; background-color: #f8f9fa; border-radius: 5px; margin-top: 30px;">
+                <p style="font-size: 1.2em; color: #6c757d;">Vous n'avez pas encore généré de PDF</p>
+                <a href="{{ path('app_pdf_index') }}" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 3px;">
+                    Générer mon premier PDF
+                </a>
+            </div>
+        {% endif %}
+
+        <div style="margin-top: 30px;">
+            <a href="{{ path('app_home') }}">← Retour à l'accueil</a>
+        </div>
+    </div>
+{% endblock %}
