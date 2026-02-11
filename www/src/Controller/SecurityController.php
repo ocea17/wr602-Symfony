@@ -29,4 +29,17 @@ class SecurityController extends AbstractController
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
+
+    #[Route('/forgot-password', name: 'app_forgot_password')]
+    public function forgotPassword(): Response
+    {
+        return $this->render('security/forgot_password.html.twig');
+    }
+
+    #[Route('/reset-password', name: 'app_reset_password', methods: ['POST'])]
+    public function resetPassword(): Response
+    {
+        $this->addFlash('success', 'Un email vous a été envoyé si votre compte existe.');
+        return $this->redirectToRoute('app_login');
+    }
 }
