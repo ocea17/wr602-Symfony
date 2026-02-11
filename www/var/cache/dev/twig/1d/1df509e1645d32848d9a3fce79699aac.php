@@ -644,6 +644,6 @@ class __TwigTemplate_6e332a8c5093a0c5f045a3aeaa30bb15 extends Template
         }
     }
 </script>
-", "@WebProfiler/Profiler/base_js.html.twig", "/var/www/wr602-Symfony/vendor/symfony/web-profiler-bundle/Resources/views/Profiler/base_js.html.twig");
+", "@WebProfiler/Profiler/base_js.html.twig", "/home/lou/wr602-Symfony/www/vendor/symfony/web-profiler-bundle/Resources/views/Profiler/base_js.html.twig");
     }
 }

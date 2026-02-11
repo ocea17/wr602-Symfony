@@ -240,6 +240,6 @@ class __TwigTemplate_ad6c68ce3348789c72444acd7f425365 extends Template
         {% block body %}{% endblock %}
     </body>
 </html>
-", "base.html.twig", "/var/www/wr602-Symfony/templates/base.html.twig");
+", "base.html.twig", "/home/lou/wr602-Symfony/www/templates/base.html.twig");
     }
 }

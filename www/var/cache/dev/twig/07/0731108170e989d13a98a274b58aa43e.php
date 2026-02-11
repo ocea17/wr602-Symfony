@@ -1943,6 +1943,6 @@ class __TwigTemplate_2fa06168071a187570cb8f9580a02aae extends Template
         </tbody>
     </table>
 {% endmacro %}
-", "@Doctrine/Collector/db.html.twig", "/var/www/wr602-Symfony/vendor/doctrine/doctrine-bundle/templates/Collector/db.html.twig");
+", "@Doctrine/Collector/db.html.twig", "/home/lou/wr602-Symfony/www/vendor/doctrine/doctrine-bundle/templates/Collector/db.html.twig");
     }
 }
