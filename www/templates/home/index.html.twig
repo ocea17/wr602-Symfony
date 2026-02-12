@@ -1,36 +1,88 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Dashboard - PDF Generator{% endblock %}
 
 {% block body %}
-    <div style="max-width: 800px; margin: 50px auto; padding: 20px;">
-        <h1>Bienvenue sur votre espace PDF</h1>
+    {# Header #}
+    {{ include('_partials/header.html.twig') }}
 
-        {% if app.user %}
-            <p>Bonjour <strong>{{ app.user.firstname }} {{ app.user.lastname }}</strong> !</p>
+    {# Main content #}
+    <div class="max-w-7xl mx-auto px-6 py-10">
+        {# Welcome section #}
+        <div class="mb-10">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Bonjour {{ app.user.firstname }} ! 👋</h1>
+            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-600 rounded-md text-sm font-semibold">
+                {{ app.user.plan.name }}
+            </span>
+        </div>
 
-            <p>
-                Votre abonnement actuel :
-                <strong style="color: #007bff;">{{ app.user.plan.name }}</strong>
-            </p>
-
-            <div style="margin-top: 30px;">
-                <a href="{{ path('app_subscription_change') }}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 3px;">
-                    Gérer mon abonnement
-                </a>
+        {# Stats grid #}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            {# Stat 1 - PDFs aujourd'hui #}
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <div class="text-4xl font-bold {{ today_pdfs >= (app.user.plan.limitGeneration ?? 999) ? 'text-red-500' : 'text-blue-500' }} mb-2">
+                    {{ today_pdfs }}/{{ app.user.plan.limitGeneration ?? '∞' }}
+                </div>
+                <div class="text-sm text-gray-600">PDFs aujourd'hui</div>
             </div>
-            <div style="margin-top: 15px;">
-                <a href="{{ path('app_history') }}" style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px;">
-                    📋 Voir mon historique
-                </a>
+
+            {# Stat 2 - Total généré #}
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <div class="text-4xl font-bold text-blue-500 mb-2">
+                    {{ total_pdfs }}
+                </div>
+                <div class="text-sm text-gray-600">Total générés</div>
             </div>
 
-            <div style="margin-top: 15px;">
-                <a href="{{ path('app_logout') }}" style="color: #dc3545;">Se déconnecter</a>
+            {# Stat 3 - Durée de stockage #}
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <div class="text-4xl font-bold text-blue-500 mb-2">
+                    {% if app.user.plan.name == 'FREE' %}
+                        7j
+                    {% elseif app.user.plan.name == 'BASIC' %}
+                        30j
+                    {% else %}
+                        ∞
+                    {% endif %}
+                </div>
+                <div class="text-sm text-gray-600">Durée de stockage</div>
             </div>
-        {% else %}
-            <p>Vous n'êtes pas connecté.</p>
-            <a href="{{ path('app_login') }}">Se connecter</a>
-        {% endif %}
+        </div>
+
+        {# Action buttons #}
+        <div class="flex gap-4 mb-10 flex-wrap">
+            <a href="{{ path('app_pdf_index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition transform hover:scale-105">
+                Générer un nouveau PDF
+            </a>
+            <a href="{{ path('app_subscription_change') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-50 text-blue-500 font-semibold rounded-lg border-2 border-blue-500 transition">
+                Améliorer mon plan
+            </a>
+        </div>
+
+        {# Recent generations #}
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-semibold mb-5">Dernières générations</h2>
+            <ul class="space-y-4">
+                {% if recent_generations|length > 0 %}
+                    {% for generation in recent_generations %}
+                        <li class="flex items-center justify-between pb-4 border-b border-gray-200 last:border-0">
+                            <div class="flex items-center gap-3">
+                                <span class="text-2xl">📄</span>
+                                <span class="font-medium text-gray-900">{{ generation.file|split('/')|last }}</span>
+                            </div>
+                            <span class="text-sm text-gray-600">{{ generation.createdAt|date('d/m/Y à H:i') }}</span>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="text-center py-8 text-gray-500">
+                        <div class="text-4xl mb-2">📄</div>
+                        <p>Aucune génération récente</p>
+                        <a href="{{ path('app_pdf_index') }}" class="text-blue-500 hover:underline mt-2 inline-block">
+                            Générer votre premier PDF
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 {% endblock %}

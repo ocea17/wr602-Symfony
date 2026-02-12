@@ -19,14 +19,10 @@ class PasswordResetController extends AbstractController
         EntityManagerInterface $em
     ): Response {
         if ($request->isMethod('POST')) {
-            dump('Formulaire soumis !'); // ← Ajoute cette ligne
             $email = $request->request->get('email');
-            dump('Email reçu: ' . $email); // ← Ajoute cette ligne aussi
             $user = $userRepository->findOneBy(['email' => $email]);
-            dump('Utilisateur trouvé: ', $user);
 
             if ($user) {
-                // Génère un token unique
                 $token = bin2hex(random_bytes(32));
                 $user->setResetToken($token);
                 $user->setResetTokenExpiresAt(new \DateTime('+1 hour'));
@@ -34,7 +30,6 @@ class PasswordResetController extends AbstractController
                 $em->flush();
             }
 
-            // Message de succès (même si l'email n'existe pas)
             $this->addFlash('success', 'Si cet email existe, un lien de réinitialisation a été envoyé.');
 
             return $this->redirectToRoute('app_login');

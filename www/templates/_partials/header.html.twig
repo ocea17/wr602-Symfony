@@ -1,0 +1,40 @@
+<header class="bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex justify-between items-center">
+            {# Logo #}
+            <a href="{{ path('app_home') }}">
+                <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 fill-current text-white" viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                    </svg>
+                </div>
+                <span class="text-lg font-bold text-gray-900">PDF Generator</span>
+            </div>
+            </a>
+
+            {# Navigation #}
+            <nav class="flex gap-8">
+                <a href="{{ path('app_home') }}" class="{% if app.request.get('_route') == 'app_home' %}text-blue-500 font-medium border-b-2 border-blue-500 pb-1{% else %}text-gray-600 hover:text-blue-500 font-medium transition{% endif %}">
+                    Accueil
+                </a>
+                <a href="{{ path('app_pdf_index') }}" class="{% if app.request.get('_route') starts with 'app_pdf' %}text-blue-500 font-medium border-b-2 border-blue-500 pb-1{% else %}text-gray-600 hover:text-blue-500 font-medium transition{% endif %}">
+                    Générer PDF
+                </a>
+                <a href="{{ path('app_history') }}" class="{% if app.request.get('_route') == 'app_history' %}text-blue-500 font-medium border-b-2 border-blue-500 pb-1{% else %}text-gray-600 hover:text-blue-500 font-medium transition{% endif %}">
+                    Historique
+                </a>
+            </nav>
+
+            {# User menu #}
+            {% if app.user %}
+                <div class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                        {{ app.user.firstname|first|upper }}{{ app.user.lastname|first|upper }}
+                    </div>
+                    <span class="text-sm font-medium">{{ app.user.firstname }}</span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</header>

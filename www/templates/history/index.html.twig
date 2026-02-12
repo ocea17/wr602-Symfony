@@ -1,58 +1,99 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Historique des PDFs{% endblock %}
+{% block title %}Historique - PDF Generator{% endblock %}
 
 {% block body %}
-    <div style="max-width: 1000px; margin: 50px auto; padding: 20px;">
-        <h1>Historique de mes PDFs</h1>
+    {# Header #}
+    {{ include('_partials/header.html.twig') }}
 
-        {% for message in app.flashes('error') %}
-            <div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 3px; margin-bottom: 15px;">
-                {{ message }}
-            </div>
-        {% endfor %}
+    <div class="min-h-screen bg-gray-50 py-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <h1 class="text-4xl font-bold text-gray-900 mb-8">Mes générations</h1>
 
-        {% if generations|length > 0 %}
-            <p>Total : <strong>{{ generations|length }}</strong> PDF(s) généré(s)</p>
+            {# Messages flash #}
+            {% for message in app.flashes('error') %}
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                    {{ message }}
+                </div>
+            {% endfor %}
 
-            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                <thead>
-                <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                    <th style="padding: 12px; text-align: left;">#</th>
-                    <th style="padding: 12px; text-align: left;">Date de création</th>
-                    <th style="padding: 12px; text-align: left;">Fichier</th>
-                    <th style="padding: 12px; text-align: center;">Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for generation in generations %}
-                    <tr style="border-bottom: 1px solid #dee2e6;">
-                        <td style="padding: 12px;">{{ generation.id }}</td>
-                        <td style="padding: 12px;">{{ generation.createdAt|date('d/m/Y à H:i') }}</td>
-                        <td style="padding: 12px; font-family: monospace; font-size: 0.9em;">
-                            {{ generation.file|split('/')|last }}
-                        </td>
-                        <td style="padding: 12px; text-align: center;">
-                            <a href="{{ path('app_history_download', {id: generation.id}) }}"
-                               style="display: inline-block; padding: 5px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 3px;">
-                                📥 Télécharger
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <div style="text-align: center; padding: 50px; background-color: #f8f9fa; border-radius: 5px; margin-top: 30px;">
-                <p style="font-size: 1.2em; color: #6c757d;">Vous n'avez pas encore généré de PDF</p>
-                <a href="{{ path('app_pdf_index') }}" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 3px;">
-                    Générer mon premier PDF
+            {% for message in app.flashes('success') %}
+                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% if generations|length > 0 %}
+                {# Stats rapides #}
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <p class="text-gray-700">
+                        Total : <strong class="text-blue-500">{{ generations|length }}</strong> PDF(s) généré(s)
+                    </p>
+                </div>
+
+                {# Table des PDFs #}
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    {# Header du tableau #}
+                    <div class="grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-200 font-semibold text-sm text-gray-600 uppercase">
+                        <div class="col-span-1"></div>
+                        <div class="col-span-5">Nom</div>
+                        <div class="col-span-3">Date</div>
+                        <div class="col-span-3 text-center">Actions</div>
+                    </div>
+
+                    {# Liste des PDFs #}
+                    {% for generation in generations %}
+                        <div class="grid grid-cols-12 gap-4 px-6 py-5 border-b border-gray-200 hover:bg-gray-50 transition items-center">
+                            {# Icône #}
+                            <div class="col-span-1 text-3xl">
+                                📄
+                            </div>
+
+                            {# Nom du fichier #}
+                            <div class="col-span-5">
+                            <span class="font-medium text-gray-900">
+                                {{ generation.file|split('/')|last }}
+                            </span>
+                            </div>
+
+                            {# Date #}
+                            <div class="col-span-3 text-sm text-gray-600">
+                                {{ generation.createdAt|date('d/m/Y à H:i') }}
+                            </div>
+
+                            {# Actions #}
+                            <div class="col-span-3 text-center">
+                                <a
+                                        href="{{ path('app_history_download', {id: generation.id}) }}"
+                                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition font-medium text-sm"
+                                >
+                                    Télécharger
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {# État vide #}
+                <div class="bg-white rounded-xl shadow-sm p-16 text-center">
+                    <div class="text-6xl mb-4 opacity-50">📄</div>
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Aucune génération pour le moment</h2>
+                    <p class="text-gray-600 mb-6">Vous n'avez pas encore généré de PDF</p>
+                    <a
+                            href="{{ path('app_pdf_index') }}"
+                            class="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition font-semibold"
+                    >
+                        Générer mon premier PDF
+                    </a>
+                </div>
+            {% endif %}
+
+            {# Retour #}
+            <div class="text-center mt-8">
+                <a href="{{ path('app_home') }}" class="text-blue-500 hover:text-blue-600 font-medium hover:underline">
+                    ← Retour à l'accueil
                 </a>
             </div>
-        {% endif %}
-
-        <div style="margin-top: 30px;">
-            <a href="{{ path('app_home') }}">← Retour à l'accueil</a>
         </div>
     </div>
 {% endblock %}

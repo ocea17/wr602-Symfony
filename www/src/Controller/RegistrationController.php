@@ -38,7 +38,7 @@ class RegistrationController extends AbstractController
             // Récupère le plan FREE par défaut
             $freePlan = $planRepository->findOneBy(['name' => 'FREE']);
 
-            // Crée le nouvel utilisateur
+            // Ici ça crée le nouvel utilisateur
             $user = new User();
             $user->setEmail($email);
             $user->setFirstname($firstname);
