@@ -41,5 +41,6 @@ Thumbs.db
 node_modules/
 public/build/
 public/uploads/pdfs/
-/public/build/
-/public/uploads/
+/www/public/build/
+/www/public/uploads/
+
