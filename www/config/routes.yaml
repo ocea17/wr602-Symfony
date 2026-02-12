@@ -76,3 +76,8 @@ app_contact_delete:
   path: /contacts/delete/{id}
   controller: App\Controller\ContactController::delete
   methods: ['GET']
+
+app_profile:
+  path: /profile
+  controller: App\Controller\ProfileController::index
+  methods: ['GET']
