@@ -11,7 +11,6 @@ class PlanFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        // Création du plan gratuit
         $planFree = new Plan();
         $planFree->setName('FREE');
         $planFree->setDescription('Plan gratuit avec 2 PDFs par jour');
@@ -22,7 +21,7 @@ class PlanFixtures extends Fixture
         $planFree->setCreatedAt(new DateTimeImmutable());
         $manager->persist($planFree);
 
-        // Création du plan basique
+        // plan basique
         $planBasic = new Plan();
         $planBasic->setName('BASIC');
         $planBasic->setDescription('Plan basique avec 20 PDFs par jour');
@@ -33,7 +32,7 @@ class PlanFixtures extends Fixture
         $planBasic->setCreatedAt(new DateTimeImmutable());
         $manager->persist($planBasic);
 
-        // Création du plan premium
+        // plan premium
         $planPremium = new Plan();
         $planPremium->setName('PREMIUM');
         $planPremium->setDescription('Plan premium avec génération illimitée de PDFs');
@@ -44,7 +43,6 @@ class PlanFixtures extends Fixture
         $planPremium->setCreatedAt(new DateTimeImmutable());
         $manager->persist($planPremium);
 
-        // Sauvegarde en base de données
         $manager->flush();
     }
 }
