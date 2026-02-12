@@ -37,3 +37,10 @@ Thumbs.db
 # Cache
 **/var/cache/
 **/var/log/
+
+node_modules/
+public/build/
+public/uploads/pdfs/
+/www/public/build/
+/www/public/uploads/
+

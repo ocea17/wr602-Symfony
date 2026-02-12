@@ -118,4 +118,8 @@ class UserContact
 
         return $this;
     }
+
+    public function setFirstname(float|bool|int|string $firstname)
+    {
+    }
 }

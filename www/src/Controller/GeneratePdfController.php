@@ -8,7 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_USER')]
 class GeneratePdfController extends AbstractController
 {
     private PdfGeneratorService $pdfService;
@@ -83,7 +85,39 @@ class GeneratePdfController extends AbstractController
     public function generateFromWysiwyg(Request $request): Response
     {
         if ($request->isMethod('POST')) {
-            $html = $request->request->get('html_content');
+            $title = $request->request->get('title');
+            $content = $request->request->get('content');
+
+            // Construire le HTML à partir des champs
+            $html = '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>' . htmlspecialchars($title) . '</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1 {
+            color: #3B82F6;
+            border-bottom: 2px solid #3B82F6;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        p {
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>' . htmlspecialchars($title) . '</h1>
+    <p>' . nl2br(htmlspecialchars($content)) . '</p>
+</body>
+</html>';
 
             try {
                 $pdfContent = $this->pdfService->generateFromHtml($html);
