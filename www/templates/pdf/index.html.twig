@@ -28,21 +28,29 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                 {# Mode 1 : URL vers PDF #}
                 <a href="{{ path('app_pdf_generate_url') }}" class="bg-white rounded-xl p-8 shadow-sm border-2 border-gray-200 hover:border-blue-500 hover:shadow-lg transition transform hover:-translate-y-1 text-center group">
-                    <div class="text-5xl mb-4">🌐</div>
+                    <div class="text-center mb-4">
+                        <i data-lucide="globe" style="width:45px; height:45px;" class="mx-auto w-16 h-16 text-blue-500"></i>
+                    </div>
                     <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-500">URL vers PDF</h3>
                     <p class="text-gray-600 text-sm">Convertir une page web en PDF</p>
                 </a>
 
                 {# Mode 2 : Fichier vers PDF #}
                 <a href="{{ path('app_pdf_generate_file') }}" class="bg-white rounded-xl p-8 shadow-sm border-2 border-gray-200 hover:border-blue-500 hover:shadow-lg transition transform hover:-translate-y-1 text-center group">
-                    <div class="text-5xl mb-4">📁</div>
+                    <div class="text-center mb-4">
+                        <i data-lucide="file" style="width:45px; height:45px;" class="mx-auto text-green-500"></i>
+
+                    </div>
                     <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-500">Fichier vers PDF</h3>
                     <p class="text-gray-600 text-sm">Upload un fichier HTML</p>
                 </a>
 
                 {# Mode 3 : Éditeur HTML #}
                 <a href="{{ path('app_pdf_generate_wysiwyg') }}" class="bg-white rounded-xl p-8 shadow-sm border-2 border-gray-200 hover:border-blue-500 hover:shadow-lg transition transform hover:-translate-y-1 text-center group">
-                    <div class="text-5xl mb-4">✏️</div>
+                    <div class="text-center mb-4">
+                        <i data-lucide="pencil" style="width:45px; height:45px;" class="mx-auto w-16 h-16 text-purple-500"></i>
+                    </div>
+
                     <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-500">Éditeur HTML</h3>
                     <p class="text-gray-600 text-sm">Écrire du HTML directement</p>
                 </a>
