@@ -73,7 +73,13 @@ app_profile:
   path: /profile
   controller: App\Controller\ProfileController::index
   methods: ['GET']
+
 app_profile_update_color:
     path: /profile/update-color
     controller: App\Controller\ProfileController::updateColor
     methods: ['POST']
+
+app_profile_update_info:
+  path: /profile/update-info
+  controller: App\Controller\ProfileController::updateInfo
+  methods: ['POST']
