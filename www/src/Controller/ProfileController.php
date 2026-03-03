@@ -50,4 +50,26 @@ class ProfileController extends AbstractController
 
         return $this->redirectToRoute('app_profile');
     }
+    public function updateInfo(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            $firstname = $request->request->get('firstname');
+            $lastname = $request->request->get('lastname');
+
+            if (!$firstname || !$lastname) {
+                $this->addFlash('error', 'Le prénom et le nom sont obligatoires.');
+                return $this->redirectToRoute('app_profile');
+            }
+
+            $user = $this->getUser();
+            $user->setFirstname($firstname);
+            $user->setLastname($lastname);
+
+            $this->em->flush();
+
+            $this->addFlash('success', 'Vos informations ont été modifiées avec succès !');
+        }
+
+        return $this->redirectToRoute('app_profile');
+    }
 }
