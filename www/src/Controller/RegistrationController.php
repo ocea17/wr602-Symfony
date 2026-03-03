@@ -21,18 +21,24 @@ class RegistrationController extends AbstractController
         if ($request->isMethod('POST')) {
             $email = $request->request->get('email');
             $password = $request->request->get('password');
+            $passwordConfirm = $request->request->get('password_confirm');
             $firstname = $request->request->get('firstname');
             $lastname = $request->request->get('lastname');
 
             // Validation simple
             if (!$email || !$password || !$firstname || !$lastname) {
                 $this->addFlash('error', 'Tous les champs sont obligatoires.');
-                return $this->render('registration/index.html.twig');
+                return $this->render('registration/register.html.twig');
+            }
+
+            if ($password !== $passwordConfirm) {
+                $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+                return $this->render('registration/register.html.twig');
             }
 
             if (strlen($password) < 6) {
                 $this->addFlash('error', 'Le mot de passe doit contenir au moins 6 caractères.');
-                return $this->render('registration/index.html.twig');
+                return $this->render('registration/register.html.twig'); // ← Change index en register
             }
 
             // Récupère le plan FREE par défaut
@@ -57,6 +63,6 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('registration/index.html.twig');
+        return $this->render('registration/register.html.twig');
     }
 }
