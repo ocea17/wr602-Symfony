@@ -58,6 +58,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTime $resetTokenExpiresAt = null;
 
+    #[ORM\Column(length: 7, nullable: true)]
+    private ?string $avatarColor = '#3B82F6';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -232,6 +235,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetTokenExpiresAt(?\DateTime $resetTokenExpiresAt): static
     {
         $this->resetTokenExpiresAt = $resetTokenExpiresAt;
+
+        return $this;
+    }
+
+    public function getAvatarColor(): ?string
+    {
+        return $this->avatarColor ?? '#3B82F6';
+    }
+
+    public function setAvatarColor(?string $avatarColor): static
+    {
+        $this->avatarColor = $avatarColor;
 
         return $this;
     }
