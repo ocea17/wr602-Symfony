@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Generation;
+use App\Repository\GenerationRepository;
 use App\Service\PdfGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,21 +16,72 @@ class GeneratePdfController extends AbstractController
 {
     private PdfGeneratorService $pdfService;
     private EntityManagerInterface $em;
+    private GenerationRepository $generationRepository;
 
-    public function __construct(PdfGeneratorService $pdfService, EntityManagerInterface $em)
-    {
+    public function __construct(
+        PdfGeneratorService $pdfService,
+        EntityManagerInterface $em,
+        GenerationRepository $generationRepository
+    ) {
         $this->pdfService = $pdfService;
         $this->em = $em;
+        $this->generationRepository = $generationRepository;
+    }
+
+    private function checkDailyLimit(): bool
+    {
+        $user = $this->getUser();
+        $plan = $user->getPlan();
+
+        // Si le plan n'a pas de limite (PREMIUM), c'est OK
+        if ($plan->getLimitGeneration() === null) {
+            return true;
+        }
+
+        // Compte les PDFs générés aujourd'hui
+        $todayStart = new \DateTime('today');
+        $todayPdfs = $this->generationRepository->createQueryBuilder('g')
+            ->select('COUNT(g.id)')
+            ->where('g.user = :user')
+            ->andWhere('g.createdAt >= :today')
+            ->setParameter('user', $user)
+            ->setParameter('today', $todayStart)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        // Vérifie si la limite est dépassée
+        return $todayPdfs < $plan->getLimitGeneration();
     }
 
     public function index(): Response
     {
-        return $this->render('pdf/index.html.twig');
+        $user = $this->getUser();
+
+        // Compte les PDFs générés aujourd'hui
+        $todayStart = new \DateTime('today');
+        $todayPdfs = $this->generationRepository->createQueryBuilder('g')
+            ->select('COUNT(g.id)')
+            ->where('g.user = :user')
+            ->andWhere('g.createdAt >= :today')
+            ->setParameter('user', $user)
+            ->setParameter('today', $todayStart)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $this->render('pdf/index.html.twig', [
+            'today_pdfs' => $todayPdfs,
+        ]);
     }
 
     public function generateFromUrl(Request $request): Response
     {
         if ($request->isMethod('POST')) {
+            // Vérifier la limite quotidienne
+            if (!$this->checkDailyLimit()) {
+                $this->addFlash('error', 'Vous avez atteint votre limite de génération pour aujourd\'hui. Passez à un plan supérieur pour continuer.');
+                return $this->redirectToRoute('app_pdf_index');
+            }
+
             $url = $request->request->get('url');
 
             try {
@@ -56,6 +108,12 @@ class GeneratePdfController extends AbstractController
     public function generateFromFile(Request $request): Response
     {
         if ($request->isMethod('POST')) {
+            // Vérifier la limite quotidienne
+            if (!$this->checkDailyLimit()) {
+                $this->addFlash('error', 'Vous avez atteint votre limite de génération pour aujourd\'hui. Passez à un plan supérieur pour continuer.');
+                return $this->redirectToRoute('app_pdf_index');
+            }
+
             $file = $request->files->get('file');
 
             if ($file) {
@@ -85,6 +143,12 @@ class GeneratePdfController extends AbstractController
     public function generateFromWysiwyg(Request $request): Response
     {
         if ($request->isMethod('POST')) {
+            // Vérifier la limite quotidienne
+            if (!$this->checkDailyLimit()) {
+                $this->addFlash('error', 'Vous avez atteint votre limite de génération pour aujourd\'hui. Passez à un plan supérieur pour continuer.');
+                return $this->redirectToRoute('app_pdf_index');
+            }
+
             $title = $request->request->get('title');
             $content = $request->request->get('content');
 
