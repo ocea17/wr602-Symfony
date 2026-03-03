@@ -63,5 +63,18 @@
                 </a>
             </div>
         </div>
+        <br>
+        {# Bannière limite atteinte #}
+        {% if today_pdfs >= (app.user.plan.limitGeneration ?? 999) %}
+            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-6 mb-8 flex items-center gap-4">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-red-900 mb-1">Limite quotidienne atteinte !</h3>
+                    <p class="text-red-700">Vous avez généré {{ today_pdfs }}/{{ app.user.plan.limitGeneration }} PDFs aujourd'hui. Revenez demain ou passez au plan BASIC pour continuer.</p>
+                </div>
+                <u><a href="{{ path('app_subscription_change') }}" class="px-6 py-3 bg-black-500 hover:bg-black-600 text-black font-semibold rounded-lg transition whitespace-nowrap">
+                    Améliorer mon plan
+                </a></u>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
