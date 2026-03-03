@@ -83,3 +83,8 @@ app_profile_update_info:
   path: /profile/update-info
   controller: App\Controller\ProfileController::updateInfo
   methods: ['POST']
+
+app_profile_update_password:
+    path: /profile/update-password
+    controller: App\Controller\ProfileController::updatePassword
+    methods: ['POST']
