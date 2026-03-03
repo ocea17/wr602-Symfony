@@ -29,7 +29,7 @@
             {# User menu #}
             {% if app.user %}
                 <a href="{{ path('app_profile') }}" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm" style="background-color: {{ app.user.avatarColor }};">
                         {{ app.user.firstname|first|upper }}{{ app.user.lastname|first|upper }}
                     </div>
                     <span class="text-sm font-medium">{{ app.user.firstname }}</span>

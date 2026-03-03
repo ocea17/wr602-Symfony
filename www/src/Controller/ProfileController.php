@@ -6,15 +6,25 @@ use App\Repository\GenerationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[IsGranted('ROLE_USER')]
 class ProfileController extends AbstractController
 {
     private GenerationRepository $generationRepository;
+    private EntityManagerInterface $em;
+    private UserPasswordHasherInterface $passwordHasher;
 
-    public function __construct(GenerationRepository $generationRepository)
-    {
+    public function __construct(
+        GenerationRepository $generationRepository,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher
+    ) {
         $this->generationRepository = $generationRepository;
+        $this->em = $em;
+        $this->passwordHasher = $passwordHasher;
     }
 
     public function index(): Response
@@ -27,5 +37,78 @@ class ProfileController extends AbstractController
             'user' => $user,
             'total_pdfs' => $totalPdfs,
         ]);
+    }
+    public function updateColor(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            $color = $request->request->get('color');
+
+            $user = $this->getUser();
+            $user->setAvatarColor($color);
+
+            $this->em->flush();
+
+            $this->addFlash('success', 'Couleur modifiée avec succès !');
+        }
+
+        return $this->redirectToRoute('app_profile');
+    }
+    public function updateInfo(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            $firstname = $request->request->get('firstname');
+            $lastname = $request->request->get('lastname');
+            $currentPassword = $request->request->get('current_password');
+            $newPassword = $request->request->get('new_password');
+            $newPasswordConfirm = $request->request->get('new_password_confirm');
+
+            // Validation du nom et prénom
+            if (!$firstname || !$lastname) {
+                $this->addFlash('error', 'Le prénom et le nom sont obligatoires.');
+                return $this->redirectToRoute('app_profile');
+            }
+
+            $user = $this->getUser();
+            $user->setFirstname($firstname);
+            $user->setLastname($lastname);
+
+            if ($currentPassword || $newPassword || $newPasswordConfirm) {
+                // Vérifier que tous les champs mot de passe sont remplis
+                if (!$currentPassword || !$newPassword || !$newPasswordConfirm) {
+                    $this->addFlash('error', 'Pour changer le mot de passe, tous les champs sont obligatoires.');
+                    return $this->redirectToRoute('app_profile');
+                }
+
+                // Vérifier que l'ancien mot de passe est correct
+                if (!$this->passwordHasher->isPasswordValid($user, $currentPassword)) {
+                    $this->addFlash('error', 'Le mot de passe actuel est incorrect.');
+                    return $this->redirectToRoute('app_profile');
+                }
+
+                // Vérifier la longueur du nouveau mot de passe
+                if (strlen($newPassword) < 6) {
+                    $this->addFlash('error', 'Le nouveau mot de passe doit contenir au moins 6 caractères.');
+                    return $this->redirectToRoute('app_profile');
+                }
+
+                // Vérifier que les nouveaux mots de passe correspondent
+                if ($newPassword !== $newPasswordConfirm) {
+                    $this->addFlash('error', 'Les nouveaux mots de passe ne correspondent pas.');
+                    return $this->redirectToRoute('app_profile');
+                }
+
+                // Hasher et sauvegarder le nouveau mot de passe
+                $hashedPassword = $this->passwordHasher->hashPassword($user, $newPassword);
+                $user->setPassword($hashedPassword);
+
+                $this->addFlash('success', 'Vos informations et votre mot de passe ont été modifiés avec succès !');
+            } else {
+                $this->addFlash('success', 'Vos informations ont été modifiées avec succès !');
+            }
+
+            $this->em->flush();
+        }
+
+        return $this->redirectToRoute('app_profile');
     }
 }
