@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}PDF Generator{% endblock %}</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <link href="{{ asset('build/app.css') }}" rel="stylesheet">
-</head>
-<body class="font-sans">
-{% block body %}{% endblock %}
-<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
-<script>
-    lucide.createIcons();
-</script>
-
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}PDF Generator{% endblock %}</title>
+        
+        {# Google Fonts - Inter #}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        
+        {# TailwindCSS #}
+        <link href="{{ asset('build/app.css') }}" rel="stylesheet">
+    </head>
+    <body class="font-sans">
+        {% block body %}{% endblock %}
+        
+        {# Lucide Icons #}
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <script>
+            lucide.createIcons();
+        </script>
+    </body>
 </html>
