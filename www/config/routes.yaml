@@ -1,12 +1,28 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
+# Page d'accueil PUBLIQUE (plans)
+app_home_public:
+  path: /
+  controller: App\Controller\HomePublicController::index
+  methods: ['GET']
+
+# Dashboard (connecté uniquement)
+app_home:
+  path: /dashboard
+  controller: App\Controller\HomeController::index
+  methods: ['GET']
 
 app_login:
   path: /login
   controller: App\Controller\SecurityController::login
+  methods: ['GET', 'POST']
+
+app_logout:
+  path: /logout
+  methods: ['GET']
+
+app_register:
+  path: /register
+  controller: App\Controller\RegistrationController::register
+  methods: ['GET', 'POST']
 
 app_forgot_password:
   path: /forgot-password
@@ -17,15 +33,6 @@ app_reset_password:
   path: /reset-password/{token}
   controller: App\Controller\PasswordResetController::resetPassword
   methods: ['GET', 'POST']
-
-app_register:
-  path: /register
-  controller: App\Controller\RegistrationController::register
-  methods: ['GET', 'POST']
-
-app_home:
-  path: /
-  controller: App\Controller\HomeController::index
 
 app_subscription_change:
   path: /subscription/change
@@ -60,21 +67,6 @@ app_history:
 app_history_download:
   path: /history/download/{id}
   controller: App\Controller\HistoryController::download
-  methods: ['GET']
-
-app_contact_index:
-  path: /contacts
-  controller: App\Controller\ContactController::index
-  methods: ['GET']
-
-app_contact_add:
-  path: /contacts/add
-  controller: App\Controller\ContactController::add
-  methods: ['GET', 'POST']
-
-app_contact_delete:
-  path: /contacts/delete/{id}
-  controller: App\Controller\ContactController::delete
   methods: ['GET']
 
 app_profile:

@@ -1,0 +1,87 @@
+{# Plans grid #}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    {% for plan in plans %}
+        <div class="bg-white rounded-2xl border-2 border-gray-200 p-8 relative transition transform hover:-translate-y-2 hover:shadow-xl">
+
+            {# Badge recommandé pour PREMIUM #}
+            {% if plan.name == 'PREMIUM' %}
+                <div class="absolute -top-3 right-6 bg-purple-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    RECOMMANDÉ
+                </div>
+            {% endif %}
+
+            {# Badge du nom du plan #}
+            <span class="inline-block px-3 py-1 rounded-md text-sm font-semibold mb-4
+                {% if plan.name == 'FREE' %}bg-gray-100 text-gray-700
+                {% elseif plan.name == 'BASIC' %}bg-blue-100 text-blue-600
+                {% else %}bg-purple-100 text-purple-600{% endif %}">
+                {{ plan.name }}
+            </span>
+
+            {# Prix #}
+            <div class="mb-6">
+                <span class="text-5xl font-bold text-gray-900">
+                    {% if plan.price == 0 %}
+                        0€
+                    {% else %}
+                        {{ plan.price }}€
+                    {% endif %}
+                </span>
+                <span class="text-lg text-gray-500">/mois</span>
+            </div>
+
+            {# Description #}
+            <p class="text-gray-600 mb-6">{{ plan.description }}</p>
+
+            {# Features #}
+            <ul class="space-y-3 mb-8">
+                <li class="flex items-center gap-2 text-gray-700">
+                    <span class="text-green-500 font-bold">✓</span>
+                    <span>
+                        {% if plan.limitGeneration is null %}
+                            PDFs illimités
+                        {% else %}
+                            {{ plan.limitGeneration }} PDFs par jour
+                        {% endif %}
+                    </span>
+                </li>
+                <li class="flex items-center gap-2 text-gray-700">
+                    <span class="text-green-500 font-bold">✓</span>
+                    <span>
+                        {% if plan.name == 'FREE' %}
+                            Stockage 7 jours
+                        {% elseif plan.name == 'BASIC' %}
+                            Stockage 30 jours
+                        {% else %}
+                            Stockage illimité
+                        {% endif %}
+                    </span>
+                </li>
+                <li class="flex items-center gap-2 text-gray-700">
+                    <span class="text-green-500 font-bold">✓</span>
+                    <span>Tous les formats</span>
+                </li>
+                {% if plan.name == 'PREMIUM' %}
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Sans watermark</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Accès API</span>
+                    </li>
+                {% endif %}
+            </ul>
+
+            {# Button - Toujours vers login pour les visiteurs #}
+            <a href="{{ path('app_login') }}" class="block w-full py-3 px-6 text-center rounded-lg font-semibold transition transform hover:scale-105
+                {% if plan.name == 'PREMIUM' %}
+                    bg-purple-500 hover:bg-purple-600 text-white
+                {% else %}
+                    bg-blue-500 hover:bg-blue-600 text-white
+                {% endif %}">
+                Choisir ce plan
+            </a>
+        </div>
+    {% endfor %}
+</div>
