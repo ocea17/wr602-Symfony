@@ -14,7 +14,7 @@
             <div class="bg-white rounded-xl shadow-sm p-8 mb-6">
                 <div class="flex items-center gap-6 mb-6">
                     {# Avatar #}
-                    <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                    <div class="w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-2xl" style="background-color: {{ user.avatarColor }};">
                         {{ user.firstname|first|upper }}{{ user.lastname|first|upper }}
                     </div>
 
@@ -76,6 +76,29 @@
                         <div class="text-sm text-gray-600">Stockage</div>
                     </div>
                 </div>
+            </div>
+
+            {# Personnalisation #}
+            <div class="bg-white rounded-xl shadow-sm p-8 mb-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-6">Personnalisation</h3>
+
+                <form method="post" action="{{ path('app_profile_update_color') }}" data-turbo="false">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Couleur de l'avatar</label>
+                        <div class="flex items-center gap-4 flex-wrap">
+                            {% set colors = ['#3B82F6', '#8B5CF6', '#EC4899', '#10B981', '#F59E0B', '#EF4444', '#6366F1', '#14B8A6'] %}
+                            {% for color in colors %}
+                                <button
+                                        type="submit"
+                                        name="color"
+                                        value="{{ color }}"
+                                        class="w-12 h-12 rounded-full border-4 {{ app.user.avatarColor == color ? 'border-gray-900' : 'border-gray-200' }} hover:border-gray-400 transition"
+                                        style="background-color: {{ color }};"
+                                ></button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </form>
             </div>
 
             {# Actions #}
