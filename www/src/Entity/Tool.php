@@ -32,11 +32,11 @@ class Tool
      * @var Collection<int, Plan>
      */
     #[ORM\ManyToMany(targetEntity: Plan::class, inversedBy: 'tools')]
-    private Collection $plan;
+    private Collection $plans;
 
     public function __construct()
     {
-        $this->plan = new ArrayCollection();
+        $this->plans = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -52,7 +52,6 @@ class Tool
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -64,7 +63,6 @@ class Tool
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
-
         return $this;
     }
 
@@ -76,7 +74,6 @@ class Tool
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -88,7 +85,6 @@ class Tool
     public function setActive(bool $active): static
     {
         $this->active = $active;
-
         return $this;
     }
 
@@ -97,22 +93,20 @@ class Tool
      */
     public function getPlans(): Collection
     {
-        return $this->plan;
+        return $this->plans;
     }
 
     public function addPlan(Plan $plan): static
     {
-        if (!$this->plan->contains($plan)) {
-            $this->plan->add($plan);
+        if (!$this->plans->contains($plan)) {
+            $this->plans->add($plan);
         }
-
         return $this;
     }
 
     public function removePlan(Plan $plan): static
     {
-        $this->plan->removeElement($plan);
-
+        $this->plans->removeElement($plan);
         return $this;
     }
 }

@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Generation;
+use App\Entity\Tool;
 use App\Repository\GenerationRepository;
+use App\Repository\ToolRepository;
 use App\Service\PdfGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,21 +13,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('ROLE_USER')]
 class GeneratePdfController extends AbstractController
 {
     private PdfGeneratorService $pdfService;
     private EntityManagerInterface $em;
     private GenerationRepository $generationRepository;
+    private ToolRepository $toolRepository;
 
     public function __construct(
         PdfGeneratorService $pdfService,
         EntityManagerInterface $em,
-        GenerationRepository $generationRepository
+        GenerationRepository $generationRepository,
+        ToolRepository $toolRepository
     ) {
         $this->pdfService = $pdfService;
         $this->em = $em;
         $this->generationRepository = $generationRepository;
+        $this->toolRepository = $toolRepository;
     }
 
     private function checkDailyLimit(): bool
@@ -33,12 +37,10 @@ class GeneratePdfController extends AbstractController
         $user = $this->getUser();
         $plan = $user->getPlan();
 
-        // Si le plan n'a pas de limite (PREMIUM), c'est OK
         if ($plan->getLimitGeneration() === null) {
             return true;
         }
 
-        // Compte les PDFs générés aujourd'hui
         $todayStart = new \DateTime('today');
         $todayPdfs = $this->generationRepository->createQueryBuilder('g')
             ->select('COUNT(g.id)')
@@ -49,7 +51,6 @@ class GeneratePdfController extends AbstractController
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Vérifie si la limite est dépassée
         return $todayPdfs < $plan->getLimitGeneration();
     }
 
@@ -68,27 +69,44 @@ class GeneratePdfController extends AbstractController
             ->getQuery()
             ->getSingleScalarResult();
 
+        // Récupère tous les tools actifs
+        $allTools = $this->toolRepository->findAllActive();
+
         return $this->render('pdf/index.html.twig', [
             'today_pdfs' => $todayPdfs,
+            'tools' => $allTools,
         ]);
     }
 
-    public function generateFromUrl(Request $request): Response
+    public function convertTool(string $slug, Request $request): Response
     {
+        $tool = $this->toolRepository->findOneBySlug($slug);
+
+        if (!$tool) {
+            throw $this->createNotFoundException('Outil introuvable.');
+        }
+
+        $this->denyAccessUnlessGranted('TOOL_ACCESS', $tool);
+
         if ($request->isMethod('POST')) {
-            // Vérifier la limite quotidienne
+            // Vérifie la limite quotidienne
             if (!$this->checkDailyLimit()) {
-                $this->addFlash('error', 'Vous avez atteint votre limite de génération pour aujourd\'hui. Passez à un plan supérieur pour continuer.');
+                $this->addFlash('error', 'Vous avez atteint votre limite de génération pour aujourd\'hui.');
                 return $this->redirectToRoute('app_pdf_index');
             }
 
-            $url = $request->request->get('url');
-
             try {
-                $pdfContent = $this->pdfService->generatePdfFromUrl($url);
+                $pdfContent = match ($slug) {
+                    'url' => $this->generateFromUrl($request),
+                    'html' => $this->generateFromFile($request),
+                    'wysiwyg' => $this->generateFromWysiwyg($request),
+                    default => throw new \Exception('Type de génération non supporté')
+                };
+
                 $filename = 'pdf_' . time() . '.pdf';
                 $filepath = $this->pdfService->savePdf($pdfContent, $filename);
 
+                // Enregistre en BDD
                 $generation = new Generation();
                 $generation->setUser($this->getUser());
                 $generation->setFile($filepath);
@@ -102,58 +120,41 @@ class GeneratePdfController extends AbstractController
             }
         }
 
-        return $this->render('pdf/generate_url.html.twig');
+        $template = match ($slug) {
+            'url' => 'pdf/generate_url.html.twig',
+            'html' => 'pdf/generate_file.html.twig',
+            'wysiwyg' => 'pdf/generate_wysiwyg.html.twig',
+            default => throw $this->createNotFoundException('Template introuvable')
+        };
+
+        return $this->render($template, [
+            'tool' => $tool,
+        ]);
     }
 
-    public function generateFromFile(Request $request): Response
+    private function generateFromUrl(Request $request): string
     {
-        if ($request->isMethod('POST')) {
-            // Vérifier la limite quotidienne
-            if (!$this->checkDailyLimit()) {
-                $this->addFlash('error', 'Vous avez atteint votre limite de génération pour aujourd\'hui. Passez à un plan supérieur pour continuer.');
-                return $this->redirectToRoute('app_pdf_index');
-            }
+        $url = $request->request->get('url');
+        return $this->pdfService->generatePdfFromUrl($url);
+    }
 
-            $file = $request->files->get('file');
-
-            if ($file) {
-                try {
-                    $content = file_get_contents($file->getPathname());
-                    $pdfContent = $this->pdfService->generateFromHtml($content);
-                    $filename = 'pdf_' . time() . '.pdf';
-                    $filepath = $this->pdfService->savePdf($pdfContent, $filename);
-
-                    $generation = new Generation();
-                    $generation->setUser($this->getUser());
-                    $generation->setFile($filepath);
-                    $generation->setCreatedAt(new \DateTimeImmutable());
-                    $this->em->persist($generation);
-                    $this->em->flush();
-
-                    return $this->file(__DIR__ . '/../../public/' . $filepath);
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Erreur : ' . $e->getMessage());
-                }
-            }
+    private function generateFromFile(Request $request): string
+    {
+        $file = $request->files->get('file');
+        if (!$file) {
+            throw new \Exception('Aucun fichier uploadé');
         }
 
-        return $this->render('pdf/generate_file.html.twig');
+        $content = file_get_contents($file->getPathname());
+        return $this->pdfService->generateFromHtml($content);
     }
 
-    public function generateFromWysiwyg(Request $request): Response
+    private function generateFromWysiwyg(Request $request): string
     {
-        if ($request->isMethod('POST')) {
-            // Vérifier la limite quotidienne
-            if (!$this->checkDailyLimit()) {
-                $this->addFlash('error', 'Vous avez atteint votre limite de génération pour aujourd\'hui. Passez à un plan supérieur pour continuer.');
-                return $this->redirectToRoute('app_pdf_index');
-            }
+        $title = $request->request->get('title');
+        $content = $request->request->get('content');
 
-            $title = $request->request->get('title');
-            $content = $request->request->get('content');
-
-            // Construire le HTML à partir des champs
-            $html = '<!DOCTYPE html>
+        $html = '<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -183,24 +184,6 @@ class GeneratePdfController extends AbstractController
 </body>
 </html>';
 
-            try {
-                $pdfContent = $this->pdfService->generateFromHtml($html);
-                $filename = 'pdf_' . time() . '.pdf';
-                $filepath = $this->pdfService->savePdf($pdfContent, $filename);
-
-                $generation = new Generation();
-                $generation->setUser($this->getUser());
-                $generation->setFile($filepath);
-                $generation->setCreatedAt(new \DateTimeImmutable());
-                $this->em->persist($generation);
-                $this->em->flush();
-
-                return $this->file(__DIR__ . '/../../public/' . $filepath);
-            } catch (\Exception $e) {
-                $this->addFlash('error', 'Erreur : ' . $e->getMessage());
-            }
-        }
-
-        return $this->render('pdf/generate_wysiwyg.html.twig');
+        return $this->pdfService->generateFromHtml($html);
     }
 }

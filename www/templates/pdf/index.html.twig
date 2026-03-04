@@ -3,13 +3,13 @@
 {% block title %}Générer un PDF - PDF Generator{% endblock %}
 
 {% block body %}
-    {# Header#}
+    {# Header #}
     {{ include('_partials/header.html.twig') }}
 
     {# Main content #}
     <div class="min-h-screen bg-gray-50 py-10">
         <div class="max-w-4xl mx-auto px-6">
-            <h1 class="text-4xl font-bold text-gray-900 mb-8">Générer un PDF</h1>
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Générer un PDF</h1>
 
             {# Messages flash #}
             {% for message in app.flashes('success') %}
@@ -24,57 +24,61 @@
                 </div>
             {% endfor %}
 
-            {# Grid des 3 modes #}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                {# Mode 1 : URL vers PDF #}
-                <a href="{{ path('app_pdf_generate_url') }}" class="bg-white rounded-xl p-8 shadow-sm border-2 border-gray-200 hover:border-blue-500 hover:shadow-lg transition transform hover:-translate-y-1 text-center group">
-                    <div class="text-center mb-4">
-                        <i data-lucide="globe" style="width:45px; height:45px;" class="mx-auto w-16 h-16 text-blue-500"></i>
+            {# Bannière limite atteinte #}
+            {% if today_pdfs >= (app.user.plan.limitGeneration ?? 999) %}
+                <div class="bg-red-50 border-2 border-red-200 rounded-lg p-6 mb-8 flex items-center gap-4">
+                    <div class="text-4xl">⚠️</div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-red-900 mb-1">Limite quotidienne atteinte !</h3>
+                        <p class="text-red-700">Vous avez généré {{ today_pdfs }}/{{ app.user.plan.limitGeneration }} PDFs aujourd'hui.</p>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-500">URL vers PDF</h3>
-                    <p class="text-gray-600 text-sm">Convertir une page web en PDF</p>
-                </a>
+                    <a href="{{ path('app_subscription_change') }}" class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition whitespace-nowrap">
+                        Améliorer mon plan
+                    </a>
+                </div>
+            {% endif %}
 
-                {# Mode 2 : Fichier vers PDF #}
-                <a href="{{ path('app_pdf_generate_file') }}" class="bg-white rounded-xl p-8 shadow-sm border-2 border-gray-200 hover:border-blue-500 hover:shadow-lg transition transform hover:-translate-y-1 text-center group">
-                    <div class="text-center mb-4">
-                        <i data-lucide="file" style="width:45px; height:45px;" class="mx-auto text-green-500"></i>
+            {# Grid des tools #}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for tool in tools %}
 
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-500">Fichier vers PDF</h3>
-                    <p class="text-gray-600 text-sm">Upload un fichier HTML</p>
-                </a>
-
-                {# Mode 3 : Éditeur HTML #}
-                <a href="{{ path('app_pdf_generate_wysiwyg') }}" class="bg-white rounded-xl p-8 shadow-sm border-2 border-gray-200 hover:border-blue-500 hover:shadow-lg transition transform hover:-translate-y-1 text-center group">
-                    <div class="text-center mb-4">
-                        <i data-lucide="pencil" style="width:45px; height:45px;" class="mx-auto w-16 h-16 text-purple-500"></i>
-                    </div>
-
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-500">Éditeur HTML</h3>
-                    <p class="text-gray-600 text-sm">Écrire du HTML directement</p>
-                </a>
+                    {% if is_granted('TOOL_ACCESS', tool) %}
+                        {# Outil accessible #}
+                        <a href="{{ path('app_convert_tool', {slug: tool.slug}) }}" class="bg-white rounded-xl p-8 shadow-sm border-2 border-gray-200 hover:border-blue-500 hover:shadow-lg transition transform hover:-translate-y-1 text-center group">
+                            <div class="flex justify-center mb-4">
+                                {% if tool.slug == 'url' %}
+                                    <i data-lucide="globe" class="w-12 h-12 text-blue-500"></i>
+                                {% elseif tool.slug == 'html' %}
+                                    <i data-lucide="file-text" class="w-12 h-12 text-green-500"></i>
+                                {% else %}
+                                    <i data-lucide="pencil" class="w-12 h-12 text-purple-500"></i>
+                                {% endif %}
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-500">{{ tool.name }}</h3>
+                            <p class="text-gray-600 text-sm">{{ tool.description }}</p>
+                        </a>
+                    {% else %}
+                        {# Outil bloqué #}
+                        <div class="bg-gray-100 rounded-xl p-8 shadow-sm border-2 border-gray-300 text-center opacity-60">
+                            <div class="flex justify-center mb-4">
+                                <i data-lucide="lock" class="w-12 h-12 text-gray-400"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-500 mb-2">{{ tool.name }}</h3>
+                            <p class="text-gray-500 text-sm mb-4">{{ tool.description }}</p>
+                            <a href="{{ path('app_subscription_change') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition">
+                                Améliorer mon plan
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
-            
+
             {# Retour #}
-            <div class="text-center">
+            <div class="text-center mt-8">
                 <a href="{{ path('app_home') }}" class="text-blue-500 hover:text-blue-600 font-medium hover:underline">
                     ← Retour à l'accueil
                 </a>
             </div>
         </div>
-        <br>
-        {# Bannière limite atteinte #}
-        {% if today_pdfs >= (app.user.plan.limitGeneration ?? 999) %}
-            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-6 mb-8 flex items-center gap-4">
-                <div class="flex-1">
-                    <h3 class="text-lg font-semibold text-red-900 mb-1">Limite quotidienne atteinte !</h3>
-                    <p class="text-red-700">Vous avez généré {{ today_pdfs }}/{{ app.user.plan.limitGeneration }} PDFs aujourd'hui. Revenez demain ou passez au plan BASIC pour continuer.</p>
-                </div>
-                <u><a href="{{ path('app_subscription_change') }}" class="px-6 py-3 bg-black-500 hover:bg-black-600 text-black font-semibold rounded-lg transition whitespace-nowrap">
-                    Améliorer mon plan
-                </a></u>
-            </div>
-        {% endif %}
     </div>
 {% endblock %}
