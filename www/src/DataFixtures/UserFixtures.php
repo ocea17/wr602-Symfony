@@ -2,12 +2,12 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\User;
 use App\Entity\Plan;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class UserFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -20,13 +20,15 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        $planFree = $manager->getRepository(Plan::class)->findOneBy(['name' => 'FREE']);
-        $planBasic = $manager->getRepository(Plan::class)->findOneBy(['name' => 'BASIC']);
-        $planPremium = $manager->getRepository(Plan::class)->findOneBy(['name' => 'PREMIUM']);
+        // Récupère les plans via les références AVEC le 2ème paramètre
+        $planFree = $this->getReference(PlanFixtures::PLAN_FREE, Plan::class);
+        $planBasic = $this->getReference(PlanFixtures::PLAN_BASIC, Plan::class);
+        $planPremium = $this->getReference(PlanFixtures::PLAN_PREMIUM, Plan::class);
 
+        // User FREE
         $user1 = new User();
         $user1->setEmail('test@test.com');
-        $user1->setLastname('orange');
+        $user1->setLastname('Orange');
         $user1->setFirstname('Gina');
         $user1->setRoles(['ROLE_USER']);
         $user1->setPlan($planFree);
@@ -34,6 +36,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user1->setPassword($hashedPassword);
         $manager->persist($user1);
 
+        // User BASIC
         $user2 = new User();
         $user2->setEmail('basic@test.com');
         $user2->setLastname('Hari');
@@ -44,6 +47,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user2->setPassword($hashedPassword);
         $manager->persist($user2);
 
+        // User PREMIUM
         $user3 = new User();
         $user3->setEmail('premium@test.com');
         $user3->setLastname('Cristel');

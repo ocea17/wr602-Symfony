@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PlanRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -23,29 +25,22 @@ class Plan
     #[ORM\Column(nullable: true)]
     private ?int $limitGeneration = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $image = null;
-
-    #[ORM\Column(length: 50)]
-    private ?string $role = null;
-
     #[ORM\Column]
     private ?float $price = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?float $specialPrice = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $specialPriceFrom = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $specialPriceTo = null;
 
     #[ORM\Column]
     private ?bool $active = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    /**
+     * @var Collection<int, Tool>
+     */
+    #[ORM\ManyToMany(targetEntity: Tool::class, mappedBy: 'plans')]
+    private Collection $tools;
+
+    public function __construct()
+    {
+        $this->tools = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -60,7 +55,6 @@ class Plan
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -72,7 +66,6 @@ class Plan
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -84,31 +77,6 @@ class Plan
     public function setLimitGeneration(?int $limitGeneration): static
     {
         $this->limitGeneration = $limitGeneration;
-
-        return $this;
-    }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(?string $image): static
-    {
-        $this->image = $image;
-
-        return $this;
-    }
-
-    public function getRole(): ?string
-    {
-        return $this->role;
-    }
-
-    public function setRole(string $role): static
-    {
-        $this->role = $role;
-
         return $this;
     }
 
@@ -120,43 +88,6 @@ class Plan
     public function setPrice(float $price): static
     {
         $this->price = $price;
-
-        return $this;
-    }
-
-    public function getSpecialPrice(): ?float
-    {
-        return $this->specialPrice;
-    }
-
-    public function setSpecialPrice(?float $specialPrice): static
-    {
-        $this->specialPrice = $specialPrice;
-
-        return $this;
-    }
-
-    public function getSpecialPriceFrom(): ?\DateTime
-    {
-        return $this->specialPriceFrom;
-    }
-
-    public function setSpecialPriceFrom(?\DateTime $specialPriceFrom): static
-    {
-        $this->specialPriceFrom = $specialPriceFrom;
-
-        return $this;
-    }
-
-    public function getSpecialPriceTo(): ?\DateTime
-    {
-        return $this->specialPriceTo;
-    }
-
-    public function setSpecialPriceTo(?\DateTime $specialPriceTo): static
-    {
-        $this->specialPriceTo = $specialPriceTo;
-
         return $this;
     }
 
@@ -168,19 +99,31 @@ class Plan
     public function setActive(bool $active): static
     {
         $this->active = $active;
-
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    /**
+     * @return Collection<int, Tool>
+     */
+    public function getTools(): Collection
     {
-        return $this->createdAt;
+        return $this->tools;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function addTool(Tool $tool): static
     {
-        $this->createdAt = $createdAt;
+        if (!$this->tools->contains($tool)) {
+            $this->tools->add($tool);
+            $tool->addPlan($this);
+        }
+        return $this;
+    }
 
+    public function removeTool(Tool $tool): static
+    {
+        if ($this->tools->removeElement($tool)) {
+            $tool->removePlan($this);
+        }
         return $this;
     }
 }
