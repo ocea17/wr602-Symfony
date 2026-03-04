@@ -17,24 +17,21 @@ class ToolAccessVoter extends Voter
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
-    {
-        $user = $token->getUser();
+{
+    $user = $token->getUser();
 
-        // L'utilisateur doit être connecté
-        if (!$user instanceof User) {
-            return false;
-        }
-
-        /** @var Tool $tool */
-        $tool = $subject;
-
-        // Récupère le plan de l'utilisateur
-        $userPlan = $user->getPlan();
-        if ($userPlan === null) {
-            return false;
-        }
-
-        // Vérifie que le plan contient ce tool
-        return $userPlan->getTools()->contains($tool);
+    if (!$user instanceof User) {
+        return false;
     }
+
+    /** @var Tool $tool */
+    $tool = $subject;
+
+    $userPlan = $user->getPlan();
+    if ($userPlan === null) {
+        return false;
+    }
+
+    return $userPlan->getTools()->contains($tool);
+}
 }
