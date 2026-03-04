@@ -3,46 +3,70 @@
 namespace App\DataFixtures;
 
 use App\Entity\Plan;
-use DateTimeImmutable;
+use App\Entity\Tool;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class PlanFixtures extends Fixture
+class PlanFixtures extends Fixture implements DependentFixtureInterface
 {
+    public const PLAN_FREE = 'plan-free';
+    public const PLAN_BASIC = 'plan-basic';
+    public const PLAN_PREMIUM = 'plan-premium';
+
     public function load(ObjectManager $manager): void
     {
-        $planFree = new Plan();
-        $planFree->setName('FREE');
-        $planFree->setDescription('Plan gratuit avec 2 PDFs par jour');
-        $planFree->setLimitGeneration(2);
-        $planFree->setRole('ROLE_USER');
-        $planFree->setPrice(0);
-        $planFree->setActive(true);
-        $planFree->setCreatedAt(new DateTimeImmutable());
-        $manager->persist($planFree);
+        // Plan FREE
+        $freePlan = new Plan();
+        $freePlan->setName('FREE');
+        $freePlan->setPrice(0);
+        $freePlan->setDescription('Plan gratuit avec 2 PDFs par jour');
+        $freePlan->setLimitGeneration(2);
+        $freePlan->setActive(true);
+        
+        $freePlan->addTool($this->getReference(ToolFixtures::TOOL_URL, Tool::class));
+        $freePlan->addTool($this->getReference(ToolFixtures::TOOL_WYSIWYG, Tool::class));
+        
+        $manager->persist($freePlan);
+        $this->addReference(self::PLAN_FREE, $freePlan);
 
-        // plan basique
-        $planBasic = new Plan();
-        $planBasic->setName('BASIC');
-        $planBasic->setDescription('Plan basique avec 20 PDFs par jour');
-        $planBasic->setLimitGeneration(20);
-        $planBasic->setRole('ROLE_USER');
-        $planBasic->setPrice(9.99);
-        $planBasic->setActive(true);
-        $planBasic->setCreatedAt(new DateTimeImmutable());
-        $manager->persist($planBasic);
+        // Plan BASIC
+        $basicPlan = new Plan();
+        $basicPlan->setName('BASIC');
+        $basicPlan->setPrice(9.99);
+        $basicPlan->setDescription('Plan basique avec 20 PDFs par jour');
+        $basicPlan->setLimitGeneration(20);
+        $basicPlan->setActive(true);
+        
+        $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_URL, Tool::class));
+        $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_HTML, Tool::class));
+        $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_WYSIWYG, Tool::class));
+        
+        $manager->persist($basicPlan);
+        $this->addReference(self::PLAN_BASIC, $basicPlan);
 
-        // plan premium
-        $planPremium = new Plan();
-        $planPremium->setName('PREMIUM');
-        $planPremium->setDescription('Plan premium avec génération illimitée de PDFs');
-        $planPremium->setLimitGeneration(null);
-        $planPremium->setRole('ROLE_PREMIUM');
-        $planPremium->setPrice(29.99);
-        $planPremium->setActive(true);
-        $planPremium->setCreatedAt(new DateTimeImmutable());
-        $manager->persist($planPremium);
+        // Plan PREMIUM
+        $premiumPlan = new Plan();
+        $premiumPlan->setName('PREMIUM');
+        $premiumPlan->setPrice(29.99);
+        $premiumPlan->setDescription('Plan premium avec génération illimitée de PDFs');
+        $premiumPlan->setLimitGeneration(null);
+        $premiumPlan->setActive(true);
+        
+        $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_URL, Tool::class));
+        $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_HTML, Tool::class));
+        $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_WYSIWYG, Tool::class));
+        
+        $manager->persist($premiumPlan);
+        $this->addReference(self::PLAN_PREMIUM, $premiumPlan);
 
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            ToolFixtures::class,
+        ];
     }
 }
