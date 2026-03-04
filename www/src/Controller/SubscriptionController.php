@@ -34,8 +34,10 @@ class SubscriptionController extends AbstractController
 
             $user->setPlan($newPlan);
 
-            if ($newPlan->getRole() === 'ROLE_PREMIUM') {
+            if ($newPlan->getName() === 'PREMIUM') {
                 $user->setRoles(['ROLE_PREMIUM']);
+            } elseif ($newPlan->getName() === 'BASIC') {
+                $user->setRoles(['ROLE_BASIC']);
             } else {
                 $user->setRoles(['ROLE_USER']);
             }
