@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fusionner des PDFs - PDF Generator{% endblock %}
+
+{% block body %}
+    {{ include('_partials/header.html.twig') }}
+
+    <div class="min-h-screen bg-gray-50 py-10">
+        <div class="max-w-2xl mx-auto px-6">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Fusionner des PDFs</h1>
+
+            {% for message in app.flashes('error') %}
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <div class="bg-white rounded-xl shadow-sm p-8">
+                <form method="post" enctype="multipart/form-data" data-turbo="false">
+                    <div class="mb-6">
+                        <label for="files" class="block text-sm font-medium text-gray-700 mb-2">
+                            Fichiers PDF à fusionner (minimum 2)
+                        </label>
+                        <input 
+                            type="file" 
+                            id="files" 
+                            name="files[]" 
+                            accept=".pdf"
+                            multiple
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                        <p class="text-xs text-gray-500 mt-1">Sélectionnez plusieurs fichiers PDF</p>
+                    </div>
+
+                    <button type="submit" class="w-full px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition">
+                        🔗 Fusionner les PDFs
+                    </button>
+                </form>
+            </div>
+
+            {{ include('_partials/pdf_benefits.html.twig') }}
+
+            <div class="text-center mt-8">
+                <a href="{{ path('app_pdf_index') }}" class="text-blue-500 hover:text-blue-600 font-medium hover:underline">
+                    ← Retour aux outils
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

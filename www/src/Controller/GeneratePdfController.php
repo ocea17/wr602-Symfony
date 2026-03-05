@@ -100,6 +100,8 @@ class GeneratePdfController extends AbstractController
                     'url' => $this->generateFromUrl($request),
                     'html' => $this->generateFromFile($request),
                     'wysiwyg' => $this->generateFromWysiwyg($request),
+                    'merge' => $this->generateFromMerge($request),
+                    'split' => $this->generateFromSplit($request),
                     default => throw new \Exception('Type de génération non supporté')
                 };
 
@@ -124,6 +126,8 @@ class GeneratePdfController extends AbstractController
             'url' => 'pdf/generate_url.html.twig',
             'html' => 'pdf/generate_file.html.twig',
             'wysiwyg' => 'pdf/generate_wysiwyg.html.twig',
+            'merge' => 'pdf/generate_merge.html.twig',
+            'split' => 'pdf/generate_split.html.twig',
             default => throw $this->createNotFoundException('Template introuvable')
         };
 
@@ -185,5 +189,37 @@ class GeneratePdfController extends AbstractController
 </html>';
 
         return $this->pdfService->generateFromHtml($html);
+    }
+    private function generateFromMerge(Request $request): string
+    {
+        $files = $request->files->get('files');
+
+        if (!$files || count($files) < 2) {
+            throw new \Exception('Veuillez uploader au moins 2 fichiers PDF');
+        }
+
+        return $this->pdfService->mergePdfs($files);
+    }
+
+    private function generateFromSplit(Request $request): string
+    {
+        $file = $request->files->get('file');
+
+        if (!$file) {
+            throw new \Exception('Aucun fichier uploadé');
+        }
+
+        if (!$file->isValid()) {
+            throw new \Exception('Le fichier uploadé est invalide : ' . $file->getErrorMessage());
+        }
+
+        $startPage = (int) $request->request->get('start_page', 1);
+        $endPage = (int) $request->request->get('end_page', 1);
+
+        if ($startPage < 1 || $endPage < $startPage) {
+            throw new \Exception('Numéros de pages invalides');
+        }
+
+        return $this->pdfService->splitPdf($file, $startPage, $endPage);
     }
 }

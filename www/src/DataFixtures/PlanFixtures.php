@@ -37,10 +37,11 @@ class PlanFixtures extends Fixture implements DependentFixtureInterface
         $basicPlan->setDescription('Plan basique avec 20 PDFs par jour');
         $basicPlan->setLimitGeneration(20);
         $basicPlan->setActive(true);
-        
+
         $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_URL, Tool::class));
         $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_HTML, Tool::class));
         $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_WYSIWYG, Tool::class));
+        $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_MERGE, Tool::class));
         
         $manager->persist($basicPlan);
         $this->addReference(self::PLAN_BASIC, $basicPlan);
@@ -52,10 +53,12 @@ class PlanFixtures extends Fixture implements DependentFixtureInterface
         $premiumPlan->setDescription('Plan premium avec génération illimitée de PDFs');
         $premiumPlan->setLimitGeneration(null);
         $premiumPlan->setActive(true);
-        
+
         $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_URL, Tool::class));
         $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_HTML, Tool::class));
         $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_WYSIWYG, Tool::class));
+        $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_MERGE, Tool::class));
+        $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_SPLIT, Tool::class));
         
         $manager->persist($premiumPlan);
         $this->addReference(self::PLAN_PREMIUM, $premiumPlan);
