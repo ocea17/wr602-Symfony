@@ -19,6 +19,11 @@ class HistoryController extends AbstractController
     {
         $user = $this->getUser();
 
+        if ($user->getPlan()->getName() === 'FREE') {
+            $this->addFlash('error', 'L\'historique est disponible à partir du plan BASIC. Améliorez votre plan pour y accéder.');
+            return $this->redirectToRoute('app_subscription_change');
+        }
+
         $generations = $this->generationRepository->findBy(
             ['user' => $user],
             ['createdAt' => 'DESC']
