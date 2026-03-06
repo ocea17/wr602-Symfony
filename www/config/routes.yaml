@@ -78,3 +78,24 @@ app_profile_update_password:
     path: /profile/update-password
     controller: App\Controller\ProfileController::updatePassword
     methods: ['POST']
+
+# Routes Contact
+app_contacts_index:
+    path: /contacts
+    controller: App\Controller\ContactController::index
+    methods: GET
+
+app_contacts_new:
+    path: /contacts/new
+    controller: App\Controller\ContactController::new
+    methods: [GET, POST]
+
+app_contacts_edit:
+    path: /contacts/{id}/edit
+    controller: App\Controller\ContactController::edit
+    methods: [GET, POST]
+
+app_contacts_delete:
+    path: /contacts/{id}/delete
+    controller: App\Controller\ContactController::delete
+    methods: POST

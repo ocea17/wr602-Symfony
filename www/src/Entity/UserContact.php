@@ -6,7 +6,14 @@ use App\Repository\UserContactRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
+#[UniqueEntity(
+    fields: ['user', 'email'],
+    message: 'Cette adresse email existe déjà dans vos contacts',
+    errorPath: 'email'
+)]
 #[ORM\Entity(repositoryClass: UserContactRepository::class)]
 class UserContact
 {
@@ -20,12 +27,19 @@ class UserContact
     private ?User $user = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire')]
+    #[Assert\Length(max: 255)]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $firstame = null;
+    #[Assert\NotBlank(message: 'Le prénom est obligatoire')]
+    #[Assert\Length(max: 255)]
+    private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'L\'email est obligatoire')]
+    #[Assert\Email(message: 'L\'email n\'est pas valide')]
+    #[Assert\Length(max: 255)]
     private ?string $email = null;
 
     /**
@@ -68,14 +82,14 @@ class UserContact
         return $this;
     }
 
-    public function getFirstame(): ?string
+    public function getFirstname(): ?string
     {
-        return $this->firstame;
+        return $this->firstname;
     }
 
-    public function setFirstame(string $firstame): static
+    public function setFirstname(string $firstname): static
     {
-        $this->firstame = $firstame;
+        $this->firstname = $firstname;
 
         return $this;
     }
@@ -117,9 +131,5 @@ class UserContact
         }
 
         return $this;
-    }
-
-    public function setFirstname(float|bool|int|string $firstname)
-    {
     }
 }
