@@ -3,77 +3,97 @@
 namespace App\Controller;
 
 use App\Entity\UserContact;
+use App\Form\UserContactType;
 use App\Repository\UserContactRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_USER')]
 class ContactController extends AbstractController
 {
-    private UserContactRepository $contactRepository;
     private EntityManagerInterface $em;
+    private UserContactRepository $contactRepository;
 
-    public function __construct(UserContactRepository $contactRepository, EntityManagerInterface $em)
-    {
-        $this->contactRepository = $contactRepository;
+    public function __construct(
+        EntityManagerInterface $em,
+        UserContactRepository $contactRepository
+    ) {
         $this->em = $em;
+        $this->contactRepository = $contactRepository;
     }
 
     public function index(): Response
     {
         $user = $this->getUser();
-        $contacts = $this->contactRepository->findBy(['user' => $user]);
+        $contacts = $this->contactRepository->findBy(
+            ['user' => $user],
+            ['lastname' => 'ASC']
+        );
 
         return $this->render('contact/index.html.twig', [
             'contacts' => $contacts,
         ]);
     }
 
-    public function add(Request $request): Response
+    public function new(Request $request): Response
     {
-        if ($request->isMethod('POST')) {
-            $lastname = $request->request->get('lastname');
-            $firstname = $request->request->get('firstname');
-            $email = $request->request->get('email');
+        $contact = new UserContact();
+        $contact->setUser($this->getUser());
 
-            if (!$lastname || !$firstname || !$email) {
-                $this->addFlash('error', 'Tous les champs sont obligatoires.');
-                return $this->redirectToRoute('app_contact_add');
-            }
+        $form = $this->createForm(UserContactType::class, $contact);
+        $form->handleRequest($request);
 
-            $contact = new UserContact();
-            $contact->setLastname($lastname);
-            $contact->setFirstname($firstname);
-            $contact->setEmail($email);
-            $contact->setUser($this->getUser());
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->em->persist($contact);
             $this->em->flush();
 
             $this->addFlash('success', 'Contact ajouté avec succès !');
-            return $this->redirectToRoute('app_contact_index');
+            return $this->redirectToRoute('app_contacts_index');
         }
 
-        return $this->render('contact/add.html.twig');
+        return $this->render('contact/new.html.twig', [
+            'form' => $form,
+        ]);
     }
 
-    public function delete(int $id): Response
+    public function edit(Request $request, UserContact $contact): Response
     {
-        $contact = $this->contactRepository->find($id);
-
-        if (!$contact) {
-            throw $this->createNotFoundException('Contact non trouvé');
-        }
-
         if ($contact->getUser() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Vous n\'avez pas accès à ce contact');
+            throw $this->createAccessDeniedException();
         }
 
-        $this->em->remove($contact);
-        $this->em->flush();
+        $form = $this->createForm(UserContactType::class, $contact);
+        $form->handleRequest($request);
 
-        $this->addFlash('success', 'Contact supprimé avec succès !');
-        return $this->redirectToRoute('app_contact_index');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->flush();
+
+            $this->addFlash('success', 'Contact modifié avec succès !');
+            return $this->redirectToRoute('app_contacts_index');
+        }
+
+        return $this->render('contact/edit.html.twig', [
+            'contact' => $contact,
+            'form' => $form,
+        ]);
+    }
+
+    public function delete(Request $request, UserContact $contact): Response
+    {
+        if ($contact->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if ($this->isCsrfTokenValid('delete' . $contact->getId(), $request->request->get('_token'))) {
+            $this->em->remove($contact);
+            $this->em->flush();
+
+            $this->addFlash('success', 'Contact supprimé avec succès !');
+        }
+
+        return $this->redirectToRoute('app_contacts_index');
     }
 }
