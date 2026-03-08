@@ -23,6 +23,7 @@ class PlanFixtures extends Fixture implements DependentFixtureInterface
         $freePlan->setDescription('Plan gratuit avec 2 PDFs par jour');
         $freePlan->setLimitGeneration(2);
         $freePlan->setActive(true);
+        $freePlan->setLimitStorage(null);
         
         $freePlan->addTool($this->getReference(ToolFixtures::TOOL_URL, Tool::class));
         $freePlan->addTool($this->getReference(ToolFixtures::TOOL_WYSIWYG, Tool::class));
@@ -37,11 +38,11 @@ class PlanFixtures extends Fixture implements DependentFixtureInterface
         $basicPlan->setDescription('Plan basique avec 20 PDFs par jour');
         $basicPlan->setLimitGeneration(20);
         $basicPlan->setActive(true);
+        $basicPlan->setLimitStorage(50);
 
         $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_URL, Tool::class));
         $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_HTML, Tool::class));
         $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_WYSIWYG, Tool::class));
-        $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_MERGE, Tool::class));
         
         $manager->persist($basicPlan);
         $this->addReference(self::PLAN_BASIC, $basicPlan);
@@ -50,9 +51,10 @@ class PlanFixtures extends Fixture implements DependentFixtureInterface
         $premiumPlan = new Plan();
         $premiumPlan->setName('PREMIUM');
         $premiumPlan->setPrice(29.99);
-        $premiumPlan->setDescription('Plan premium avec génération illimitée de PDFs');
-        $premiumPlan->setLimitGeneration(null);
+        $premiumPlan->setDescription('Plan premium avec 200 PDFs par jour');
+        $premiumPlan->setLimitGeneration(200);
         $premiumPlan->setActive(true);
+        $premiumPlan->setLimitStorage(500);
 
         $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_URL, Tool::class));
         $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_HTML, Tool::class));
