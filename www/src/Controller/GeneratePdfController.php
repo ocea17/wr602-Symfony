@@ -89,7 +89,6 @@ class GeneratePdfController extends AbstractController
         $this->denyAccessUnlessGranted('TOOL_ACCESS', $tool);
 
         if ($request->isMethod('POST')) {
-            // Vérifie la limite quotidienne
             if (!$this->checkDailyLimit()) {
                 $this->addFlash('error', 'Vous avez atteint votre limite de génération pour aujourd\'hui.');
                 return $this->redirectToRoute('app_pdf_index');
@@ -108,10 +107,39 @@ class GeneratePdfController extends AbstractController
                 $filename = 'pdf_' . time() . '.pdf';
                 $filepath = $this->pdfService->savePdf($pdfContent, $filename);
 
-                // Enregistre en BDD
+                $user = $this->getUser();
+                $plan = $user->getPlan();
+
+
+                if ($plan->getLimitStorage() !== null) {
+
+                    $currentCount = $this->generationRepository->count(['user' => $user]);
+
+                    if ($currentCount >= $plan->getLimitStorage()) {
+                        $toDelete = $currentCount - $plan->getLimitStorage() + 1;
+
+                        $oldestGenerations = $this->generationRepository->findBy(
+                            ['user' => $user],
+                            ['createdAt' => 'ASC'],
+                            $toDelete
+                        );
+
+                        foreach ($oldestGenerations as $oldGen) {
+                            $filePath = __DIR__ . '/../../public/' . $oldGen->getFile();
+                            if (file_exists($filePath)) {
+                                unlink($filePath);
+                            }
+                            $this->em->remove($oldGen);
+                        }
+                        $this->em->flush();
+                    }
+                }
+
                 $generation = new Generation();
-                $generation->setUser($this->getUser());
+                $generation->setUser($user);
                 $generation->setFile($filepath);
+                $generation->setType($slug);
+                $generation->setCustomName($filename);
                 $generation->setCreatedAt(new \DateTimeImmutable());
                 $this->em->persist($generation);
                 $this->em->flush();
