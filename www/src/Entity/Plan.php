@@ -37,6 +37,9 @@ class Plan
     #[ORM\ManyToMany(targetEntity: Tool::class, mappedBy: 'plans')]
     private Collection $tools;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $limitStorage = null;
+
     public function __construct()
     {
         $this->tools = new ArrayCollection();
@@ -124,6 +127,18 @@ class Plan
         if ($this->tools->removeElement($tool)) {
             $tool->removePlan($this);
         }
+        return $this;
+    }
+
+    public function getLimitStorage(): ?int
+    {
+        return $this->limitStorage;
+    }
+
+    public function setLimitStorage(?int $limitStorage): static
+    {
+        $this->limitStorage = $limitStorage;
+
         return $this;
     }
 }
