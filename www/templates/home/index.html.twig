@@ -20,42 +20,40 @@
             {# Stats grid #}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                 {# Stat 1 - PDFs aujourd'hui #}
-                <div class="bg-white p-6 rounded-xl shadow-sm">
+                <div class="bg-blue-50 p-6 rounded-xl shadow-sm">
                     <div class="text-4xl font-bold {{ today_pdfs >= (app.user.plan.limitGeneration ?? 999) ? 'text-red-500' : 'text-blue-500' }} mb-2">
-                        {{ today_pdfs }}/{{ app.user.plan.limitGeneration ?? '∞' }}
+                        {{ today_pdfs }}/{{ app.user.plan.limitGeneration }}
                     </div>
                     <div class="text-sm text-gray-600">PDFs aujourd'hui</div>
                 </div>
 
                 {# Stat 2 - Total généré #}
-                <div class="bg-white p-6 rounded-xl shadow-sm">
-                    <div class="text-4xl font-bold text-blue-500 mb-2">
+                <div class="bg-purple-50 p-6 rounded-xl shadow-sm">
+                    <div class="text-4xl font-bold text-purple-500 mb-2">
                         {{ total_pdfs }}
                     </div>
                     <div class="text-sm text-gray-600">Total générés</div>
                 </div>
 
-                {# Stat 3 - Durée de stockage #}
-                <div class="bg-white p-6 rounded-xl shadow-sm">
-                    <div class="text-4xl font-bold text-blue-500 mb-2">
-                        {% if app.user.plan.name == 'FREE' %}
-                            7j
-                        {% elseif app.user.plan.name == 'BASIC' %}
-                            30j
+                {# Stat 3 - PDFs stockés #}
+                <a href="{{ path('app_history') }}" class="text-green-500 p-6 bg-green-50 rounded-lg hover:bg-green-100 transition block">
+                    <div class="text-4xl font-bold mb-2 {{ stored_pdfs >= (app.user.plan.limitStorage ?? 999) ? 'text-red-500' : 'text-green-500' }}'">
+                        {% if app.user.plan.limitStorage %}
+                            {{ stored_pdfs }}/{{ app.user.plan.limitStorage }}
                         {% else %}
-                            ∞
+                            {{ stored_pdfs }}
                         {% endif %}
                     </div>
-                    <div class="text-sm text-gray-600">Durée de stockage</div>
-                </div>
+                    <div class="text-sm text-gray-600">PDFs stockés</div>
+                </a>
             </div>
-        </div> {# Fin du conteneur stats #}
+        </div>
 
-        {# Section Nos outils - Alignement cohérent #}
+        {# Section Nos outils#}
         <div class="max-w-7xl mx-auto px-6 mb-10">
             <h2 class="text-3xl font-bold text-gray-900 mb-8">Nos outils</h2>
 
-            {# Grid des tools centré dans son conteneur #}
+            {# Grid des tools#}
             <div class="max-w-5xl mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-fr">
                     {% for tool in tools %}

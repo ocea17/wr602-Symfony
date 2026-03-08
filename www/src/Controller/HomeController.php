@@ -21,12 +21,10 @@ class HomeController extends AbstractController
         $this->generationRepository = $generationRepository;
         $this->toolRepository = $toolRepository;
     }
-
     public function index(): Response
     {
         $user = $this->getUser();
-
-        // Compte les PDFs générés aujourd'hui
+        
         $todayStart = new \DateTime('today');
         $todayPdfs = $this->generationRepository->createQueryBuilder('g')
             ->select('COUNT(g.id)')
@@ -37,16 +35,17 @@ class HomeController extends AbstractController
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Compte le total de PDFs générés
+        $storedPdfs = $this->generationRepository->count(['user' => $user]);
+
         $totalPdfs = $this->generationRepository->count(['user' => $user]);
 
-        // Récupère tous les tools actifs
-        $allTools = $this->toolRepository->findAllActive();
+        $tools = $this->toolRepository->findAll();
 
         return $this->render('home/index.html.twig', [
             'today_pdfs' => $todayPdfs,
             'total_pdfs' => $totalPdfs,
-            'tools' => $allTools,
+            'stored_pdfs' => $storedPdfs,
+            'tools' => $tools,
         ]);
     }
 }

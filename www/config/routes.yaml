@@ -59,6 +59,11 @@ app_history_download:
   controller: App\Controller\HistoryController::download
   methods: ['GET']
 
+app_history_delete:
+  path: /history/{id}/delete
+  controller: App\Controller\HistoryController::delete
+  methods: POST
+
 app_profile:
   path: /profile
   controller: App\Controller\ProfileController::index

@@ -31,6 +31,12 @@ class Generation
     #[ORM\ManyToMany(targetEntity: UserContact::class, inversedBy: 'generations')]
     private Collection $userContacts;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $type = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $customName = null;
+
     public function __construct()
     {
         $this->userContacts = new ArrayCollection();
@@ -97,6 +103,30 @@ class Generation
     public function removeUserContact(UserContact $userContact): static
     {
         $this->userContacts->removeElement($userContact);
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): static
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getCustomName(): ?string
+    {
+        return $this->customName;
+    }
+
+    public function setCustomName(?string $customName): static
+    {
+        $this->customName = $customName;
 
         return $this;
     }

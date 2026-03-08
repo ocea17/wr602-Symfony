@@ -5,35 +5,84 @@ namespace App\Controller;
 use App\Repository\GenerationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class HistoryController extends AbstractController
 {
     private GenerationRepository $generationRepository;
+    private EntityManagerInterface $em;
 
-    public function __construct(GenerationRepository $generationRepository)
-    {
+    public function __construct(
+        GenerationRepository $generationRepository,
+        EntityManagerInterface $em
+    ) {
         $this->generationRepository = $generationRepository;
+        $this->em = $em;
     }
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $user = $this->getUser();
-
-        if ($user->getPlan()->getName() === 'FREE') {
-            $this->addFlash('error', 'L\'historique est disponible à partir du plan BASIC. Améliorez votre plan pour y accéder.');
+        // Redirection pour FREE
+        if ($this->getUser()->getPlan()->getName() === 'FREE') {
+            $this->addFlash('error', 'Vous devez avoir un abonnement BASIC ou PREMIUM pour accéder à l\'historique.');
             return $this->redirectToRoute('app_subscription_change');
         }
 
+        $page = max(1, $request->query->getInt('page', 1));
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $user = $this->getUser();
+
+        // Total de générations
+        $totalGenerations = $this->generationRepository->count(['user' => $user]);
+
+        // Générations paginées
         $generations = $this->generationRepository->findBy(
             ['user' => $user],
-            ['createdAt' => 'DESC']
+            ['createdAt' => 'DESC'],
+            $limit,
+            $offset
         );
+
+        $totalPages = (int) ceil($totalGenerations / $limit);
 
         return $this->render('history/index.html.twig', [
             'generations' => $generations,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'totalGenerations' => $totalGenerations,
         ]);
     }
+    public function delete(int $id, Request $request): Response
+    {
+        $generation = $this->generationRepository->find($id);
 
+        if (!$generation || $generation->getUser() !== $this->getUser()) {
+            throw $this->createNotFoundException('PDF introuvable');
+        }
+
+        // Vérification du token CSRF
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('delete' . $id, $token)) {
+            $this->addFlash('error', 'Token de sécurité invalide');
+            return $this->redirectToRoute('app_history');
+        }
+
+        // Supprime le fichier physique
+        $filePath = __DIR__ . '/../../public/' . $generation->getFile();
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        // Supprime de la BDD
+        $this->em->remove($generation);
+        $this->em->flush();
+
+        $this->addFlash('success', 'PDF supprimé avec succès');
+        return $this->redirectToRoute('app_history');
+    }
     public function download(int $id): Response
     {
         $generation = $this->generationRepository->find($id);

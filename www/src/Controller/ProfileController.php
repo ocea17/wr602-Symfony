@@ -31,11 +31,26 @@ class ProfileController extends AbstractController
     {
         $user = $this->getUser();
 
+        // Total des PDFs
         $totalPdfs = $this->generationRepository->count(['user' => $user]);
+
+        $todayStart = new \DateTime('today');
+        $todayPdfs = $this->generationRepository->createQueryBuilder('g')
+            ->select('COUNT(g.id)')
+            ->where('g.user = :user')
+            ->andWhere('g.createdAt >= :today')
+            ->setParameter('user', $user)
+            ->setParameter('today', $todayStart)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $storedPdfs = $totalPdfs;
 
         return $this->render('profile/index.html.twig', [
             'user' => $user,
             'total_pdfs' => $totalPdfs,
+            'today_pdfs' => $todayPdfs,
+            'stored_pdfs' => $storedPdfs,
         ]);
     }
     public function updateColor(Request $request): Response

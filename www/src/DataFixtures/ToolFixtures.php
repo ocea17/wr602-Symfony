@@ -33,9 +33,9 @@ class ToolFixtures extends Fixture
         $this->addReference(self::TOOL_HTML, $toolHtml);
 
         $toolWysiwyg = new Tool();
-        $toolWysiwyg->setName('Éditeur HTML');
+        $toolWysiwyg->setName('Formulaire vers PDF');
         $toolWysiwyg->setSlug('wysiwyg');
-        $toolWysiwyg->setDescription('Écrire du HTML directement dans un éditeur');
+        $toolWysiwyg->setDescription('Remplir des champs pour générer un PDF');
         $toolWysiwyg->setActive(true);
         $manager->persist($toolWysiwyg);
         $this->addReference(self::TOOL_WYSIWYG, $toolWysiwyg);
