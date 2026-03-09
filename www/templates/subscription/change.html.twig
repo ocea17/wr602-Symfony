@@ -6,7 +6,7 @@
     {{ include('_partials/header.html.twig') }}
 
     {# Main #}
-    <div class="min-h-screen bg-gray-50 py-12">
+    <div class="py-12">
         <div class="max-w-7xl mx-auto px-6">
             <h1 class="text-4xl font-bold text-center text-gray-900 mb-12">Choisissez votre plan</h1>
 
@@ -23,161 +23,11 @@
                 </div>
             {% endfor %}
 
-            {# Plans grid #}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {% for plan in plans %}
-                    <div class="bg-white rounded-2xl border-2 {{ plan.name == 'BASIC' or plan.id == current_plan.id ? 'border-blue-500 shadow-xl' : 'border-gray-200' }} p-8 relative transition transform hover:-translate-y-2 hover:shadow-xl">
-
-                        {# Badge "Le plus populaire", "Plan actuel" #}
-                        {% if plan.id == current_plan.id %}
-                            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-semibold">
-                                PLAN ACTUEL
-                            </div>
-                        {% elseif plan.name == 'BASIC' %}
-                            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-semibold">
-                                LE PLUS POPULAIRE
-                            </div>
-                        {% endif %}
-
-                        {# Icône du plan #}
-                        <div class="flex justify-center mb-4">
-                            {% if plan.name == 'FREE' %}
-                                <i data-lucide="gift" class="w-7 h-7 text-gray-500"></i>
-                            {% elseif plan.name == 'BASIC' %}
-                                <i data-lucide="zap" class="w-7 h-7 text-blue-500"></i>
-                            {% else %}
-                                <i data-lucide="rocket" class="w-7 h-7 text-purple-500"></i>
-                            {% endif %}
-                        </div>
-
-                        {# Badge #}
-                        <div class="text-center mb-8">
-                            <span class="inline-block px-4 py-1.5 rounded-lg text-lg font-semibold
-                            {% if plan.name == 'FREE' %}bg-gray-100 text-gray-700
-                            {% elseif plan.name == 'BASIC' %}bg-blue-100 text-blue-600
-                            {% else %}bg-purple-100 text-purple-600{% endif %}">
-                                {{ plan.name }}
-                            </span>
-                        </div>
-
-                        {# Prix #}
-                        <div class="mb-6 text-center">
-                            <span class="text-5xl font-bold text-gray-900">
-                                {% if plan.price == 0 %}
-                                    0€
-                                {% else %}
-                                    {{ plan.price }}€
-                                {% endif %}
-                            </span>
-                            <span class="text-lg text-gray-500">/mois</span>
-                        </div>
-
-                        {# Description #}
-                        <p class="text-gray-600 mb-6 text-center">{{ plan.description }}</p>
-
-                        {# Features #}
-                        <ul class="space-y-3 mb-8">
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>
-                                    {% if plan.name == 'FREE' %}
-                                        <strong>2</strong> générations par / jours
-                                    {% elseif plan.name == 'BASIC' %}
-                                        <strong>20</strong> générations par / jours
-                                    {% else %}
-                                        <strong>200</strong> générations par / jours
-                                    {% endif %}
-                                </span>
-                            </li>
-                            {% if plan.name == 'FREE' %}
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>Historique des PDF</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>URL vers PDF</span>
-                                </li>
-                            {% endif %}
-                            {% if plan.name == 'BASIC' %}
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>Historique des PDF</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>Stockage de <strong>50</strong> PDFs</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>URL vers PDF</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>URL vers HTML</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>Markdown vers PDF</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>Fusion de PDF</span>
-                                </li>
-                            {% endif %}
-                            {% if plan.name == 'PREMIUM' %}
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>Historique des PDF</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>Stockage de <strong>500</strong> PDFs</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>URL vers PDF</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>URL vers HTML</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>Markdown vers PDF</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>Fusion de PDF</span>
-                                </li>
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="text-green-500 font-bold">✓</span>
-                                    <span>Séparation de PDF</span>
-                                </li>
-                            {% endif %}
-                        </ul>
-
-                        {# Button #}
-                        {% if plan.id == current_plan.id %}
-                            <button disabled class="w-full py-3 px-6 bg-gray-200 text-gray-500 rounded-lg font-semibold cursor-not-allowed">
-                                Plan actuel
-                            </button>
-                        {% else %}
-                            <form method="post" data-turbo="false">
-                                <input type="hidden" name="plan_id" value="{{ plan.id }}">
-                                <button type="submit" class="w-full py-3 px-6 rounded-lg font-semibold transition transform hover:scale-105
-                        {% if plan.name == 'PREMIUM' %}
-                            bg-purple-500 hover:bg-purple-600 text-white
-                        {% else %}
-                            bg-blue-500 hover:bg-blue-600 text-white
-                        {% endif %}">
-                                    Choisir ce plan
-                                </button>
-                            </form>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
+            {{ include('_partials/_plans_section.html.twig', {
+                plans: plans,
+                current_plan: current_plan,
+                is_logged_in: true
+            }) }}
 
             {# Retour #}
             <div class="text-center mt-12">
