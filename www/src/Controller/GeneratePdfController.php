@@ -101,6 +101,7 @@ class GeneratePdfController extends AbstractController
                     'wysiwyg' => $this->generateFromWysiwyg($request),
                     'merge' => $this->generateFromMerge($request),
                     'split' => $this->generateFromSplit($request),
+                    'screenshot' => $this->generateFromScreenshot($request),
                     default => throw new \Exception('Type de génération non supporté')
                 };
 
@@ -156,6 +157,8 @@ class GeneratePdfController extends AbstractController
             'wysiwyg' => 'pdf/generate_wysiwyg.html.twig',
             'merge' => 'pdf/generate_merge.html.twig',
             'split' => 'pdf/generate_split.html.twig',
+            'screenshot' => 'pdf/generate_screenshot.html.twig',
+
             default => throw $this->createNotFoundException('Template introuvable')
         };
 
@@ -249,5 +252,31 @@ class GeneratePdfController extends AbstractController
         }
 
         return $this->pdfService->splitPdf($file, $startPage, $endPage);
+    }
+    private function generateFromScreenshot(Request $request): string
+    {
+        $uploadedFile = $request->files->get('image');
+
+        if (!$uploadedFile) {
+            throw new \Exception('Aucune image uploadée');
+        }
+
+        // Vérifie que c'est bien une image
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!in_array($uploadedFile->getMimeType(), $allowedTypes)) {
+            throw new \Exception('Type de fichier non autorisé. Formats acceptés : JPG, PNG, GIF, WEBP');
+        }
+
+        // Sauvegarde temporaire
+        $tempPath = sys_get_temp_dir() . '/' . uniqid() . '.' . $uploadedFile->guessExtension();
+        $uploadedFile->move(dirname($tempPath), basename($tempPath));
+
+        // Génère le PDF
+        $pdfContent = $this->pdfService->generateFromImage($tempPath);
+
+        // Supprime le fichier temporaire
+        unlink($tempPath);
+
+        return $pdfContent;
     }
 }

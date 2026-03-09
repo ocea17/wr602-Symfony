@@ -6,7 +6,7 @@
     {# Header #}
     {{ include('_partials/header.html.twig') }}
 
-    <div class="min-h-screen bg-gray-100 py-10">
+    <div class="py-10">
         <div class="max-w-7xl mx-auto px-6">
             <h1 class="text-4xl font-bold text-gray-900 mb-8">Mes générations</h1>
 
@@ -140,8 +140,8 @@
                             {% endif %}
 
                             <span class="px-4 py-2 text-gray-600">
-                Page {{ currentPage }} sur {{ totalPages }}
-            </span>
+                                Page {{ currentPage }} sur {{ totalPages }}
+                            </span>
 
                             {% if currentPage < totalPages %}
                                 <a href="{{ path('app_history', {page: currentPage + 1}) }}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">

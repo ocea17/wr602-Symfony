@@ -13,6 +13,7 @@ class ToolFixtures extends Fixture
     public const TOOL_WYSIWYG = 'tool-wysiwyg';
     public const TOOL_MERGE = 'tool-merge';
     public const TOOL_SPLIT = 'tool-split';
+    public const TOOL_SCREENSHOT = 'tool-screenshot';
 
     public function load(ObjectManager $manager): void
     {
@@ -55,6 +56,14 @@ class ToolFixtures extends Fixture
         $toolSplit->setActive(true);
         $manager->persist($toolSplit);
         $this->addReference(self::TOOL_SPLIT, $toolSplit);
+
+        $screenshotTool = new Tool();
+        $screenshotTool->setName('Capture vers PDF');
+        $screenshotTool->setSlug('screenshot');
+        $screenshotTool->setDescription('Convertir une image en PDF');
+        $screenshotTool->setActive(true);
+        $manager->persist($screenshotTool);
+        $this->addReference(self::TOOL_SCREENSHOT, $screenshotTool);
 
         $manager->flush();
     }

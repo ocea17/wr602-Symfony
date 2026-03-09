@@ -30,7 +30,7 @@
     </div>
 </header>
 
-{# Hero section #}
+{# Hero #}
 <div class="bg-gradient-to-br from-blue-500 to-purple-600 text-white py-20">
     <div class="max-w-7xl mx-auto px-6 text-center">
         <h1 class="text-5xl font-bold mb-6">Générez vos PDF facilement</h1>
@@ -38,147 +38,8 @@
     </div>
 </div>
 
-{# Plans section #}
-<div class="bg-gray-50 py-16">
-    <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-4xl font-bold text-center text-gray-900 mb-12">Nos offres</h2>
-
-        {# Plans grid #}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {% for plan in plans %}
-                <div class="bg-white rounded-2xl border-2 border-gray-200 p-8 relative transition transform hover:-translate-y-2 hover:shadow-xl">
-                    
-                    {# Badge populaire #}
-                    {% if plan.name == 'BASIC' %}
-                        <div class="absolute -top-3 left-6 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                            LE PLUS POPULAIRE
-                        </div>
-                    {% endif %}
-
-                    {# Badge #}
-                    <span class="inline-block px-3 py-1 rounded-md text-sm font-semibold mb-4
-                        {% if plan.name == 'FREE' %}bg-gray-100 text-gray-700
-                        {% elseif plan.name == 'BASIC' %}bg-blue-100 text-blue-600
-                        {% else %}bg-purple-100 text-purple-600{% endif %}">
-                        {{ plan.name }}
-                    </span>
-
-                    {# Prix #}
-                    <div class="mb-6">
-                        <span class="text-5xl font-bold text-gray-900">
-                            {% if plan.price == 0 %}
-                                0€
-                            {% else %}
-                                {{ plan.price }}€
-                            {% endif %}
-                        </span>
-                        <span class="text-lg text-gray-500">/mois</span>
-                    </div>
-
-                    {# Description #}
-                    <p class="text-gray-600 mb-6">{{ plan.description }}</p>
-
-                    {# Features #}
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center gap-2 text-gray-700">
-                            <span class="text-green-500 font-bold">✓</span>
-                            <span>
-                                    {% if plan.name == 'FREE' %}
-                                        <strong>2</strong> générations par / jours
-                                    {% elseif plan.name == 'BASIC' %}
-                                        <strong>20</strong> générations par / jours
-                                    {% else %}
-                                        <strong>200</strong> générations par / jours
-                                    {% endif %}
-                                </span>
-                        </li>
-                        {% if plan.name == 'FREE' %}
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>Historique des PDF</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>URL vers PDF</span>
-                            </li>
-                        {% endif %}
-                        {% if plan.name == 'BASIC' %}
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>Historique des PDF</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>Stockage de <strong>50</strong> PDFs</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>URL vers PDF</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>URL vers HTML</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>Markdown vers PDF</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>Fusion de PDF</span>
-                            </li>
-                        {% endif %}
-                        {% if plan.name == 'PREMIUM' %}
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>Historique des PDF</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>Stockage de <strong>500</strong> PDFs</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>URL vers PDF</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>URL vers HTML</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>Markdown vers PDF</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>Fusion de PDF</span>
-                            </li>
-                            <li class="flex items-center gap-2 text-gray-700">
-                                <span class="text-green-500 font-bold">✓</span>
-                                <span>Séparation de PDF</span>
-                            </li>
-                        {% endif %}
-                    </ul>
-
-                    {# Button #}
-                    <a href="{{ path('app_login') }}" class="block w-full py-3 px-6 text-center rounded-lg font-semibold transition transform hover:scale-105
-                        {% if plan.name == 'PREMIUM' %}
-                            bg-purple-500 hover:bg-purple-600 text-white
-                        {% else %}
-                            bg-blue-500 hover:bg-blue-600 text-white
-                        {% endif %}">
-                        Choisir ce plan
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-
-{# Footer simple #}
-<footer class="bg-gray-900 text-gray-400 py-8">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-        <p>&copy; 2026 PDF Generator. Tous droits réservés.</p>
-    </div>
-</footer>
+    {{ include('_partials/_plans_section.html.twig', {
+        plans: plans,
+        is_logged_in: false
+    }) }}
 {% endblock %}

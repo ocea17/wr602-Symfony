@@ -61,6 +61,7 @@ class PlanFixtures extends Fixture implements DependentFixtureInterface
         $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_WYSIWYG, Tool::class));
         $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_MERGE, Tool::class));
         $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_SPLIT, Tool::class));
+        $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_SCREENSHOT, Tool::class));
         
         $manager->persist($premiumPlan);
         $this->addReference(self::PLAN_PREMIUM, $premiumPlan);

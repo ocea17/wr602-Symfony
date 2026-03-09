@@ -7,8 +7,8 @@
     {{ include('_partials/header.html.twig') }}
 
     {# Main content #}
-    <div class="min-h-screen bg-gray-50 py-10">
-        <div class="max-w-4xl mx-auto px-6">
+    <div class="py-10">
+        <div class="max-w-7xl mx-auto px-6 mb-10">
             <h1 class="text-3xl font-bold text-gray-900 mb-8">Générer un PDF</h1>
 
             {# Messages flash #}
@@ -38,44 +38,7 @@
                 </div>
             {% endif %}
 
-            {# Grid des tools #}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {% for tool in tools %}
-
-                    {% if is_granted('TOOL_ACCESS', tool) %}
-                        {# Outil accessible #}
-                        <a href="{{ path('app_convert_tool', {slug: tool.slug}) }}" class="bg-white rounded-xl p-8 shadow-sm border-2 border-gray-200 hover:border-blue-500 hover:shadow-lg transition transform hover:-translate-y-1 text-center group">
-                            <div class="flex justify-center mb-4">
-                                {% if tool.slug == 'url' %}
-                                    <i data-lucide="globe" class="w-12 h-12 text-blue-500"></i>
-                                {% elseif tool.slug == 'html' %}
-                                    <i data-lucide="file-text" class="w-12 h-12 text-green-500"></i>
-                                {% elseif tool.slug == 'wysiwyg' %}
-                                    <i data-lucide="pencil" class="w-12 h-12 text-purple-500"></i>
-                                {% elseif tool.slug == 'merge' %}
-                                    <i data-lucide="git-merge" class="w-12 h-12 text-orange-500"></i>
-                                {% elseif tool.slug == 'split' %}
-                                    <i data-lucide="scissors" class="w-12 h-12 text-red-500"></i>
-                                {% endif %}
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-500">{{ tool.name }}</h3>
-                            <p class="text-gray-600 text-sm">{{ tool.description }}</p>
-                        </a>
-                    {% else %}
-                        {# Outil bloqué #}
-                        <div class="bg-gray-100 rounded-xl p-8 shadow-sm border-2 border-gray-300 text-center opacity-60">
-                            <div class="flex justify-center mb-4">
-                                <i data-lucide="lock" class="w-12 h-12 text-gray-400"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-500 mb-2">{{ tool.name }}</h3>
-                            <p class="text-gray-500 text-sm mb-4">{{ tool.description }}</p>
-                            <a href="{{ path('app_subscription_change') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition">
-                                Améliorer mon plan
-                            </a>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
+            {{ include('_partials/_tools_grid.html.twig', {tools: tools}) }}
 
             {# Retour #}
             <div class="text-center mt-8">

@@ -1,0 +1,161 @@
+
+{# Plans section #}
+<div class="bg-gray-50 py-16">
+    <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center text-gray-900 mb-12">Nos offres</h2>
+
+        {# Plans grid #}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for plan in plans %}
+                <div class="bg-white rounded-2xl border-2 {{ (plan.name == 'BASIC' and (current_plan is not defined or plan.id != current_plan.id)) or (current_plan is defined and plan.id == current_plan.id) ? 'border-blue-500 shadow-xl' : 'border-gray-200' }} p-8 relative transition transform hover:-translate-y-2 hover:shadow-xl">
+
+
+                    {# Badge "Le plus populaire" #}
+                    {% if plan.name == 'BASIC' and (current_plan is not defined or plan.id != current_plan.id) %}
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-1 rounded-full text-xs font-semibold shadow-lg z-10">
+                            LE PLUS POPULAIRE
+                        </div>
+                    {% endif %}
+
+                    {# Badge "Plan actuel" #}
+                    {% if current_plan is defined and plan.id == current_plan.id %}
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-semibold z-10">
+                            PLAN ACTUEL
+                        </div>
+                    {% endif %}
+
+                    {# icons #}
+                    <div class="flex justify-left mb-4">
+                        {% if plan.name == 'FREE' %}
+                            <i data-lucide="gift" class="w-6 h-6 text-gray-500"></i>
+                        {% elseif plan.name == 'BASIC' %}
+                            <i data-lucide="zap" class="w-6 h-6 text-blue-500"></i>
+                        {% else %}
+                            <i data-lucide="rocket" class="w-6 h-6 text-purple-500"></i>
+                        {% endif %}
+                    </div>
+
+                    {# Badge #}
+                    <span class="inline-block px-3 py-1 rounded-md text-sm font-semibold mb-4
+                        {% if plan.name == 'FREE' %}bg-gray-100 text-gray-700
+                        {% elseif plan.name == 'BASIC' %}bg-blue-100 text-blue-600
+                        {% else %}bg-purple-100 text-purple-600{% endif %}">
+                        {{ plan.name }}
+                    </span>
+
+                    {# Prix #}
+                    <div class="mb-6">
+                        <span class="text-5xl font-bold text-gray-900">
+                            {% if plan.price == 0 %}
+                                0€
+                            {% else %}
+                                {{ plan.price }}€
+                            {% endif %}
+                        </span>
+                        <span class="text-lg text-gray-500">/mois</span>
+                    </div>
+
+                    {# Description #}
+                    <p class="text-gray-600 mb-6">{{ plan.description }}</p>
+
+                    {# Features #}
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-2 text-gray-700">
+                            <span class="text-green-500 font-bold">✓</span>
+                            <span>
+                                {% if plan.name == 'FREE' %}
+                                    <strong>2</strong> générations par jour
+                                {% elseif plan.name == 'BASIC' %}
+                                    <strong>20</strong> générations par jour
+                                {% else %}
+                                    <strong>200</strong> générations par jour
+                                {% endif %}
+                            </span>
+                        </li>
+
+                        {% if plan.name == 'FREE' %}
+                            <li class="flex items-center gap-2 text-gray-700">
+                                <span class="text-red-500 font-bold">✗</span>
+                                <span class="text-gray-500">Pas d'historique</span>
+                            </li>
+                            <li class="flex items-center gap-2 text-gray-700">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>URL vers PDF</span>
+                            </li>
+                            <li class="flex items-center gap-2 text-gray-700">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Formulaire vers PDF</span>
+                            </li>
+                        {% endif %}
+
+                        {% if plan.name == 'BASIC' %}
+                            <li class="flex items-center gap-2 text-gray-700">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Historique des PDF</span>
+                            </li>
+                            <li class="flex items-center gap-2 text-gray-700">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Stockage <strong>50</strong> PDFs</span>
+                            </li>
+                            <li class="flex items-center gap-2 text-gray-700">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>3 outils disponibles</span>
+                            </li>
+                        {% endif %}
+
+                        {% if plan.name == 'PREMIUM' %}
+                            <li class="flex items-center gap-2 text-gray-700">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Historique des PDF</span>
+                            </li>
+                            <li class="flex items-center gap-2 text-gray-700">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Stockage <strong>500</strong> PDFs</span>
+                            </li>
+                            <li class="flex items-center gap-2 text-gray-700">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>6 outils disponibles</span>
+                            </li>
+                            <li class="flex items-center gap-2 text-gray-700">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Support prioritaire</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+
+                    {# Button - Différent selon la page #}
+                    {% if is_logged_in is defined and is_logged_in %}
+                        {# Utilisateur connecté - Change de plan #}
+                        {% if plan.id == current_plan.id %}
+                            <button disabled class="w-full py-3 px-6 bg-gray-200 text-gray-500 rounded-lg font-semibold cursor-not-allowed">
+                                Plan actuel
+                            </button>
+                        {% else %}
+                            <form method="post" data-turbo="false">
+                                <input type="hidden" name="plan_id" value="{{ plan.id }}">
+                                <button type="submit" class="w-full py-3 px-6 rounded-lg font-semibold transition transform hover:scale-105
+                        {% if plan.name == 'PREMIUM' %}
+                            bg-purple-500 hover:bg-purple-600 text-white
+                        {% else %}
+                            bg-blue-500 hover:bg-blue-600 text-white
+                        {% endif %}">
+                                    Choisir ce plan
+                                </button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                    {# Utilisateur non connecté - Lien vers login #}
+                    <a href="{{ path('app_login') }}" class="block w-full py-3 px-6 text-center rounded-lg font-semibold transition transform hover:scale-105
+                    {% if plan.name == 'PREMIUM' %}
+                        bg-purple-500 hover:bg-purple-600 text-white
+                    {% else %}
+                        bg-blue-500 hover:bg-blue-600 text-white
+                    {% endif %}">
+                            Choisir ce plan
+                        </a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
