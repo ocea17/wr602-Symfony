@@ -7,7 +7,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use setasign\Fpdi\Fpdi;
-use setasign\Fpdi\PdfParser\StreamReader;
+
 
 class PdfGeneratorService
 {
@@ -152,5 +152,66 @@ class PdfGeneratorService
         } catch (\Exception $e) {
             throw new \Exception('Erreur lors de la séparation : ' . $e->getMessage());
         }
+    }
+    public function generateFromImage(string $imagePath): string
+    {
+        $url = $this->gotenbergUrl . '/forms/chromium/convert/html';
+
+        // Lit le contenu de l'image
+        $imageContent = file_get_contents($imagePath);
+        $extension = pathinfo($imagePath, PATHINFO_EXTENSION);
+
+        // Crée un HTML qui affiche l'image
+        $html = '
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body { margin: 0; padding: 0; }
+            img { width: 100%; height: auto; }
+        </style>
+    </head>
+    <body>
+        <img src="image.' . $extension . '" alt="Image convertie en PDF" />
+    </body>
+    </html>
+    ';
+
+        // Détermine le type MIME
+        $mimeType = match(strtolower($extension)) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+            default => 'application/octet-stream',
+        };
+
+        // Crée le body multipart
+        $boundary = uniqid();
+        $body = '';
+
+        // Ajoute le fichier HTML
+        $body .= "--{$boundary}\r\n";
+        $body .= "Content-Disposition: form-data; name=\"files\"; filename=\"index.html\"\r\n";
+        $body .= "Content-Type: text/html\r\n\r\n";
+        $body .= $html . "\r\n";
+
+        // Ajoute l'image
+        $body .= "--{$boundary}\r\n";
+        $body .= "Content-Disposition: form-data; name=\"files\"; filename=\"image.{$extension}\"\r\n";
+        $body .= "Content-Type: {$mimeType}\r\n\r\n";
+        $body .= $imageContent . "\r\n";
+
+        $body .= "--{$boundary}--\r\n";
+
+        $response = $this->httpClient->request('POST', $url, [
+            'headers' => [
+                'Content-Type' => 'multipart/form-data; boundary=' . $boundary,
+            ],
+            'body' => $body,
+        ]);
+
+        return $response->getContent();
     }
 }
