@@ -104,3 +104,24 @@ app_contacts_delete:
     path: /contacts/{id}/delete
     controller: App\Controller\ContactController::delete
     methods: POST
+
+# Payment routes
+app_payment_checkout:
+  path: /payment/checkout/{id}
+  controller: App\Controller\PaymentController::checkout
+  methods: GET
+
+app_payment_success:
+  path: /payment/success
+  controller: App\Controller\PaymentController::success
+  methods: GET
+
+app_payment_cancel:
+  path: /payment/cancel
+  controller: App\Controller\PaymentController::cancel
+  methods: GET
+
+app_payment_webhook:
+  path: /payment/webhook
+  controller: App\Controller\WebhookController::webhook
+  methods: POST
