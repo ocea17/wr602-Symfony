@@ -61,6 +61,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 7, nullable: true)]
     private ?string $avatarColor = '#3B82F6';
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $stripeCustomerId = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -247,6 +250,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatarColor(?string $avatarColor): static
     {
         $this->avatarColor = $avatarColor;
+
+        return $this;
+    }
+
+    public function getStripeCustomerId(): ?string
+    {
+        return $this->stripeCustomerId;
+    }
+
+    public function setStripeCustomerId(?string $stripeCustomerId): static
+    {
+        $this->stripeCustomerId = $stripeCustomerId;
 
         return $this;
     }
