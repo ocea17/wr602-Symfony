@@ -11,15 +11,20 @@ security:
                 property: email
         # used to reload user from session & other features (e.g. switch_user)
     firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-        main:
-            lazy: true
-            provider: app_user_provider
-            custom_authenticator: App\Security\LoginFormAuthenticator
-            logout:
-                path: app_logout
+      dev:
+        pattern: ^/(_(profiler|wdt)|css|images|js)/
+        security: false
+
+      webhook:
+        pattern: ^/payment/webhook
+        security: false
+
+      main:
+        lazy: true
+        provider: app_user_provider
+        custom_authenticator: App\Security\LoginFormAuthenticator
+        logout:
+          path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
 
