@@ -40,6 +40,9 @@ class Plan
     #[ORM\Column(nullable: true)]
     private ?int $limitStorage = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $stripePriceId = null;
+
     public function __construct()
     {
         $this->tools = new ArrayCollection();
@@ -138,6 +141,18 @@ class Plan
     public function setLimitStorage(?int $limitStorage): static
     {
         $this->limitStorage = $limitStorage;
+
+        return $this;
+    }
+
+    public function getStripePriceId(): ?string
+    {
+        return $this->stripePriceId;
+    }
+
+    public function setStripePriceId(?string $stripePriceId): static
+    {
+        $this->stripePriceId = $stripePriceId;
 
         return $this;
     }
