@@ -43,6 +43,8 @@ class WebhookController extends AbstractController
                     return new Response('Métadonnées manquantes', Response::HTTP_BAD_REQUEST);
                 }
 
+
+
                 $user = $userRepository->find($userId);
                 $plan = $planRepository->find($planId);
 
@@ -51,6 +53,11 @@ class WebhookController extends AbstractController
                 }
 
                 $user->setPlan($plan);
+
+                if (!$user->getStripeCustomerId() && isset($session->customer)) {
+                    $user->setStripeCustomerId($session->customer);
+                }
+
                 $em->flush();
                 break;
 
