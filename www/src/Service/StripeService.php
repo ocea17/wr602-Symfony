@@ -9,29 +9,42 @@ use Stripe\Stripe;
 use Stripe\Webhook;
 use Stripe\ApiRequestor;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Stripe\Customer;
 
 class StripeService
 {
     public function __construct(
-        private string $secretKey,
-        private string $webhookSecret,
+        private string      $secretKey,
+        private string      $webhookSecret,
         HttpClientInterface $httpClient,
-    ) {
+    )
+    {
         Stripe::setApiKey($this->secretKey);
-
-        // Force l'utilisation du HttpClient Symfony
         ApiRequestor::setHttpClient(new SymfonyStripeHttpClient($httpClient));
     }
 
     public function createCheckoutSession(
-        User $user,
-        Plan $plan,
+        User   $user,
+        Plan   $plan,
         string $successUrl,
         string $cancelUrl,
-    ): string {
+    ): string
+    {
+        $customerId = $user->getStripeCustomerId();
+
+        if (!$customerId) {
+            $customer = Customer::create([
+                'email' => $user->getEmail(),
+                'metadata' => [
+                    'user_id' => $user->getId(),
+                ],
+            ]);
+            $customerId = $customer->id;
+        }
+
         $session = Session::create([
             'mode' => 'subscription',
-            'customer_email' => $user->getEmail(),
+            'customer' => $customerId,
             'line_items' => [[
                 'price' => $plan->getStripePriceId(),
                 'quantity' => 1,
