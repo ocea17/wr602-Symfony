@@ -43,22 +43,22 @@ class WebhookController extends AbstractController
                     return new Response('Métadonnées manquantes', Response::HTTP_BAD_REQUEST);
                 }
 
-
-
                 $user = $userRepository->find($userId);
                 $plan = $planRepository->find($planId);
 
                 if (!$user || !$plan) {
                     return new Response('Utilisateur ou plan introuvable', Response::HTTP_NOT_FOUND);
                 }
-
+                
                 $user->setPlan($plan);
 
+                // ✅ Sauvegarder le Customer ID Stripe
                 if (!$user->getStripeCustomerId() && isset($session->customer)) {
                     $user->setStripeCustomerId($session->customer);
                 }
 
                 $em->flush();
+
                 break;
 
             case 'customer.subscription.deleted':
