@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class GeneratePdfController extends AbstractController
 {
@@ -102,6 +101,7 @@ class GeneratePdfController extends AbstractController
                     'merge' => $this->generateFromMerge($request),
                     'split' => $this->generateFromSplit($request),
                     'screenshot' => $this->generateFromScreenshot($request),
+                    'office' => $this->generateFromOffice($request),
                     default => throw new \Exception('Type de génération non supporté')
                 };
 
@@ -158,6 +158,7 @@ class GeneratePdfController extends AbstractController
             'merge' => 'pdf/generate_merge.html.twig',
             'split' => 'pdf/generate_split.html.twig',
             'screenshot' => 'pdf/generate_screenshot.html.twig',
+            'office' => 'pdf/generate_office.html.twig',
 
             default => throw $this->createNotFoundException('Template introuvable')
         };
@@ -276,6 +277,33 @@ class GeneratePdfController extends AbstractController
 
         // Supprime le fichier temporaire
         unlink($tempPath);
+
+        return $pdfContent;
+    }
+    private function generateFromOffice(Request $request): string
+    {
+        $file = $request->files->get('file');
+
+        if (!$file) {
+            throw new \Exception('Aucun fichier sélectionné.');
+        }
+
+        $allowedExtensions = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'];
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        if (!in_array($extension, $allowedExtensions)) {
+            throw new \Exception('Format non supporté.');
+        }
+
+        $tempPath = sys_get_temp_dir() . '/' . uniqid() . '.' . $extension;
+        $file->move(dirname($tempPath), basename($tempPath));
+
+        $pdfContent = $this->pdfService->generateFromOffice($tempPath);
+        unlink($tempPath);
+
+        if (!$pdfContent) {
+            throw new \Exception('Erreur lors de la conversion.');
+        }
 
         return $pdfContent;
     }
