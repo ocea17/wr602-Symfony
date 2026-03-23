@@ -9,7 +9,7 @@
                 {% if tool.slug == 'url' %}
                     <i data-lucide="globe" class="w-12 h-12 text-blue-500"></i>
                 {% elseif tool.slug == 'html' %}
-                    <i data-lucide="file-text" class="w-12 h-12 text-green-500"></i>
+                    <i data-lucide="file-code-corner" class="w-12 h-12 text-green-500"></i>
                 {% elseif tool.slug == 'wysiwyg' %}
                     <i data-lucide="pencil" class="w-12 h-12 text-orange-500"></i>
                 {% elseif tool.slug == 'merge' %}
@@ -18,6 +18,8 @@
                     <i data-lucide="scissors" class="w-12 h-12 text-red-500"></i>
                 {% elseif tool.slug == 'screenshot' %}
                     <i data-lucide="file-image" class="w-12 h-12 text-purple-500"></i>
+                {% elseif tool.slug == 'office' %}
+                    <i data-lucide="file-text" class="w-12 h-12 text-sky-500"></i>
                 {% endif %}
             </div>
 
