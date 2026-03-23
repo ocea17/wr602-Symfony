@@ -15,6 +15,8 @@ class ToolFixtures extends Fixture
     public const TOOL_SPLIT = 'tool-split';
     public const TOOL_SCREENSHOT = 'tool-screenshot';
 
+    public const TOOL_OFFICE = 'tool-office';
+
     public function load(ObjectManager $manager): void
     {
         $toolUrl = new Tool();
@@ -64,6 +66,15 @@ class ToolFixtures extends Fixture
         $screenshotTool->setActive(true);
         $manager->persist($screenshotTool);
         $this->addReference(self::TOOL_SCREENSHOT, $screenshotTool);
+
+        $officeTool = new Tool();
+        $officeTool->setName('Fichier Office vers PDF');
+        $officeTool->setSlug('office');
+        $officeTool->setDescription('Convertir Word, Excel, PowerPoint en PDF');
+        $officeTool->setActive(true);
+
+        $manager->persist($officeTool);
+        $this->addReference(self::TOOL_OFFICE, $officeTool);
 
         $manager->flush();
     }
