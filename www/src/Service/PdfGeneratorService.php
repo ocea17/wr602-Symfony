@@ -214,4 +214,42 @@ class PdfGeneratorService
 
         return $response->getContent();
     }
+    public function generateFromOffice(string $filePath): ?string
+    {
+        $boundary = uniqid();
+        $filename = basename($filePath);
+        $fileContent = file_get_contents($filePath);
+
+        // Détecte le MIME type
+        $mimeType = match (strtolower(pathinfo($filePath, PATHINFO_EXTENSION))) {
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'doc' => 'application/msword',
+            'xls' => 'application/vnd.ms-excel',
+            'ppt' => 'application/vnd.ms-powerpoint',
+            default => 'application/octet-stream',
+        };
+
+        $body = "--$boundary\r\n";
+        $body .= "Content-Disposition: form-data; name=\"files\"; filename=\"$filename\"\r\n";
+        $body .= "Content-Type: $mimeType\r\n\r\n";
+        $body .= $fileContent . "\r\n";
+        $body .= "--$boundary--\r\n";
+
+        $response = $this->httpClient->request('POST', $this->gotenbergUrl . '/forms/libreoffice/convert', [
+            'headers' => [
+                'Content-Type' => "multipart/form-data; boundary=$boundary",
+            ],
+            'body' => $body,
+        ]);
+
+        if ($response->getStatusCode() === 200) {
+            $content = $response->getContent();
+            return $content;
+        }
+
+        return null;
+    }
+
 }
