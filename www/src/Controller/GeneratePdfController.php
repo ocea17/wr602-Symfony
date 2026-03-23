@@ -102,6 +102,7 @@ class GeneratePdfController extends AbstractController
                     'split' => $this->generateFromSplit($request),
                     'screenshot' => $this->generateFromScreenshot($request),
                     'office' => $this->generateFromOffice($request),
+                    'text' => $this->generateFromText($request),
                     default => throw new \Exception('Type de génération non supporté')
                 };
 
@@ -159,6 +160,7 @@ class GeneratePdfController extends AbstractController
             'split' => 'pdf/generate_split.html.twig',
             'screenshot' => 'pdf/generate_screenshot.html.twig',
             'office' => 'pdf/generate_office.html.twig',
+            'text' => 'pdf/generate_text.html.twig',
 
             default => throw $this->createNotFoundException('Template introuvable')
         };
@@ -299,6 +301,32 @@ class GeneratePdfController extends AbstractController
         $file->move(dirname($tempPath), basename($tempPath));
 
         $pdfContent = $this->pdfService->generateFromOffice($tempPath);
+        unlink($tempPath);
+
+        if (!$pdfContent) {
+            throw new \Exception('Erreur lors de la conversion.');
+        }
+
+        return $pdfContent;
+    }
+    private function generateFromText(Request $request): string
+    {
+        $file = $request->files->get('file');
+
+        if (!$file) {
+            throw new \Exception('Aucun fichier sélectionné.');
+        }
+
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        if ($extension !== 'txt') {
+            throw new \Exception('Format non supporté. Seul le format TXT est accepté.');
+        }
+
+        $tempPath = sys_get_temp_dir() . '/' . uniqid() . '.txt';
+        $file->move(dirname($tempPath), basename($tempPath));
+
+        $pdfContent = $this->pdfService->generateFromText($tempPath);
         unlink($tempPath);
 
         if (!$pdfContent) {
