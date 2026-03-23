@@ -13,13 +13,14 @@
     {# Tailwind #}
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="font-sans flex flex-col min-h-screen">
-<div class="flex-grow bg-gray-50">
-    {% block body %}{% endblock %}
-</div>
+<body class="font-sans flex flex-col min-h-screen bg-gray-50">
 
-{# Footer #}
-{{ include('_partials/_footer.html.twig') }}
+{% block body %}{% endblock %}
+
+{# Footer - toujours en bas #}
+<div class="mt-auto">
+    {{ include('_partials/_footer.html.twig') }}
+</div>
 
 {# Lucide Icons #}
 <script src="https://unpkg.com/lucide@latest"></script>

@@ -23,12 +23,6 @@ class HistoryController extends AbstractController
 
     public function index(Request $request): Response
     {
-        // Redirection pour FREE
-        if ($this->getUser()->getPlan()->getName() === 'FREE') {
-            $this->addFlash('error', 'Vous devez avoir un abonnement BASIC ou PREMIUM pour accéder à l\'historique.');
-            return $this->redirectToRoute('app_subscription_change');
-        }
-
         $page = max(1, $request->query->getInt('page', 1));
         $limit = 10;
         $offset = ($page - 1) * $limit;
