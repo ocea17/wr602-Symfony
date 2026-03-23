@@ -251,5 +251,39 @@ class PdfGeneratorService
 
         return null;
     }
+    public function generateFromText(string $filePath): ?string
+    {
+        $textContent = file_get_contents($filePath);
+        $filename = basename($filePath, '.txt');
 
+        $html = '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>' . htmlspecialchars($filename) . '</title>
+    <style>
+        body {
+            font-family: "Courier New", monospace;
+            margin: 40px;
+            line-height: 1.6;
+            color: #333;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        h1 {
+            color: #3B82F6;
+            font-family: Arial, sans-serif;
+            border-bottom: 2px solid #3B82F6;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div>' . htmlspecialchars($textContent) . '</div>
+</body>
+</html>';
+
+        return $this->generateFromHtml($html);
+    }
 }
