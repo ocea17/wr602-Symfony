@@ -231,7 +231,7 @@
                                 </a>
                             {% endif %}
                         {% endif %}
-                        {% else %}
+                    {% else %}
                         {# Utilisateur non connecté - Lien vers login #}
                         <a href="{{ path('app_login') }}" class="block w-full py-3 px-6 text-center rounded-lg font-semibold transition transform hover:scale-105
                     {% if plan.name == 'PREMIUM' %}
@@ -239,7 +239,7 @@
                     {% else %}
                         bg-blue-500 hover:bg-blue-600 text-white
                     {% endif %}">
-                            Choisir ce plan
+                            Se connecter pour souscrire
                         </a>
                     {% endif %}
                 </div>
