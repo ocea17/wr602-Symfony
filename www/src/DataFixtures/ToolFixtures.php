@@ -14,8 +14,9 @@ class ToolFixtures extends Fixture
     public const TOOL_MERGE = 'tool-merge';
     public const TOOL_SPLIT = 'tool-split';
     public const TOOL_SCREENSHOT = 'tool-screenshot';
-
     public const TOOL_OFFICE = 'tool-office';
+
+    public const TOOL_TEXT = 'tool-text';
 
     public function load(ObjectManager $manager): void
     {
@@ -75,6 +76,15 @@ class ToolFixtures extends Fixture
 
         $manager->persist($officeTool);
         $this->addReference(self::TOOL_OFFICE, $officeTool);
+
+        $textTool = new Tool();
+        $textTool->setName('Fichier texte vers PDF');
+        $textTool->setSlug('text');
+        $textTool->setDescription('Convertir fichiers texte (.txt) en PDF');
+        $textTool->setActive(true);
+
+        $manager->persist($textTool);
+        $this->addReference(self::TOOL_TEXT, $textTool);
 
         $manager->flush();
     }
