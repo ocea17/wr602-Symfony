@@ -54,6 +54,11 @@ app_history:
   controller: App\Controller\HistoryController::index
   methods: ['GET']
 
+app_history_send:
+  path: /history/send/{id}
+  controller: App\Controller\HistoryController::send
+  methods: POST
+
 app_history_download:
   path: /history/download/{id}
   controller: App\Controller\HistoryController::download

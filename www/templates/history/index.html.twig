@@ -128,6 +128,14 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-4">
+                                        <a href="{{ asset(generation.file) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition font-medium text-sm">
+                                            <i data-lucide="eye" class="w-4 h-4"></i>
+                                            <span class="text-sm">Voir</span>
+                                        </a>
+                                        <button onclick="openSendModal({{ generation.id }}, '{{ generation.customName ?? generation.file|split('/')|last }}')" class="inline-flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition font-medium text-sm">
+                                            <i data-lucide="send" class="w-4 h-4"></i>
+                                            <span class="text-sm">Envoyer</span>
+                                        </button>
                                         <a href="{{ asset(generation.file) }}" download class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition font-medium text-sm">
                                             <i data-lucide="download" class="w-4 h-4"></i>
                                             <span class="text-sm">Télécharger</span>
@@ -189,4 +197,74 @@
             </div>
         </div>
     </div>
+    <div id="sendModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-[9999] flex items-center justify-center px-4">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Envoyer le PDF</h2>
+                <button onclick="closeSendModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <p class="text-gray-600 mb-6">
+                Fichier : <strong id="modalFileName"></strong>
+            </p>
+
+            <form id="sendPdfForm" method="post" action="">
+                <input type="hidden" name="_token" value="{{ csrf_token('send_pdf') }}">
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Sélectionnez les destinataires
+                    </label>
+
+                    {% if contacts|length > 0 %}
+                        <div class="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-4">
+                            {% for contact in contacts %}
+                                <label class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                    <input type="checkbox" name="contacts[]" value="{{ contact.id }}" class="w-4 h-4 text-blue-500 rounded">
+                                    <span class="text-gray-900">{{ contact.firstname }} {{ contact.lastname }}</span>
+                                    <span class="text-gray-500 text-sm">{{ contact.email }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-gray-500 text-sm">
+                            Vous n'avez pas encore de contacts.
+                            <a href="{{ path('app_contacts_new') }}" class="text-blue-500 hover:underline">Ajouter un contact</a>
+                        </p>
+                    {% endif %}
+                </div>
+
+                <div class="mb-6">
+                    <label for="messageInput" class="block text-sm font-medium text-gray-700 mb-2">
+                        Message personnalisé (optionnel)
+                    </label>
+                    <textarea id="messageInput" name="message" rows="4" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ajoutez un message..."></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeSendModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition">
+                        Envoyer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openSendModal(generationId, fileName) {
+            document.getElementById('sendModal').classList.remove('hidden');
+            document.getElementById('modalFileName').textContent = fileName;
+            document.getElementById('sendPdfForm').action = '/history/send/' + generationId;
+            lucide.createIcons();
+        }
+
+        function closeSendModal() {
+            document.getElementById('sendModal').classList.add('hidden');
+        }
+    </script>
 {% endblock %}
