@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use App\Repository\UserContactRepository;
 use App\Repository\GenerationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,13 +15,16 @@ class HistoryController extends AbstractController
 {
     private GenerationRepository $generationRepository;
     private EntityManagerInterface $em;
+    private UserContactRepository $contactRepository;
 
     public function __construct(
         GenerationRepository $generationRepository,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        UserContactRepository $contactRepository
     ) {
         $this->generationRepository = $generationRepository;
         $this->em = $em;
+        $this->contactRepository = $contactRepository;
     }
 
     public function index(Request $request): Response
@@ -29,10 +35,8 @@ class HistoryController extends AbstractController
 
         $user = $this->getUser();
 
-        // Total de générations
         $totalGenerations = $this->generationRepository->count(['user' => $user]);
 
-        // Générations paginées
         $generations = $this->generationRepository->findBy(
             ['user' => $user],
             ['createdAt' => 'DESC'],
@@ -42,11 +46,14 @@ class HistoryController extends AbstractController
 
         $totalPages = (int) ceil($totalGenerations / $limit);
 
+        $contacts = $this->contactRepository->findBy(['user' => $user]);
+
         return $this->render('history/index.html.twig', [
             'generations' => $generations,
             'currentPage' => $page,
             'totalPages' => $totalPages,
             'totalGenerations' => $totalGenerations,
+            'contacts' => $contacts,
         ]);
     }
     public function delete(int $id, Request $request): Response
@@ -57,20 +64,17 @@ class HistoryController extends AbstractController
             throw $this->createNotFoundException('PDF introuvable');
         }
 
-        // Vérification du token CSRF
         $token = $request->request->get('_token');
         if (!$this->isCsrfTokenValid('delete' . $id, $token)) {
             $this->addFlash('error', 'Token de sécurité invalide');
             return $this->redirectToRoute('app_history');
         }
 
-        // Supprime le fichier physique
         $filePath = __DIR__ . '/../../public/' . $generation->getFile();
         if (file_exists($filePath)) {
             unlink($filePath);
         }
 
-        // Supprime de la BDD
         $this->em->remove($generation);
         $this->em->flush();
 
@@ -97,5 +101,76 @@ class HistoryController extends AbstractController
         }
 
         return $this->file($filepath);
+    }
+    public function send(int $id, Request $request, MailerInterface $mailer): Response
+    {
+        $generation = $this->generationRepository->find($id);
+
+        if (!$generation || $generation->getUser() !== $this->getUser()) {
+            throw $this->createNotFoundException('PDF introuvable');
+        }
+
+        // Vérification CSRF
+        if (!$this->isCsrfTokenValid('send_pdf', $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token de sécurité invalide');
+            return $this->redirectToRoute('app_history');
+        }
+
+        // Récupère les contacts sélectionnés
+        $contactIds = $request->request->all('contacts');
+
+        if (empty($contactIds)) {
+            $this->addFlash('error', 'Veuillez sélectionner au moins un destinataire');
+            return $this->redirectToRoute('app_history');
+        }
+
+        $contacts = $this->contactRepository->findBy(['id' => $contactIds, 'user' => $this->getUser()]);
+
+        if (empty($contacts)) {
+            $this->addFlash('error', 'Aucun contact valide sélectionné');
+            return $this->redirectToRoute('app_history');
+        }
+
+        // Message personnalisé
+        $customMessage = $request->request->get('message', '');
+
+        // Chemin du PDF
+        $filepath = $this->getParameter('kernel.project_dir') . '/public/' . $generation->getFile();
+
+        if (!file_exists($filepath)) {
+            $this->addFlash('error', 'Le fichier PDF n\'existe plus');
+            return $this->redirectToRoute('app_history');
+        }
+
+        // Envoie l'email à chaque contact
+        $sentCount = 0;
+        foreach ($contacts as $contact) {
+            try {
+                $email = (new Email())
+                    ->from('oce.leite1712@gmail.com')
+                    ->to($contact->getEmail())
+                    ->subject('PDF : ' . ($generation->getCustomName() ?? 'Document'))
+                    ->html(
+                        '<p>Bonjour ' . htmlspecialchars($contact->getFirstname()) . ',</p>' .
+                        '<p>Vous trouverez ci-joint le document PDF.</p>' .
+                        ($customMessage ? '<p><em>' . nl2br(htmlspecialchars($customMessage)) . '</em></p>' : '') .
+                        '<p>Cordialement,<br>' . htmlspecialchars($this->getUser()->getEmail()) . '</p>'
+                    )
+                    ->attachFromPath($filepath);
+
+                $mailer->send($email);
+                $sentCount++;
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        if ($sentCount > 0) {
+            $this->addFlash('success', "PDF envoyé à {$sentCount} destinataire(s)");
+        } else {
+            $this->addFlash('error', 'Erreur lors de l\'envoi des emails');
+        }
+
+        return $this->redirectToRoute('app_history');
     }
 }
