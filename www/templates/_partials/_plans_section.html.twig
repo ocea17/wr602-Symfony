@@ -1,7 +1,15 @@
 {# Section des plans - Réutilisable #}
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
     {% for plan in plans %}
-        <div class="bg-white rounded-2xl shadow-xl p-8 {{ plan.name == 'BASIC' ? 'border-4 border-blue-500 relative' : 'border border-gray-200' }} hover:shadow-2xl transition transform hover:-translate-y-2">
+        <div class="bg-white rounded-2xl shadow-xl p-8
+        {% if is_logged_in and user_plan == plan.name %}
+            border-4 border-blue-500 relative
+        {% elseif plan.name == 'BASIC' and (not is_logged_in or user_plan != 'BASIC') %}
+            border-4 border-purple-600
+        {% else %}
+            border border-gray-200
+        {% endif %}
+        hover:shadow-2xl transition transform hover:-translate-y-2">
 
             {# Badge "Le plus populaire" pour Basic #}
             {% if plan.name == 'BASIC' %}
@@ -36,7 +44,7 @@
                     {# Badge nom du plan #}
                     <span class="px-3 py-1 rounded-md text-sm font-semibold
                     {% if plan.name == 'FREE' %}bg-gray-100 text-gray-700
-                    {% elseif plan.name == 'BASIC' %}bg-blue-100 text-blue-600
+                    {% elseif plan.name == 'BASIC' %}bg-blue-200 text-blue-700
                     {% else %}bg-purple-100 text-purple-600{% endif %}">
                     {{ plan.name }}
                 </span>
