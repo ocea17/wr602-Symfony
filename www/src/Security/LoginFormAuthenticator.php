@@ -41,11 +41,19 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $session = $request->getSession();
+        $redirectTo = $session->get('redirect_after_login');
+
+        if ($redirectTo === 'subscription') {
+            $session->remove('redirect_after_login');
+            return new RedirectResponse($this->urlGenerator->generate('app_subscription_change'));
+        }
+
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('app_subscription_change'));
+        return new RedirectResponse($this->urlGenerator->generate('app_home'));
     }
 
     protected function getLoginUrl(Request $request): string
