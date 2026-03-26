@@ -130,3 +130,8 @@ app_payment_webhook:
   path: /payment/webhook
   controller: App\Controller\WebhookController::webhook
   methods: POST
+
+app_pdf_result:
+  path: /pdf/result/{id}
+  controller: App\Controller\GeneratePdfController::result
+  methods: [ GET ]
