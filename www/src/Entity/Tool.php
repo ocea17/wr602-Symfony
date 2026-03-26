@@ -109,4 +109,18 @@ class Tool
         $this->plans->removeElement($plan);
         return $this;
     }
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $requiredPlan = 'FREE';
+
+    public function getRequiredPlan(): ?string
+    {
+        return $this->requiredPlan;
+    }
+
+    public function setRequiredPlan(?string $requiredPlan): static
+    {
+        $this->requiredPlan = $requiredPlan;
+        return $this;
+    }
 }
