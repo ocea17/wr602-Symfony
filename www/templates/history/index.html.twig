@@ -49,7 +49,7 @@
                         <div>
                             <p class="text-gray-700">
                                 Stockage utilisé :
-                                <strong class="{{ generations|length >= (app.user.plan.limitStorage ?? 999) ? 'text-red-500' : 'text-blue-500' }}">
+                                <strong class="{{ generations|length >= (app.user.plan.limitStorage ?? 999) ? 'text-red-500' : 'text-blue-600' }}">
                                     {{ generations|length }}{% if app.user.plan.limitStorage %}/{{ app.user.plan.limitStorage }}{% endif %}
                                 </strong>
                                 PDF(s)
@@ -76,7 +76,7 @@
 
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden">
                     <table class="w-full">
-                        <thead class="bg-gray-50 border-b border-gray-200">
+                        <thead class="bg-gray-100 border-b border-gray-200">
                         <tr>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Type</th>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Nom</th>
@@ -135,7 +135,7 @@
                                             <i data-lucide="send" class="w-4 h-4"></i>
                                             <span class="text-sm">Envoyer</span>
                                         </button>
-                                        <a href="{{ asset(generation.file) }}" download class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition font-medium text-sm">
+                                        <a href="{{ asset(generation.file) }}" download class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium text-sm">
                                             <i data-lucide="download" class="w-4 h-4"></i>
                                             <span class="text-sm">Télécharger</span>
                                         </a>
@@ -182,7 +182,7 @@
                     </div>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-2">Aucune génération pour le moment</h2>
                     <p class="text-gray-600 mb-6">Vous n'avez pas encore généré de PDF</p>
-                    <a href="{{ path('app_pdf_index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition font-semibold">
+                    <a href="{{ path('app_pdf_index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-semibold">
                         Générer mon premier PDF
                     </a>
                 </div>
@@ -190,7 +190,7 @@
 
             {# Retour #}
             <div class="text-center mt-8">
-                <a href="{{ path('app_home') }}" class="text-blue-500 hover:text-blue-600 font-medium hover:underline">
+                <a href="{{ path('app_home') }}" class="text-blue-600 hover:text-blue-700 font-medium hover:underline">
                     ← Retour à l'accueil
                 </a>
             </div>

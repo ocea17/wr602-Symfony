@@ -20,43 +20,48 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        // Récupère les plans via les références AVEC le 2ème paramètre
+        // Récupère les plans via les références
         $planFree = $this->getReference(PlanFixtures::PLAN_FREE, Plan::class);
         $planBasic = $this->getReference(PlanFixtures::PLAN_BASIC, Plan::class);
         $planPremium = $this->getReference(PlanFixtures::PLAN_PREMIUM, Plan::class);
 
+        $colors = ['#3B82F6', '#8B5CF6', '#EC4899', '#10B981', '#F59E0B'];
+
         // User FREE
-        $user1 = new User();
-        $user1->setEmail('test@test.com');
-        $user1->setLastname('Orange');
-        $user1->setFirstname('Gina');
-        $user1->setRoles(['ROLE_USER']);
-        $user1->setPlan($planFree);
-        $hashedPassword = $this->passwordHasher->hashPassword($user1, 'test');
-        $user1->setPassword($hashedPassword);
-        $manager->persist($user1);
+        $userFree = new User();
+        $userFree->setEmail('demo.free@pdfgenerator.com');
+        $userFree->setFirstname('Demo');
+        $userFree->setLastname('Free');
+        $userFree->setRoles(['ROLE_USER']);
+        $userFree->setPlan($planFree);
+        $userFree->setAvatarColor($colors[0]);
+        $hashedPassword = $this->passwordHasher->hashPassword($userFree, 'demo123');
+        $userFree->setPassword($hashedPassword);
+        $manager->persist($userFree);
 
         // User BASIC
-        $user2 = new User();
-        $user2->setEmail('basic@test.com');
-        $user2->setLastname('Hari');
-        $user2->setFirstname('Bob');
-        $user2->setRoles(['ROLE_USER']);
-        $user2->setPlan($planBasic);
-        $hashedPassword = $this->passwordHasher->hashPassword($user2, 'test');
-        $user2->setPassword($hashedPassword);
-        $manager->persist($user2);
+        $userBasic = new User();
+        $userBasic->setEmail('demo.basic@pdfgenerator.com');
+        $userBasic->setFirstname('Demo');
+        $userBasic->setLastname('Basic');
+        $userBasic->setRoles(['ROLE_USER']);
+        $userBasic->setPlan($planBasic);
+        $userBasic->setAvatarColor($colors[1]);
+        $hashedPassword = $this->passwordHasher->hashPassword($userBasic, 'demo123');
+        $userBasic->setPassword($hashedPassword);
+        $manager->persist($userBasic);
 
         // User PREMIUM
-        $user3 = new User();
-        $user3->setEmail('premium@test.com');
-        $user3->setLastname('Cristel');
-        $user3->setFirstname('Line');
-        $user3->setRoles(['ROLE_PREMIUM']);
-        $user3->setPlan($planPremium);
-        $hashedPassword = $this->passwordHasher->hashPassword($user3, 'test');
-        $user3->setPassword($hashedPassword);
-        $manager->persist($user3);
+        $userPremium = new User();
+        $userPremium->setEmail('demo.premium@pdfgenerator.com');
+        $userPremium->setFirstname('Demo');
+        $userPremium->setLastname('Premium');
+        $userPremium->setRoles(['ROLE_USER']);
+        $userPremium->setPlan($planPremium);
+        $userPremium->setAvatarColor($colors[2]);
+        $hashedPassword = $this->passwordHasher->hashPassword($userPremium, 'demo123');
+        $userPremium->setPassword($hashedPassword);
+        $manager->persist($userPremium);
 
         $manager->flush();
     }
