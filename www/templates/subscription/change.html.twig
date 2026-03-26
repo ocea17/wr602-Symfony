@@ -24,8 +24,8 @@
 
             {{ include('_partials/_plans_section.html.twig', {
                 plans: plans,
-                current_plan: current_plan,
-                is_logged_in: true
+                is_logged_in: true,
+                user_plan: app.user.plan.name
             }) }}
 
             {# Retour #}
