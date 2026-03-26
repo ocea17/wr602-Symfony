@@ -42,15 +42,19 @@ class ContactController extends AbstractController
     {
         $contact = new UserContact();
         $contact->setUser($this->getUser());
-
         $form = $this->createForm(UserContactType::class, $contact);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->persist($contact);
             $this->em->flush();
-
             $this->addFlash('success', 'Contact ajouté avec succès !');
+
+            $redirectTo = $request->query->get('redirect_to');
+            if ($redirectTo) {
+                return $this->redirect($redirectTo);
+            }
+
             return $this->redirectToRoute('app_contacts_index');
         }
 
