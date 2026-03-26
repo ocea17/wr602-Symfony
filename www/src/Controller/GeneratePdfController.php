@@ -106,7 +106,7 @@ class GeneratePdfController extends AbstractController
                     default => throw new \Exception('Type de génération non supporté')
                 };
 
-                $filename = 'pdf_' . time() . '.pdf';
+                $filename = 'pdfgenerator_' . time() . '.pdf';
                 $filepath = $this->pdfService->savePdf($pdfContent, $filename);
 
                 $user = $this->getUser();
@@ -141,12 +141,12 @@ class GeneratePdfController extends AbstractController
                 $generation->setUser($user);
                 $generation->setFile($filepath);
                 $generation->setType($slug);
-                $generation->setCustomName($filename);
+                $generation->setCustomName('pdfgenerator_' . $slug . '.pdf');
                 $generation->setCreatedAt(new \DateTimeImmutable());
                 $this->em->persist($generation);
                 $this->em->flush();
 
-                return $this->file(__DIR__ . '/../../public/' . $filepath);
+                return $this->redirectToRoute('app_pdf_result', ['id' => $generation->getId()]);
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Erreur : ' . $e->getMessage());
             }
@@ -264,20 +264,16 @@ class GeneratePdfController extends AbstractController
             throw new \Exception('Aucune image uploadée');
         }
 
-        // Vérifie que c'est bien une image
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (!in_array($uploadedFile->getMimeType(), $allowedTypes)) {
             throw new \Exception('Type de fichier non autorisé. Formats acceptés : JPG, PNG, GIF, WEBP');
         }
 
-        // Sauvegarde temporaire
         $tempPath = sys_get_temp_dir() . '/' . uniqid() . '.' . $uploadedFile->guessExtension();
         $uploadedFile->move(dirname($tempPath), basename($tempPath));
 
-        // Génère le PDF
         $pdfContent = $this->pdfService->generateFromImage($tempPath);
 
-        // Supprime le fichier temporaire
         unlink($tempPath);
 
         return $pdfContent;
@@ -334,5 +330,21 @@ class GeneratePdfController extends AbstractController
         }
 
         return $pdfContent;
+    }
+    public function result(int $id): Response
+    {
+        $generation = $this->generationRepository->find($id);
+
+        if (!$generation || $generation->getUser() !== $this->getUser()) {
+            throw $this->createNotFoundException('PDF introuvable');
+        }
+
+        $contacts = $this->em->getRepository(\App\Entity\UserContact::class)
+            ->findBy(['user' => $this->getUser()]);
+
+        return $this->render('pdf/result.html.twig', [
+            'generation' => $generation,
+            'contacts' => $contacts,
+        ]);
     }
 }

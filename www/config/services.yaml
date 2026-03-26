@@ -7,12 +7,15 @@ parameters:
   stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
   stripe_publishable_key: '%env(STRIPE_PUBLISHABLE_KEY)%'
   stripe_webhook_secret: '%env(STRIPE_WEBHOOK_SECRET)%'
+  app.timezone: 'Europe/Paris'
 
 services:
   # Default configuration for services in App\
   _defaults:
     autowire: true
     autoconfigure: true
+    bind:
+      $timezone: '%app.timezone%'
 
   # Makes classes in src/ available to be used as services
   App\:

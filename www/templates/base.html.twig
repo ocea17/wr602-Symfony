@@ -15,9 +15,17 @@
 </head>
 <body class="font-sans flex flex-col min-h-screen bg-gray-50">
 
-{% block body %}{% endblock %}
+{# Header #}
+{% if app.user %}
+    {{ include('_partials/header.html.twig') }}
+{% endif %}
 
-{# Footer - toujours en bas #}
+{# Contenu de la page #}
+<main class="flex-grow">
+    {% block body %}{% endblock %}
+</main>
+
+{# Footer #}
 <div class="mt-auto">
     {{ include('_partials/_footer.html.twig') }}
 </div>
