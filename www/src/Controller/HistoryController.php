@@ -100,7 +100,10 @@ class HistoryController extends AbstractController
             return $this->redirectToRoute('app_history');
         }
 
-        return $this->file($filepath);
+        $type = $generation->getType() ?: 'document';
+        $customName = 'pdfgenerator_' . $type . '.pdf';
+
+        return $this->file($filepath, $customName);
     }
     public function send(int $id, Request $request, MailerInterface $mailer): Response
     {
