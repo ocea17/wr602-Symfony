@@ -6,6 +6,6 @@ RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Force reinstall Stripe with curl support (ignore platform requirements)
+# Force reinstall Stripe with curl support
 WORKDIR /var/www
 RUN composer require stripe/stripe-php --ignore-platform-req=ext-curl || true
