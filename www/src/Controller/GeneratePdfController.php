@@ -7,6 +7,7 @@ use App\Entity\Tool;
 use App\Repository\GenerationRepository;
 use App\Repository\ToolRepository;
 use App\Service\PdfGeneratorService;
+use App\Entity\PdfQueue;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,17 @@ class GeneratePdfController extends AbstractController
     private EntityManagerInterface $em;
     private GenerationRepository $generationRepository;
     private ToolRepository $toolRepository;
+
+    private array $templates = [
+        'url' => 'pdf/generate_url.html.twig',
+        'html' => 'pdf/generate_file.html.twig',
+        'wysiwyg' => 'pdf/generate_wysiwyg.html.twig',
+        'merge' => 'pdf/generate_merge.html.twig',
+        'split' => 'pdf/generate_split.html.twig',
+        'screenshot' => 'pdf/generate_screenshot.html.twig',
+        'office' => 'pdf/generate_office.html.twig',
+        'text' => 'pdf/generate_text.html.twig',
+    ];
 
     public function __construct(
         PdfGeneratorService $pdfService,
@@ -33,6 +45,7 @@ class GeneratePdfController extends AbstractController
 
     private function checkDailyLimit(): bool
     {
+
         $user = $this->getUser();
         $plan = $user->getPlan();
 
@@ -57,7 +70,6 @@ class GeneratePdfController extends AbstractController
     {
         $user = $this->getUser();
 
-        // Compte les PDFs générés aujourd'hui
         $todayStart = new \DateTime('today');
         $todayPdfs = $this->generationRepository->createQueryBuilder('g')
             ->select('COUNT(g.id)')
@@ -68,7 +80,6 @@ class GeneratePdfController extends AbstractController
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Récupère tous les tools actifs
         $allTools = $this->toolRepository->findAllActive();
 
         return $this->render('pdf/index.html.twig', [
@@ -94,6 +105,7 @@ class GeneratePdfController extends AbstractController
             }
 
             try {
+                // ✅ Génération immédiate
                 $pdfContent = match ($slug) {
                     'url' => $this->generateFromUrl($request),
                     'html' => $this->generateFromFile($request),
@@ -106,15 +118,13 @@ class GeneratePdfController extends AbstractController
                     default => throw new \Exception('Type de génération non supporté')
                 };
 
-                $filename = 'pdfgenerator_' . time() . '.pdf';
+                $filename = 'pdfgenerator_' . $slug . '_' . time() . '.pdf';
                 $filepath = $this->pdfService->savePdf($pdfContent, $filename);
 
                 $user = $this->getUser();
                 $plan = $user->getPlan();
 
-
                 if ($plan->getLimitStorage() !== null) {
-
                     $currentCount = $this->generationRepository->count(['user' => $user]);
 
                     if ($currentCount >= $plan->getLimitStorage()) {
@@ -139,31 +149,26 @@ class GeneratePdfController extends AbstractController
 
                 $generation = new Generation();
                 $generation->setUser($user);
-                $generation->setFile($filepath);
                 $generation->setType($slug);
+                $generation->setFile($filepath);
                 $generation->setCustomName('pdfgenerator_' . $slug . '.pdf');
                 $generation->setCreatedAt(new \DateTimeImmutable());
+
                 $this->em->persist($generation);
                 $this->em->flush();
 
                 return $this->redirectToRoute('app_pdf_result', ['id' => $generation->getId()]);
+
             } catch (\Exception $e) {
-                $this->addFlash('error', 'Erreur : ' . $e->getMessage());
+                $this->addFlash('error', 'Erreur lors de la génération : ' . $e->getMessage());
+                return $this->redirectToRoute('app_pdf_index');
             }
         }
 
-        $template = match ($slug) {
-            'url' => 'pdf/generate_url.html.twig',
-            'html' => 'pdf/generate_file.html.twig',
-            'wysiwyg' => 'pdf/generate_wysiwyg.html.twig',
-            'merge' => 'pdf/generate_merge.html.twig',
-            'split' => 'pdf/generate_split.html.twig',
-            'screenshot' => 'pdf/generate_screenshot.html.twig',
-            'office' => 'pdf/generate_office.html.twig',
-            'text' => 'pdf/generate_text.html.twig',
-
-            default => throw $this->createNotFoundException('Template introuvable')
-        };
+        $template = $this->templates[$slug] ?? null;
+        if (!$template) {
+            throw $this->createNotFoundException('Template introuvable');
+        }
 
         return $this->render($template, [
             'tool' => $tool,
@@ -346,5 +351,32 @@ class GeneratePdfController extends AbstractController
             'generation' => $generation,
             'contacts' => $contacts,
         ]);
+    }
+    private function prepareQueueParameters(string $type, Request $request): array
+    {
+        return match ($type) {
+            'url' => ['url' => $request->request->get('url')],
+            'html' => ['html_content' => file_get_contents($request->files->get('file')->getPathname())],
+            'text' => ['text_file' => $request->files->get('file')->getPathname()],
+            'office' => ['office_file' => $request->files->get('file')->getPathname()],
+            'screenshot' => ['image_path' => $request->files->get('image')->getPathname()],
+            'merge' => ['files' => $this->handleMergeFiles($request)],
+            'split' => [
+                'file' => $request->files->get('file')->getPathname(),
+                'start_page' => (int) $request->request->get('start_page'),
+                'end_page' => (int) $request->request->get('end_page'),
+            ],
+            default => [],
+        };
+    }
+
+    private function handleMergeFiles(Request $request): array
+    {
+        $files = $request->files->get('files');
+        $paths = [];
+        foreach ($files as $file) {
+            $paths[] = $file->getPathname();
+        }
+        return $paths;
     }
 }
