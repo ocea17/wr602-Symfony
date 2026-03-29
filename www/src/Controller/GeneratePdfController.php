@@ -42,11 +42,10 @@ class GeneratePdfController extends BaseController
 
     private function checkDailyLimit(): bool
     {
-
         $user = $this->getAuthenticatedUser();
         $plan = $user->getPlan();
 
-        if ($plan->getLimitGeneration() === null) {
+        if (null === $plan->getLimitGeneration()) {
             return true;
         }
 
@@ -89,15 +88,16 @@ class GeneratePdfController extends BaseController
     {
         $tool = $this->toolRepository->findOneBySlug($slug);
 
-        if (!$tool) {
+        if (! $tool) {
             throw $this->createNotFoundException('Outil introuvable.');
         }
 
         $this->denyAccessUnlessGranted('TOOL_ACCESS', $tool);
 
         if ($request->isMethod('POST')) {
-            if (!$this->checkDailyLimit()) {
+            if (! $this->checkDailyLimit()) {
                 $this->addFlash('error', 'Vous avez atteint votre limite de génération pour aujourd\'hui.');
+
                 return $this->redirectToRoute('app_pdf_index');
             }
 
@@ -114,13 +114,13 @@ class GeneratePdfController extends BaseController
                     default => throw new \Exception('Type de génération non supporté')
                 };
 
-                $filename = 'pdfgenerator_' . $slug . '_' . time() . '.pdf';
+                $filename = 'pdfgenerator_'.$slug.'_'.time().'.pdf';
                 $filepath = $this->pdfService->savePdf($pdfContent, $filename);
 
                 $user = $this->getAuthenticatedUser();
                 $plan = $user->getPlan();
 
-                if ($plan->getLimitStorage() !== null) {
+                if (null !== $plan->getLimitStorage()) {
                     $currentCount = $this->generationRepository->count(['user' => $user]);
 
                     if ($currentCount >= $plan->getLimitStorage()) {
@@ -133,7 +133,7 @@ class GeneratePdfController extends BaseController
                         );
 
                         foreach ($oldestGenerations as $oldGen) {
-                            $filePath = __DIR__ . '/../../public/' . $oldGen->getFile();
+                            $filePath = __DIR__.'/../../public/'.$oldGen->getFile();
                             if (file_exists($filePath)) {
                                 unlink($filePath);
                             }
@@ -147,22 +147,22 @@ class GeneratePdfController extends BaseController
                 $generation->setUser($user);
                 $generation->setType($slug);
                 $generation->setFile($filepath);
-                $generation->setCustomName('pdfgenerator_' . $slug . '.pdf');
+                $generation->setCustomName('pdfgenerator_'.$slug.'.pdf');
                 $generation->setCreatedAt(new \DateTimeImmutable());
 
                 $this->em->persist($generation);
                 $this->em->flush();
 
                 return $this->redirectToRoute('app_pdf_result', ['id' => $generation->getId()]);
-
             } catch (\Exception $e) {
-                $this->addFlash('error', 'Erreur lors de la génération : ' . $e->getMessage());
+                $this->addFlash('error', 'Erreur lors de la génération : '.$e->getMessage());
+
                 return $this->redirectToRoute('app_pdf_index');
             }
         }
 
         $template = $this->templates[$slug] ?? null;
-        if (!$template) {
+        if (! $template) {
             throw $this->createNotFoundException('Template introuvable');
         }
 
@@ -174,17 +174,19 @@ class GeneratePdfController extends BaseController
     private function generateFromUrl(Request $request): string
     {
         $url = $request->request->get('url');
+
         return $this->pdfService->generatePdfFromUrl($url);
     }
 
     private function generateFromFile(Request $request): string
     {
         $file = $request->files->get('file');
-        if (!$file) {
+        if (! $file) {
             throw new \Exception('Aucun fichier uploadé');
         }
 
         $content = file_get_contents($file->getPathname());
+
         return $this->pdfService->generateFromHtml($content);
     }
 
@@ -197,7 +199,7 @@ class GeneratePdfController extends BaseController
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>' . htmlspecialchars($title) . '</title>
+    <title>'.htmlspecialchars($title).'</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -218,18 +220,19 @@ class GeneratePdfController extends BaseController
     </style>
 </head>
 <body>
-    <h1>' . htmlspecialchars($title) . '</h1>
-    <p>' . nl2br(htmlspecialchars($content)) . '</p>
+    <h1>'.htmlspecialchars($title).'</h1>
+    <p>'.nl2br(htmlspecialchars($content)).'</p>
 </body>
 </html>';
 
         return $this->pdfService->generateFromHtml($html);
     }
+
     private function generateFromMerge(Request $request): string
     {
         $files = $request->files->get('files');
 
-        if (!$files || count($files) < 2) {
+        if (! $files || count($files) < 2) {
             throw new \Exception('Veuillez uploader au moins 2 fichiers PDF');
         }
 
@@ -240,12 +243,12 @@ class GeneratePdfController extends BaseController
     {
         $file = $request->files->get('file');
 
-        if (!$file) {
+        if (! $file) {
             throw new \Exception('Aucun fichier uploadé');
         }
 
-        if (!$file->isValid()) {
-            throw new \Exception('Le fichier uploadé est invalide : ' . $file->getErrorMessage());
+        if (! $file->isValid()) {
+            throw new \Exception('Le fichier uploadé est invalide : '.$file->getErrorMessage());
         }
 
         $startPage = (int) $request->request->get('start_page', 1);
@@ -257,20 +260,21 @@ class GeneratePdfController extends BaseController
 
         return $this->pdfService->splitPdf($file, $startPage, $endPage);
     }
+
     private function generateFromScreenshot(Request $request): string
     {
         $uploadedFile = $request->files->get('image');
 
-        if (!$uploadedFile) {
+        if (! $uploadedFile) {
             throw new \Exception('Aucune image uploadée');
         }
 
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        if (!in_array($uploadedFile->getMimeType(), $allowedTypes)) {
+        if (! in_array($uploadedFile->getMimeType(), $allowedTypes)) {
             throw new \Exception('Type de fichier non autorisé. Formats acceptés : JPG, PNG, GIF, WEBP');
         }
 
-        $tempPath = sys_get_temp_dir() . '/' . uniqid() . '.' . $uploadedFile->guessExtension();
+        $tempPath = sys_get_temp_dir().'/'.uniqid().'.'.$uploadedFile->guessExtension();
         $uploadedFile->move(dirname($tempPath), basename($tempPath));
 
         $pdfContent = $this->pdfService->generateFromImage($tempPath);
@@ -279,64 +283,67 @@ class GeneratePdfController extends BaseController
 
         return $pdfContent;
     }
+
     private function generateFromOffice(Request $request): string
     {
         $file = $request->files->get('file');
 
-        if (!$file) {
+        if (! $file) {
             throw new \Exception('Aucun fichier sélectionné.');
         }
 
         $allowedExtensions = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'];
         $extension = strtolower($file->getClientOriginalExtension());
 
-        if (!in_array($extension, $allowedExtensions)) {
+        if (! in_array($extension, $allowedExtensions)) {
             throw new \Exception('Format non supporté.');
         }
 
-        $tempPath = sys_get_temp_dir() . '/' . uniqid() . '.' . $extension;
+        $tempPath = sys_get_temp_dir().'/'.uniqid().'.'.$extension;
         $file->move(dirname($tempPath), basename($tempPath));
 
         $pdfContent = $this->pdfService->generateFromOffice($tempPath);
         unlink($tempPath);
 
-        if (!$pdfContent) {
+        if (! $pdfContent) {
             throw new \Exception('Erreur lors de la conversion.');
         }
 
         return $pdfContent;
     }
+
     private function generateFromText(Request $request): string
     {
         $file = $request->files->get('file');
 
-        if (!$file) {
+        if (! $file) {
             throw new \Exception('Aucun fichier sélectionné.');
         }
 
         $extension = strtolower($file->getClientOriginalExtension());
 
-        if ($extension !== 'txt') {
+        if ('txt' !== $extension) {
             throw new \Exception('Format non supporté. Seul le format TXT est accepté.');
         }
 
-        $tempPath = sys_get_temp_dir() . '/' . uniqid() . '.txt';
+        $tempPath = sys_get_temp_dir().'/'.uniqid().'.txt';
         $file->move(dirname($tempPath), basename($tempPath));
 
         $pdfContent = $this->pdfService->generateFromText($tempPath);
         unlink($tempPath);
 
-        if (!$pdfContent) {
+        if (! $pdfContent) {
             throw new \Exception('Erreur lors de la conversion.');
         }
 
         return $pdfContent;
     }
+
     public function result(int $id): Response
     {
         $generation = $this->generationRepository->find($id);
 
-        if (!$generation || $generation->getUser() !== $this->getUser()) {
+        if (! $generation || $generation->getUser() !== $this->getUser()) {
             throw $this->createNotFoundException('PDF introuvable');
         }
 
@@ -348,6 +355,7 @@ class GeneratePdfController extends BaseController
             'contacts' => $contacts,
         ]);
     }
+
     private function handleMergeFiles(Request $request): array
     {
         $files = $request->files->get('files');
@@ -355,6 +363,7 @@ class GeneratePdfController extends BaseController
         foreach ($files as $file) {
             $paths[] = $file->getPathname();
         }
+
         return $paths;
     }
 }

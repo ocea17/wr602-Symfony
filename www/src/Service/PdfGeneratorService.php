@@ -2,12 +2,11 @@
 
 namespace App\Service;
 
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use setasign\Fpdi\Fpdi;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
-use setasign\Fpdi\Fpdi;
-
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PdfGeneratorService
 {
@@ -26,12 +25,12 @@ class PdfGeneratorService
     public function generatePdfFromUrl(string $url): string
     {
         $formData = new FormDataPart([
-            'url' => $url
+            'url' => $url,
         ]);
 
-        $response = $this->httpClient->request('POST', $this->gotenbergUrl . '/forms/chromium/convert/url', [
+        $response = $this->httpClient->request('POST', $this->gotenbergUrl.'/forms/chromium/convert/url', [
             'headers' => $formData->getPreparedHeaders()->toArray(),
-            'body' => $formData->bodyToIterable()
+            'body' => $formData->bodyToIterable(),
         ]);
 
         return $response->getContent();
@@ -42,16 +41,16 @@ class PdfGeneratorService
      */
     public function generateFromHtml(string $htmlContent): string
     {
-        $tmpFile = tempnam(sys_get_temp_dir(), 'html_') . '.html';
+        $tmpFile = tempnam(sys_get_temp_dir(), 'html_').'.html';
         file_put_contents($tmpFile, $htmlContent);
 
         $formData = new FormDataPart([
-            'files' => DataPart::fromPath($tmpFile, 'index.html', 'text/html')
+            'files' => DataPart::fromPath($tmpFile, 'index.html', 'text/html'),
         ]);
 
-        $response = $this->httpClient->request('POST', $this->gotenbergUrl . '/forms/chromium/convert/html', [
+        $response = $this->httpClient->request('POST', $this->gotenbergUrl.'/forms/chromium/convert/html', [
             'headers' => $formData->getPreparedHeaders()->toArray(),
-            'body' => $formData->bodyToIterable()
+            'body' => $formData->bodyToIterable(),
         ]);
 
         $content = $response->getContent();
@@ -63,22 +62,23 @@ class PdfGeneratorService
     public function savePdf(string $pdfContent, string $filename): string
     {
         $directory = 'uploads/pdfs/';
-        $fullPath = __DIR__ . '/../../public/' . $directory;
+        $fullPath = __DIR__.'/../../public/'.$directory;
 
-        if (!is_dir($fullPath)) {
+        if (! is_dir($fullPath)) {
             mkdir($fullPath, 0777, true);
         }
 
-        file_put_contents($fullPath . $filename, $pdfContent);
-        return $directory . $filename;
+        file_put_contents($fullPath.$filename, $pdfContent);
+
+        return $directory.$filename;
     }
 
     public function mergePdfs(array $files): string
     {
-        $url = $this->gotenbergUrl . '/forms/pdfengines/merge';
+        $url = $this->gotenbergUrl.'/forms/pdfengines/merge';
 
         // Crée un boundary pour multipart
-        $boundary = '----WebKitFormBoundary' . uniqid();
+        $boundary = '----WebKitFormBoundary'.uniqid();
         $body = '';
 
         // Ajoute chaque fichier
@@ -94,7 +94,7 @@ class PdfGeneratorService
 
         $response = $this->httpClient->request('POST', $url, [
             'headers' => [
-                'Content-Type' => 'multipart/form-data; boundary=' . $boundary,
+                'Content-Type' => 'multipart/form-data; boundary='.$boundary,
             ],
             'body' => $body,
         ]);
@@ -103,18 +103,18 @@ class PdfGeneratorService
     }
 
     /**
-     * Sépare un PDF (extrait une plage de pages)
+     * Sépare un PDF (extrait une plage de pages).
      */
     public function splitPdf($file, int $startPage, int $endPage): string
     {
         // Vérifie que le fichier existe et est valide
-        if (!$file || !$file->isValid()) {
+        if (! $file || ! $file->isValid()) {
             throw new \Exception('Fichier invalide');
         }
 
         $inputPath = $file->getRealPath();
 
-        if (!$inputPath || !file_exists($inputPath)) {
+        if (! $inputPath || ! file_exists($inputPath)) {
             throw new \Exception('Fichier introuvable');
         }
 
@@ -128,11 +128,11 @@ class PdfGeneratorService
             }
 
             if ($startPage < 1 || $startPage > $pageCount) {
-                throw new \Exception("Page de début invalide");
+                throw new \Exception('Page de début invalide');
             }
 
             // Importe les pages demandées
-            for ($i = $startPage; $i <= $endPage; $i++) {
+            for ($i = $startPage; $i <= $endPage; ++$i) {
                 $templateId = $pdf->importPage($i);
                 $size = $pdf->getTemplateSize($templateId);
 
@@ -141,21 +141,21 @@ class PdfGeneratorService
             }
 
             // Sauvegarde dans un fichier temporaire puis récupère le contenu
-            $tempFile = sys_get_temp_dir() . '/split_' . uniqid() . '.pdf';
+            $tempFile = sys_get_temp_dir().'/split_'.uniqid().'.pdf';
             $pdf->Output('F', $tempFile);
 
             $content = file_get_contents($tempFile);
             unlink($tempFile);
 
             return $content;
-
         } catch (\Exception $e) {
-            throw new \Exception('Erreur lors de la séparation : ' . $e->getMessage());
+            throw new \Exception('Erreur lors de la séparation : '.$e->getMessage());
         }
     }
+
     public function generateFromImage(string $imagePath): string
     {
-        $url = $this->gotenbergUrl . '/forms/chromium/convert/html';
+        $url = $this->gotenbergUrl.'/forms/chromium/convert/html';
 
         // Lit le contenu de l'image
         $imageContent = file_get_contents($imagePath);
@@ -173,13 +173,13 @@ class PdfGeneratorService
         </style>
     </head>
     <body>
-        <img src="image.' . $extension . '" alt="Image convertie en PDF" />
+        <img src="image.'.$extension.'" alt="Image convertie en PDF" />
     </body>
     </html>
     ';
 
         // Détermine le type MIME
-        $mimeType = match(strtolower($extension)) {
+        $mimeType = match (strtolower($extension)) {
             'jpg', 'jpeg' => 'image/jpeg',
             'png' => 'image/png',
             'gif' => 'image/gif',
@@ -195,25 +195,26 @@ class PdfGeneratorService
         $body .= "--{$boundary}\r\n";
         $body .= "Content-Disposition: form-data; name=\"files\"; filename=\"index.html\"\r\n";
         $body .= "Content-Type: text/html\r\n\r\n";
-        $body .= $html . "\r\n";
+        $body .= $html."\r\n";
 
         // Ajoute l'image
         $body .= "--{$boundary}\r\n";
         $body .= "Content-Disposition: form-data; name=\"files\"; filename=\"image.{$extension}\"\r\n";
         $body .= "Content-Type: {$mimeType}\r\n\r\n";
-        $body .= $imageContent . "\r\n";
+        $body .= $imageContent."\r\n";
 
         $body .= "--{$boundary}--\r\n";
 
         $response = $this->httpClient->request('POST', $url, [
             'headers' => [
-                'Content-Type' => 'multipart/form-data; boundary=' . $boundary,
+                'Content-Type' => 'multipart/form-data; boundary='.$boundary,
             ],
             'body' => $body,
         ]);
 
         return $response->getContent();
     }
+
     public function generateFromOffice(string $filePath): ?string
     {
         $boundary = uniqid();
@@ -234,23 +235,25 @@ class PdfGeneratorService
         $body = "--$boundary\r\n";
         $body .= "Content-Disposition: form-data; name=\"files\"; filename=\"$filename\"\r\n";
         $body .= "Content-Type: $mimeType\r\n\r\n";
-        $body .= $fileContent . "\r\n";
+        $body .= $fileContent."\r\n";
         $body .= "--$boundary--\r\n";
 
-        $response = $this->httpClient->request('POST', $this->gotenbergUrl . '/forms/libreoffice/convert', [
+        $response = $this->httpClient->request('POST', $this->gotenbergUrl.'/forms/libreoffice/convert', [
             'headers' => [
                 'Content-Type' => "multipart/form-data; boundary=$boundary",
             ],
             'body' => $body,
         ]);
 
-        if ($response->getStatusCode() === 200) {
+        if (200 === $response->getStatusCode()) {
             $content = $response->getContent();
+
             return $content;
         }
 
         return null;
     }
+
     public function generateFromText(string $filePath): ?string
     {
         $textContent = file_get_contents($filePath);
@@ -260,7 +263,7 @@ class PdfGeneratorService
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>' . htmlspecialchars($filename) . '</title>
+    <title>'.htmlspecialchars($filename).'</title>
     <style>
         body {
             font-family: "Courier New", monospace;
@@ -280,7 +283,7 @@ class PdfGeneratorService
     </style>
 </head>
 <body>
-    <div>' . htmlspecialchars($textContent) . '</div>
+    <div>'.htmlspecialchars($textContent).'</div>
 </body>
 </html>';
 

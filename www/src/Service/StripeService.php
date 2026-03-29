@@ -4,35 +4,33 @@ namespace App\Service;
 
 use App\Entity\Plan;
 use App\Entity\User;
+use Stripe\ApiRequestor;
 use Stripe\Checkout\Session;
+use Stripe\Customer;
 use Stripe\Stripe;
 use Stripe\Webhook;
-use Stripe\ApiRequestor;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Stripe\Customer;
 
 class StripeService
 {
     public function __construct(
-        private string      $secretKey,
-        private string      $webhookSecret,
+        private string $secretKey,
+        private string $webhookSecret,
         HttpClientInterface $httpClient,
-    )
-    {
+    ) {
         Stripe::setApiKey($this->secretKey);
         ApiRequestor::setHttpClient(new SymfonyStripeHttpClient($httpClient));
     }
 
     public function createCheckoutSession(
-        User   $user,
-        Plan   $plan,
+        User $user,
+        Plan $plan,
         string $successUrl,
         string $cancelUrl,
-    ): string
-    {
+    ): string {
         $customerId = $user->getStripeCustomerId();
 
-        if (!$customerId) {
+        if (! $customerId) {
             $customer = Customer::create([
                 'email' => $user->getEmail(),
                 'metadata' => [
@@ -49,7 +47,7 @@ class StripeService
                 'price' => $plan->getStripePriceId(),
                 'quantity' => 1,
             ]],
-            'success_url' => $successUrl . '?session_id={CHECKOUT_SESSION_ID}',
+            'success_url' => $successUrl.'?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => $cancelUrl,
             'metadata' => [
                 'user_id' => $user->getId(),

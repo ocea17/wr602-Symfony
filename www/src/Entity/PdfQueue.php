@@ -124,6 +124,7 @@ class PdfQueue
     public function setParameters(array $parameters): static
     {
         $this->parameters = $parameters;
+
         return $this;
     }
 
@@ -135,6 +136,7 @@ class PdfQueue
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
         return $this;
     }
 }

@@ -26,16 +26,17 @@ class SubscriptionController extends BaseController
             $planId = $request->request->get('plan_id');
             $newPlan = $planRepository->find($planId);
 
-            if (!$newPlan) {
+            if (! $newPlan) {
                 $this->addFlash('error', 'Plan invalide.');
+
                 return $this->redirectToRoute('app_subscription_change');
             }
 
             $user->setPlan($newPlan);
 
-            if ($newPlan->getName() === 'PREMIUM') {
+            if ('PREMIUM' === $newPlan->getName()) {
                 $user->setRoles(['ROLE_PREMIUM']);
-            } elseif ($newPlan->getName() === 'BASIC') {
+            } elseif ('BASIC' === $newPlan->getName()) {
                 $user->setRoles(['ROLE_BASIC']);
             } else {
                 $user->setRoles(['ROLE_USER']);
@@ -43,7 +44,8 @@ class SubscriptionController extends BaseController
 
             $em->flush();
 
-            $this->addFlash('success', 'Votre abonnement a été changé avec succès vers le plan ' . $newPlan->getName() . ' !');
+            $this->addFlash('success', 'Votre abonnement a été changé avec succès vers le plan '.$newPlan->getName().' !');
+
             return $this->redirectToRoute('app_home');
         }
 

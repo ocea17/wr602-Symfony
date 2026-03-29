@@ -78,6 +78,7 @@ class ContactController extends BaseController
             $this->em->flush();
 
             $this->addFlash('success', 'Contact modifié avec succès !');
+
             return $this->redirectToRoute('app_contacts_index');
         }
 
@@ -93,7 +94,7 @@ class ContactController extends BaseController
             throw $this->createAccessDeniedException();
         }
 
-        if ($this->isCsrfTokenValid('delete' . $contact->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$contact->getId(), $request->request->get('_token'))) {
             $this->em->remove($contact);
             $this->em->flush();
 

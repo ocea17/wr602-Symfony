@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
-use App\Repository\UserContactRepository;
 use App\Repository\GenerationRepository;
-use Symfony\Component\HttpFoundation\Response;
+use App\Repository\UserContactRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 class HistoryController extends BaseController
 {
@@ -55,21 +55,23 @@ class HistoryController extends BaseController
             'contacts' => $contacts,
         ]);
     }
+
     public function delete(int $id, Request $request): Response
     {
         $generation = $this->generationRepository->find($id);
 
-        if (!$generation || $generation->getUser() !== $this->getUser()) {
+        if (! $generation || $generation->getUser() !== $this->getUser()) {
             throw $this->createNotFoundException('PDF introuvable');
         }
 
         $token = $request->request->get('_token');
-        if (!$this->isCsrfTokenValid('delete' . $id, $token)) {
+        if (! $this->isCsrfTokenValid('delete'.$id, $token)) {
             $this->addFlash('error', 'Token de sécurité invalide');
+
             return $this->redirectToRoute('app_history');
         }
 
-        $filePath = __DIR__ . '/../../public/' . $generation->getFile();
+        $filePath = __DIR__.'/../../public/'.$generation->getFile();
         if (file_exists($filePath)) {
             unlink($filePath);
         }
@@ -78,13 +80,15 @@ class HistoryController extends BaseController
         $this->em->flush();
 
         $this->addFlash('success', 'PDF supprimé avec succès');
+
         return $this->redirectToRoute('app_history');
     }
+
     public function download(int $id): Response
     {
         $generation = $this->generationRepository->find($id);
 
-        if (!$generation) {
+        if (! $generation) {
             throw $this->createNotFoundException('PDF non trouvé');
         }
 
@@ -92,29 +96,32 @@ class HistoryController extends BaseController
             throw $this->createAccessDeniedException('Vous n\'avez pas accès à ce PDF');
         }
 
-        $filepath = __DIR__ . '/../../public/' . $generation->getFile();
+        $filepath = __DIR__.'/../../public/'.$generation->getFile();
 
-        if (!file_exists($filepath)) {
+        if (! file_exists($filepath)) {
             $this->addFlash('error', 'Le fichier PDF n\'existe plus sur le serveur');
+
             return $this->redirectToRoute('app_history');
         }
 
         $type = $generation->getType() ?: 'document';
-        $customName = 'pdfgenerator_' . $type . '.pdf';
+        $customName = 'pdfgenerator_'.$type.'.pdf';
 
         return $this->file($filepath, $customName);
     }
+
     public function send(int $id, Request $request, MailerInterface $mailer): Response
     {
         $generation = $this->generationRepository->find($id);
 
-        if (!$generation || $generation->getUser() !== $this->getUser()) {
+        if (! $generation || $generation->getUser() !== $this->getUser()) {
             throw $this->createNotFoundException('PDF introuvable');
         }
 
         // Vérification CSRF
-        if (!$this->isCsrfTokenValid('send_pdf', $request->request->get('_token'))) {
+        if (! $this->isCsrfTokenValid('send_pdf', $request->request->get('_token'))) {
             $this->addFlash('error', 'Token de sécurité invalide');
+
             return $this->redirectToRoute('app_history');
         }
 
@@ -123,6 +130,7 @@ class HistoryController extends BaseController
 
         if (empty($contactIds)) {
             $this->addFlash('error', 'Veuillez sélectionner au moins un destinataire');
+
             return $this->redirectToRoute('app_history');
         }
 
@@ -130,6 +138,7 @@ class HistoryController extends BaseController
 
         if (empty($contacts)) {
             $this->addFlash('error', 'Aucun contact valide sélectionné');
+
             return $this->redirectToRoute('app_history');
         }
 
@@ -137,10 +146,11 @@ class HistoryController extends BaseController
         $customMessage = $request->request->get('message', '');
 
         // Chemin du PDF
-        $filepath = $this->getParameter('kernel.project_dir') . '/public/' . $generation->getFile();
+        $filepath = $this->getParameter('kernel.project_dir').'/public/'.$generation->getFile();
 
-        if (!file_exists($filepath)) {
+        if (! file_exists($filepath)) {
             $this->addFlash('error', 'Le fichier PDF n\'existe plus');
+
             return $this->redirectToRoute('app_history');
         }
 
@@ -151,17 +161,17 @@ class HistoryController extends BaseController
                 $email = (new Email())
                     ->from('oce.leite1712@gmail.com')
                     ->to($contact->getEmail())
-                    ->subject('PDF : ' . ($generation->getCustomName() ?? 'Document'))
+                    ->subject('PDF : '.($generation->getCustomName() ?? 'Document'))
                     ->html(
-                        '<p>Bonjour ' . htmlspecialchars($contact->getFirstname()) . ',</p>' .
-                        '<p>Vous trouverez ci-joint le document PDF.</p>' .
-                        ($customMessage ? '<p><em>' . nl2br(htmlspecialchars($customMessage)) . '</em></p>' : '') .
-                        '<p>Cordialement,<br>' . htmlspecialchars($this->getUser()->getEmail()) . '</p>'
+                        '<p>Bonjour '.htmlspecialchars($contact->getFirstname()).',</p>'.
+                        '<p>Vous trouverez ci-joint le document PDF.</p>'.
+                        ($customMessage ? '<p><em>'.nl2br(htmlspecialchars($customMessage)).'</em></p>' : '').
+                        '<p>Cordialement,<br>'.htmlspecialchars($this->getUser()->getEmail()).'</p>'
                     )
                     ->attachFromPath($filepath);
 
                 $mailer->send($email);
-                $sentCount++;
+                ++$sentCount;
             } catch (\Exception $e) {
                 continue;
             }

@@ -39,21 +39,21 @@ class WebhookController extends AbstractController
                 $userId = $session->metadata->user_id ?? null;
                 $planId = $session->metadata->plan_id ?? null;
 
-                if (!$userId || !$planId) {
+                if (! $userId || ! $planId) {
                     return new Response('Métadonnées manquantes', Response::HTTP_BAD_REQUEST);
                 }
 
                 $user = $userRepository->find($userId);
                 $plan = $planRepository->find($planId);
 
-                if (!$user || !$plan) {
+                if (! $user || ! $plan) {
                     return new Response('Utilisateur ou plan introuvable', Response::HTTP_NOT_FOUND);
                 }
-                
+
                 $user->setPlan($plan);
 
                 // Sauvegarder le customer id stripe
-                if (!$user->getStripeCustomerId() && isset($session->customer)) {
+                if (! $user->getStripeCustomerId() && isset($session->customer)) {
                     $user->setStripeCustomerId($session->customer);
                 }
 
@@ -75,6 +75,7 @@ class WebhookController extends AbstractController
                         $em->flush();
                     }
                 }
+
                 break;
 
             default:

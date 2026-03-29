@@ -93,7 +93,7 @@ class Generation
 
     public function addUserContact(UserContact $userContact): static
     {
-        if (!$this->userContacts->contains($userContact)) {
+        if (! $this->userContacts->contains($userContact)) {
             $this->userContacts->add($userContact);
         }
 

@@ -61,6 +61,7 @@ class Plan
     public function setName(string $name): static
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -72,6 +73,7 @@ class Plan
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -83,6 +85,7 @@ class Plan
     public function setLimitGeneration(?int $limitGeneration): static
     {
         $this->limitGeneration = $limitGeneration;
+
         return $this;
     }
 
@@ -94,6 +97,7 @@ class Plan
     public function setPrice(float $price): static
     {
         $this->price = $price;
+
         return $this;
     }
 
@@ -105,6 +109,7 @@ class Plan
     public function setActive(bool $active): static
     {
         $this->active = $active;
+
         return $this;
     }
 
@@ -118,10 +123,11 @@ class Plan
 
     public function addTool(Tool $tool): static
     {
-        if (!$this->tools->contains($tool)) {
+        if (! $this->tools->contains($tool)) {
             $this->tools->add($tool);
             $tool->addPlan($this);
         }
+
         return $this;
     }
 
@@ -130,6 +136,7 @@ class Plan
         if ($this->tools->removeElement($tool)) {
             $tool->removePlan($this);
         }
+
         return $this;
     }
 

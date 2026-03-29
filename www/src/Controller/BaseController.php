@@ -11,7 +11,7 @@ abstract class BaseController extends AbstractController
     {
         $user = $this->getUser();
 
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             throw new \LogicException('User must be authenticated');
         }
 

@@ -36,19 +36,21 @@ class ChangePlanCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        
+
         $email = $input->getArgument('email');
         $planName = strtoupper($input->getArgument('plan'));
 
         $user = $this->userRepository->findOneBy(['email' => $email]);
-        if (!$user) {
+        if (! $user) {
             $io->error("User not found: $email");
+
             return Command::FAILURE;
         }
 
         $plan = $this->planRepository->findOneBy(['name' => $planName]);
-        if (!$plan) {
+        if (! $plan) {
             $io->error("Plan not found: $planName");
+
             return Command::FAILURE;
         }
 
@@ -56,6 +58,7 @@ class ChangePlanCommand extends Command
         $this->em->flush();
 
         $io->success("User $email updated to $planName plan!");
+
         return Command::SUCCESS;
     }
 }

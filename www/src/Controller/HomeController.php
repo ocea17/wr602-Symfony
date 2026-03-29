@@ -20,10 +20,11 @@ class HomeController extends BaseController
         $this->generationRepository = $generationRepository;
         $this->toolRepository = $toolRepository;
     }
+
     public function index(): Response
     {
         $user = $this->getAuthenticatedUser();
-        
+
         $todayStart = new \DateTime('today');
         $todayPdfs = $this->generationRepository->createQueryBuilder('g')
             ->select('COUNT(g.id)')

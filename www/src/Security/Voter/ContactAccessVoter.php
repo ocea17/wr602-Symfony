@@ -3,7 +3,6 @@
 namespace App\Security\Voter;
 
 use App\Entity\User;
-use App\Entity\UserContact;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -21,7 +20,7 @@ class ContactAccessVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return false;
         }
 
@@ -29,7 +28,7 @@ class ContactAccessVoter extends Voter
         $planName = $plan->getName();
 
         // FREE n'a pas accès aux contacts
-        if ($planName === 'FREE') {
+        if ('FREE' === $planName) {
             return false;
         }
 

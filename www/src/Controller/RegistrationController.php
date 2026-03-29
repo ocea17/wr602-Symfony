@@ -26,18 +26,21 @@ class RegistrationController extends AbstractController
             $lastname = $request->request->get('lastname');
 
             // Validation simple
-            if (!$email || !$password || !$firstname || !$lastname) {
+            if (! $email || ! $password || ! $firstname || ! $lastname) {
                 $this->addFlash('error', 'Tous les champs sont obligatoires.');
+
                 return $this->render('registration/register.html.twig');
             }
 
             if ($password !== $passwordConfirm) {
                 $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+
                 return $this->render('registration/register.html.twig');
             }
 
             if (strlen($password) < 6) {
                 $this->addFlash('error', 'Le mot de passe doit contenir au moins 6 caractères.');
+
                 return $this->render('registration/register.html.twig'); // ← Change index en register
             }
 
@@ -60,6 +63,7 @@ class RegistrationController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Votre compte a été créé avec succès ! Vous pouvez maintenant vous connecter.');
+
             return $this->redirectToRoute('app_login');
         }
 
