@@ -52,7 +52,7 @@ class MakerTestRunner
      */
     public function copy(string $source, string $destination)
     {
-        $path = __DIR__.'/../../tests/fixtures/'.$source;
+        $path = $this->environment->getFixturesPath($source);
 
         if (!file_exists($path)) {
             throw new \Exception(\sprintf('Cannot find file "%s"', $path));
@@ -76,7 +76,7 @@ class MakerTestRunner
     public function renderTemplateFile(string $source, string $destination, array $variables): void
     {
         $twig = new Environment(
-            new FilesystemLoader(__DIR__.'/../../tests/fixtures')
+            new FilesystemLoader($this->environment->getFixturesPath())
         );
 
         $rendered = $twig->render($source, $variables);
@@ -114,7 +114,7 @@ class MakerTestRunner
 
         $newData = $callback($manipulator->getData());
         if (!\is_array($newData)) {
-            throw new \Exception('The modifyYamlFile() callback must return the final array of data');
+            throw new \Exception('The modifyYamlFile() callback must return the final array of data.');
         }
         $manipulator->setData($newData);
 
@@ -172,7 +172,7 @@ class MakerTestRunner
 
         // Flex includes a recipe to suffix the dbname w/ "_test" - lets keep
         // things simple for these tests and not do that.
-        $this->modifyYamlFile('config/packages/doctrine.yaml', function (array $config) {
+        $this->modifyYamlFile('config/packages/doctrine.yaml', static function (array $config) {
             if (isset($config['when@test']['doctrine']['dbal']['dbname_suffix'])) {
                 unset($config['when@test']['doctrine']['dbal']['dbname_suffix']);
             }
