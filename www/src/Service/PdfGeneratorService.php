@@ -187,6 +187,7 @@ class PdfGeneratorService
             default => 'application/octet-stream',
         };
 
+        // Crée le body multipart
         $boundary = uniqid();
         $body = '';
 

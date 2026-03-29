@@ -1,16 +1,15 @@
-# Public
+# Page d'accueil PUBLIQUE (plans)
 app_home_public:
   path: /
   controller: App\Controller\HomePublicController::index
   methods: ['GET']
 
-# Dashboard
+# Dashboard (connecté uniquement)
 app_home:
   path: /dashboard
   controller: App\Controller\HomeController::index
   methods: ['GET']
 
-# Authentification
 app_login:
   path: /login
   controller: App\Controller\SecurityController::login
@@ -35,37 +34,11 @@ app_reset_password:
   controller: App\Controller\PasswordResetController::resetPassword
   methods: ['GET', 'POST']
 
-# Subscription
 app_subscription_change:
   path: /subscription/change
   controller: App\Controller\SubscriptionController::change
-  methods: ['GET']
+  methods: ['GET', 'POST']
 
-app_subscription_subscribe:
-  path: /subscription/subscribe/{planId}
-  controller: App\Controller\SubscriptionController::subscribe
-  methods: ['GET']
-  requirements:
-    planId: '\d+'
-
-app_subscription_success:
-  path: /subscription/success/{planId}
-  controller: App\Controller\SubscriptionController::success
-  methods: ['GET']
-  requirements:
-    planId: '\d+'
-
-app_subscription_webhook:
-  path: /subscription/webhook
-  controller: App\Controller\SubscriptionController::webhook
-  methods: ['POST']
-
-app_subscription_cancel:
-  path: /subscription/cancel
-  controller: App\Controller\SubscriptionController::cancel
-  methods: ['GET']
-
-#Pdf
 app_pdf_index:
   path: /pdf
   controller: App\Controller\GeneratePdfController::index
@@ -76,14 +49,6 @@ app_convert_tool:
   controller: App\Controller\GeneratePdfController::convertTool
   methods: ['GET', 'POST']
 
-app_pdf_result:
-  path: /pdf/result/{id}
-  controller: App\Controller\GeneratePdfController::result
-  methods: ['GET']
-  requirements:
-    id: '\d+'
-
-# Historique
 app_history:
   path: /history
   controller: App\Controller\HistoryController::index
@@ -92,34 +57,27 @@ app_history:
 app_history_send:
   path: /history/send/{id}
   controller: App\Controller\HistoryController::send
-  methods: ['POST']
-  requirements:
-    id: '\d+'
+  methods: POST
 
 app_history_download:
   path: /history/download/{id}
   controller: App\Controller\HistoryController::download
   methods: ['GET']
-  requirements:
-    id: '\d+'
 
 app_history_delete:
   path: /history/{id}/delete
   controller: App\Controller\HistoryController::delete
-  methods: ['POST']
-  requirements:
-    id: '\d+'
+  methods: POST
 
-# Profile
 app_profile:
   path: /profile
   controller: App\Controller\ProfileController::index
   methods: ['GET']
 
 app_profile_update_color:
-  path: /profile/update-color
-  controller: App\Controller\ProfileController::updateColor
-  methods: ['POST']
+    path: /profile/update-color
+    controller: App\Controller\ProfileController::updateColor
+    methods: ['POST']
 
 app_profile_update_info:
   path: /profile/update-info
@@ -127,54 +85,53 @@ app_profile_update_info:
   methods: ['POST']
 
 app_profile_update_password:
-  path: /profile/update-password
-  controller: App\Controller\ProfileController::updatePassword
-  methods: ['POST']
+    path: /profile/update-password
+    controller: App\Controller\ProfileController::updatePassword
+    methods: ['POST']
 
-# Contacts
+# Routes Contact
 app_contacts_index:
-  path: /contacts
-  controller: App\Controller\ContactController::index
-  methods: ['GET']
+    path: /contacts
+    controller: App\Controller\ContactController::index
+    methods: GET
 
 app_contacts_new:
-  path: /contacts/new
-  controller: App\Controller\ContactController::new
-  methods: ['GET', 'POST']
+    path: /contacts/new
+    controller: App\Controller\ContactController::new
+    methods: [GET, POST]
 
 app_contacts_edit:
-  path: /contacts/{id}/edit
-  controller: App\Controller\ContactController::edit
-  methods: ['GET', 'POST']
-  requirements:
-    id: '\d+'
+    path: /contacts/{id}/edit
+    controller: App\Controller\ContactController::edit
+    methods: [GET, POST]
 
 app_contacts_delete:
-  path: /contacts/{id}/delete
-  controller: App\Controller\ContactController::delete
-  methods: ['POST']
-  requirements:
-    id: '\d+'
+    path: /contacts/{id}/delete
+    controller: App\Controller\ContactController::delete
+    methods: POST
 
-# payment
+# Payment routes
 app_payment_checkout:
   path: /payment/checkout/{id}
   controller: App\Controller\PaymentController::checkout
-  methods: ['GET']
-  requirements:
-    id: '\d+'
+  methods: GET
 
 app_payment_success:
   path: /payment/success
   controller: App\Controller\PaymentController::success
-  methods: ['GET']
+  methods: GET
 
 app_payment_cancel:
   path: /payment/cancel
   controller: App\Controller\PaymentController::cancel
-  methods: ['GET']
+  methods: GET
 
 app_payment_webhook:
   path: /payment/webhook
   controller: App\Controller\WebhookController::webhook
-  methods: ['POST']
+  methods: POST
+
+app_pdf_result:
+  path: /pdf/result/{id}
+  controller: App\Controller\GeneratePdfController::result
+  methods: [ GET ]

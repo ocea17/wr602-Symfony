@@ -20,13 +20,14 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+        // Récupère les plans via les références
         $planFree = $this->getReference(PlanFixtures::PLAN_FREE, Plan::class);
         $planBasic = $this->getReference(PlanFixtures::PLAN_BASIC, Plan::class);
         $planPremium = $this->getReference(PlanFixtures::PLAN_PREMIUM, Plan::class);
 
         $colors = ['#3B82F6', '#8B5CF6', '#EC4899', '#10B981', '#F59E0B'];
 
-        // User free
+        // User FREE
         $userFree = new User();
         $userFree->setEmail('demo.free@pdfgenerator.com');
         $userFree->setFirstname('Demo');
@@ -38,7 +39,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $userFree->setPassword($hashedPassword);
         $manager->persist($userFree);
 
-        // User basic
+        // User BASIC
         $userBasic = new User();
         $userBasic->setEmail('demo.basic@pdfgenerator.com');
         $userBasic->setFirstname('Demo');
@@ -50,7 +51,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $userBasic->setPassword($hashedPassword);
         $manager->persist($userBasic);
 
-        // User premium
+        // User PREMIUM
         $userPremium = new User();
         $userPremium->setEmail('demo.premium@pdfgenerator.com');
         $userPremium->setFirstname('Demo');

@@ -1,4 +1,4 @@
-{# Grille des outils #}
+{# Grille des outils - Réutilisable #}
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for tool in tools %}
         {% set is_accessible = is_granted('TOOL_ACCESS', tool) %}
@@ -15,7 +15,7 @@
                 </span>
             </div>
 
-            {# Icône des outils #}
+            {# Icône de l'outil #}
             <div class="flex justify-center mb-4">
                 {% if tool.slug == 'url' %}
                     <i data-lucide="globe" class="w-12 h-12 text-blue-500"></i>
