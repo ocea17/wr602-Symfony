@@ -48,3 +48,4 @@ www/.env
 
 # IDE
 .idea/
+www/.env.local
