@@ -13,25 +13,25 @@ class ToolAccessVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return $attribute === self::ACCESS && $subject instanceof Tool;
+        return self::ACCESS === $attribute && $subject instanceof Tool;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
-{
-    $user = $token->getUser();
+    {
+        $user = $token->getUser();
 
-    if (!$user instanceof User) {
-        return false;
+        if (! $user instanceof User) {
+            return false;
+        }
+
+        /** @var Tool $tool */
+        $tool = $subject;
+
+        $userPlan = $user->getPlan();
+        if (null === $userPlan) {
+            return false;
+        }
+
+        return $userPlan->getTools()->contains($tool);
     }
-
-    /** @var Tool $tool */
-    $tool = $subject;
-
-    $userPlan = $user->getPlan();
-    if ($userPlan === null) {
-        return false;
-    }
-
-    return $userPlan->getTools()->contains($tool);
-}
 }

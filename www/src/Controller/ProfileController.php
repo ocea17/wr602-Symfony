@@ -3,15 +3,14 @@
 namespace App\Controller;
 
 use App\Repository\GenerationRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
-class ProfileController extends AbstractController
+class ProfileController extends BaseController
 {
     private GenerationRepository $generationRepository;
     private EntityManagerInterface $em;
@@ -29,9 +28,9 @@ class ProfileController extends AbstractController
 
     public function index(): Response
     {
-        $user = $this->getUser();
+        $user = $this->getAuthenticatedUser();
 
-        // Total des PDFs
+        // Total des pdf
         $totalPdfs = $this->generationRepository->count(['user' => $user]);
 
         $todayStart = new \DateTime('today');
@@ -53,12 +52,13 @@ class ProfileController extends AbstractController
             'stored_pdfs' => $storedPdfs,
         ]);
     }
+
     public function updateColor(Request $request): Response
     {
         if ($request->isMethod('POST')) {
             $color = $request->request->get('color');
 
-            $user = $this->getUser();
+            $user = $this->getAuthenticatedUser();
             $user->setAvatarColor($color);
 
             $this->em->flush();
@@ -68,6 +68,7 @@ class ProfileController extends AbstractController
 
         return $this->redirectToRoute('app_profile');
     }
+
     public function updateInfo(Request $request): Response
     {
         if ($request->isMethod('POST')) {
@@ -78,37 +79,42 @@ class ProfileController extends AbstractController
             $newPasswordConfirm = $request->request->get('new_password_confirm');
 
             // Validation du nom et prénom
-            if (!$firstname || !$lastname) {
+            if (! $firstname || ! $lastname) {
                 $this->addFlash('error', 'Le prénom et le nom sont obligatoires.');
+
                 return $this->redirectToRoute('app_profile');
             }
 
-            $user = $this->getUser();
+            $user = $this->getAuthenticatedUser();
             $user->setFirstname($firstname);
             $user->setLastname($lastname);
 
             if ($currentPassword || $newPassword || $newPasswordConfirm) {
                 // Vérifier que tous les champs mot de passe sont remplis
-                if (!$currentPassword || !$newPassword || !$newPasswordConfirm) {
+                if (! $currentPassword || ! $newPassword || ! $newPasswordConfirm) {
                     $this->addFlash('error', 'Pour changer le mot de passe, tous les champs sont obligatoires.');
+
                     return $this->redirectToRoute('app_profile');
                 }
 
                 // Vérifier que l'ancien mot de passe est correct
-                if (!$this->passwordHasher->isPasswordValid($user, $currentPassword)) {
+                if (! $this->passwordHasher->isPasswordValid($user, $currentPassword)) {
                     $this->addFlash('error', 'Le mot de passe actuel est incorrect.');
+
                     return $this->redirectToRoute('app_profile');
                 }
 
                 // Vérifier la longueur du nouveau mot de passe
                 if (strlen($newPassword) < 6) {
                     $this->addFlash('error', 'Le nouveau mot de passe doit contenir au moins 6 caractères.');
+
                     return $this->redirectToRoute('app_profile');
                 }
 
                 // Vérifier que les nouveaux mots de passe correspondent
                 if ($newPassword !== $newPasswordConfirm) {
                     $this->addFlash('error', 'Les nouveaux mots de passe ne correspondent pas.');
+
                     return $this->redirectToRoute('app_profile');
                 }
 

@@ -1,1 +1,0 @@
-{"version":2,"defects":[],"times":{"App\\Tests\\Entity\\GenerationTest::testGetterAndSetter":0.005,"App\\Tests\\Entity\\PlanTest::testGetterAndSetter":0,"App\\Tests\\Entity\\UserTest::testGetterAndSetter":0}}

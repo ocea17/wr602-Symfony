@@ -52,6 +52,7 @@ class Tool
     public function setName(string $name): static
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -63,6 +64,7 @@ class Tool
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
         return $this;
     }
 
@@ -74,6 +76,7 @@ class Tool
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -85,6 +88,7 @@ class Tool
     public function setActive(bool $active): static
     {
         $this->active = $active;
+
         return $this;
     }
 
@@ -98,15 +102,17 @@ class Tool
 
     public function addPlan(Plan $plan): static
     {
-        if (!$this->plans->contains($plan)) {
+        if (! $this->plans->contains($plan)) {
             $this->plans->add($plan);
         }
+
         return $this;
     }
 
     public function removePlan(Plan $plan): static
     {
         $this->plans->removeElement($plan);
+
         return $this;
     }
 
@@ -121,6 +127,7 @@ class Tool
     public function setRequiredPlan(?string $requiredPlan): static
     {
         $this->requiredPlan = $requiredPlan;
+
         return $this;
     }
 }

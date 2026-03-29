@@ -45,3 +45,10 @@ public/uploads/pdfs/
 /www/public/uploads/
 
 www/.env
+
+# IDE
+.idea/
+www/.env.local
+
+# PHPUnit
+www/.phpunit.cache/

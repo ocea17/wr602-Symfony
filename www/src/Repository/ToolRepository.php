@@ -17,7 +17,7 @@ class ToolRepository extends ServiceEntityRepository
     }
 
     /**
-     * Trouve un tool par son slug
+     * Trouve un tool par son slug.
      */
     public function findOneBySlug(string $slug): ?Tool
     {
@@ -25,7 +25,7 @@ class ToolRepository extends ServiceEntityRepository
     }
 
     /**
-     * Récupère tous les tools actifs
+     * Récupère tous les tools actifs.
      */
     public function findAllActive(): array
     {

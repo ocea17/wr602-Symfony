@@ -41,6 +41,7 @@ class HandleQueueCommand extends Command
 
         if (empty($pendingItems)) {
             $io->info('No pending items in queue.');
+
             return Command::SUCCESS;
         }
 
@@ -58,7 +59,7 @@ class HandleQueueCommand extends Command
 
                 $pdfContent = $this->generatePdf($item);
 
-                $filename = 'queue_' . $item->getId() . '_' . time() . '.pdf';
+                $filename = 'queue_'.$item->getId().'_'.time().'.pdf';
                 $filepath = $this->pdfService->savePdf($pdfContent, $filename);
 
                 $item->setStatus('completed');
@@ -66,7 +67,7 @@ class HandleQueueCommand extends Command
                 $item->setProcessedAt(new \DateTime());
                 $this->em->flush();
 
-                $processed++;
+                ++$processed;
                 $io->success(sprintf('Queue item #%d processed successfully!', $item->getId()));
             } catch (\Exception $e) {
                 $item->setStatus('failed');
@@ -74,12 +75,13 @@ class HandleQueueCommand extends Command
                 $item->setProcessedAt(new \DateTime());
                 $this->em->flush();
 
-                $failed++;
+                ++$failed;
                 $io->error(sprintf('Queue item #%d failed: %s', $item->getId(), $e->getMessage()));
             }
         }
 
         $io->success(sprintf('Processed: %d | Failed: %d', $processed, $failed));
+
         return Command::SUCCESS;
     }
 

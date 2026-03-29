@@ -6,8 +6,8 @@ use App\Repository\UserContactRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity(
     fields: ['user', 'email'],
@@ -116,7 +116,7 @@ class UserContact
 
     public function addGeneration(Generation $generation): static
     {
-        if (!$this->generations->contains($generation)) {
+        if (! $this->generations->contains($generation)) {
             $this->generations->add($generation);
             $generation->addUserContact($this);
         }

@@ -25,11 +25,11 @@ class PlanFixtures extends Fixture implements DependentFixtureInterface
         $freePlan->setActive(true);
         $freePlan->setLimitStorage(null);
         $freePlan->setStripePriceId(null);
-        
+
         $freePlan->addTool($this->getReference(ToolFixtures::TOOL_URL, Tool::class));
         $freePlan->addTool($this->getReference(ToolFixtures::TOOL_WYSIWYG, Tool::class));
         $freePlan->addTool($this->getReference(ToolFixtures::TOOL_TEXT, Tool::class));
-        
+
         $manager->persist($freePlan);
         $this->addReference(self::PLAN_FREE, $freePlan);
 
@@ -48,7 +48,7 @@ class PlanFixtures extends Fixture implements DependentFixtureInterface
         $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_WYSIWYG, Tool::class));
         $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_MERGE, Tool::class));
         $basicPlan->addTool($this->getReference(ToolFixtures::TOOL_TEXT, Tool::class));
-        
+
         $manager->persist($basicPlan);
         $this->addReference(self::PLAN_BASIC, $basicPlan);
 
@@ -70,7 +70,7 @@ class PlanFixtures extends Fixture implements DependentFixtureInterface
         $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_SCREENSHOT, Tool::class));
         $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_OFFICE, Tool::class));
         $premiumPlan->addTool($this->getReference(ToolFixtures::TOOL_TEXT, Tool::class));
-        
+
         $manager->persist($premiumPlan);
         $this->addReference(self::PLAN_PREMIUM, $premiumPlan);
 

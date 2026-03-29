@@ -9,13 +9,14 @@ class SymfonyStripeHttpClient implements ClientInterface
 {
     public function __construct(
         private HttpClientInterface $httpClient
-    ) {}
+    ) {
+    }
 
     public function request($method, $absUrl, $headers, $params, $hasFile)
     {
         $options = ['headers' => $headers];
 
-        if ($method === 'post') {
+        if ('post' === $method) {
             $options['body'] = $params;
         }
 
@@ -24,7 +25,7 @@ class SymfonyStripeHttpClient implements ClientInterface
         return [
             $response->getContent(false),
             $response->getStatusCode(),
-            $response->getHeaders(false)
+            $response->getHeaders(false),
         ];
     }
 }

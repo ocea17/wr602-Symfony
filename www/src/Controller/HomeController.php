@@ -4,12 +4,11 @@ namespace App\Controller;
 
 use App\Repository\GenerationRepository;
 use App\Repository\ToolRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
-class HomeController extends AbstractController
+class HomeController extends BaseController
 {
     private GenerationRepository $generationRepository;
     private ToolRepository $toolRepository;
@@ -21,10 +20,11 @@ class HomeController extends AbstractController
         $this->generationRepository = $generationRepository;
         $this->toolRepository = $toolRepository;
     }
+
     public function index(): Response
     {
-        $user = $this->getUser();
-        
+        $user = $this->getAuthenticatedUser();
+
         $todayStart = new \DateTime('today');
         $todayPdfs = $this->generationRepository->createQueryBuilder('g')
             ->select('COUNT(g.id)')

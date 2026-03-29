@@ -44,8 +44,9 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $session = $request->getSession();
         $redirectTo = $session->get('redirect_after_login');
 
-        if ($redirectTo === 'subscription') {
+        if ('subscription' === $redirectTo) {
             $session->remove('redirect_after_login');
+
             return new RedirectResponse($this->urlGenerator->generate('app_subscription_change'));
         }
 

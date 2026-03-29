@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Plan;
-use App\Entity\User;
 use App\Service\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,8 +17,9 @@ class PaymentController extends AbstractController
         Plan $plan,
         StripeService $stripeService,
     ): Response {
-        if ($plan->getStripePriceId() === null) {
+        if (null === $plan->getStripePriceId()) {
             $this->addFlash('info', 'Ce plan est gratuit, aucun paiement requis.');
+
             return $this->redirectToRoute('app_home');
         }
 
