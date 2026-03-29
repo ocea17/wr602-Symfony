@@ -7,14 +7,14 @@
     {% set hasAccess = is_granted('CONTACT_VIEW') %}
 
     <div class="relative min-h-[calc(100vh-169px)]">
-        {# Overlay modal pour free #}
+        {# Overlay modal pour FREE #}
         {% if not hasAccess %}
             <div class="absolute inset-0 bg-gray-900 bg-opacity-70 backdrop-blur-[2px] z-50 flex items-center justify-center px-4">
                 <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md mx-auto text-center">
                     <div class="mb-4">
                         <i data-lucide="lock" class="w-16 h-16 text-blue-500 mx-auto"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Fonctionnalité BASIC</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4"> Fonctionnalité BASIC</h2>
                     <p class="text-gray-600 mb-6">
                         Gérez vos contacts avec un abonnement <strong>BASIC</strong> ou <strong>PREMIUM</strong>
                     </p>
@@ -25,14 +25,12 @@
             </div>
         {% endif %}
 
-        {# Contenu flouté pour free #}
-        <div class="py-6 sm:py-10 max-w-7xl mx-auto px-4 sm:px-6 {% if not hasAccess %}filter blur-[1px] pointer-events-none select-none{% endif %}">
-
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Mes contacts</h1>
-                <a href="{{ path('app_contacts_new') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition">
-                    <i data-lucide="plus" class="w-5 h-5"></i>
-                    <span>Ajouter un contact</span>
+        {# Contenu (flouté) #}
+        <div class="py-10 max-w-7xl mx-auto px-6 {% if not hasAccess %}filter blur-[1px] pointer-events-none select-none{% endif %}">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">Mes contacts</h1>
+                <a href="{{ path('app_contacts_new') }}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition flex justify-center">
+                    <span class="flex items-center gap-2"><i data-lucide="plus" class="w-6 h-6"></i>Ajouter un contact</span>
                 </a>
             </div>
 
@@ -44,103 +42,79 @@
             {% endfor %}
 
             {% if contacts is empty %}
-                <div class="bg-white rounded-xl shadow-sm p-8 sm:p-12 text-center">
-                    <div class="flex justify-center mb-4">
-                        <i data-lucide="user" class="w-12 h-12 sm:w-16 sm:h-16 text-gray-400"></i>
-                    </div>
-                    <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Aucun contact</h3>
-                    <p class="text-sm sm:text-base text-gray-600 mb-6">Commencez par ajouter votre premier contact !</p>
-                    <a href="{{ path('app_contacts_new') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition">
-                        <i data-lucide="plus" class="w-5 h-5"></i>
-                        <span>Ajouter un contact</span>
+                <div class="bg-white rounded-xl shadow-sm p-12 text-center">
+                    <div class="text-6xl mb-4 flex justify-center"><i data-lucide="user" class="w-12 h-12 text-black-500"></i></div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Aucun contact</h3>
+                    <p class="text-gray-600 mb-6">Commencez par ajouter votre premier contact !</p>
+                    <a href="{{ path('app_contacts_new') }}" class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition">
+                        <span class="flex items-center gap-2"><i data-lucide="plus" class="w-6 h-6"></i>Ajouter un contact</span>
                     </a>
                 </div>
             {% else %}
-                {# Desktop: tableau - mobile: cards #}
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-                    {# Desktop tableau - mobile: caché #}
-                    <div class="hidden md:block">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-100 border-b">
-                            <tr>
-                                <th class="px-6 py-4 font-semibold text-gray-900">Nom</th>
-                                <th class="px-6 py-4 font-semibold text-gray-900">Prénom</th>
-                                <th class="px-6 py-4 font-semibold text-gray-900">Email</th>
-                                <th class="px-6 py-4 font-semibold text-gray-900">Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                            {% for contact in contacts %}
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="px-6 py-4 font-medium text-gray-900">
-                                        {{ contact.lastname }}
-                                    </td>
-                                    <td class="px-6 py-4 text-gray-700">
-                                        {{ contact.firstname }}
-                                    </td>
-                                    <td class="px-6 py-4 text-gray-600">
-                                        {{ contact.email }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <a href="{{ path('app_contacts_edit', {id: contact.id}) }}" class="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
-                                                <i data-lucide="pencil" class="w-4 h-4"></i>
-                                                <span>Modifier</span>
-                                            </a>
-                                            <form method="post" action="{{ path('app_contacts_delete', {id: contact.id}) }}" onsubmit="return confirm('Supprimer ce contact ?');">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contact.id) }}">
-                                                <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition">
-                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                                    <span>Supprimer</span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-100 border-b">
+                        <tr>
+                            <th class="px-6 py-4 font-semibold text-gray-900">Nom</th>
+                            <th class="px-6 py-4 font-semibold text-gray-900">Prénom</th>
+                            <th class="px-6 py-4 font-semibold text-gray-900">Email</th>
+                            <th class="px-6 py-4 font-semibold text-gray-900">Actions</th>
+                        </tr>
+                        </thead>
 
-                    {# Mobile: Cards en desktop: caché #}
-                    <div class="md:hidden divide-y divide-gray-200">
+                        <tbody class="divide-y divide-gray-200">
+
                         {% for contact in contacts %}
-                            <div class="p-4 hover:bg-gray-50 transition">
-                                {# Contact Info #}
-                                <div class="mb-3">
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                            {{ contact.firstname|first|upper }}{{ contact.lastname|first|upper }}
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-gray-900">{{ contact.firstname }} {{ contact.lastname }}</p>
-                                            <p class="text-sm text-gray-600">{{ contact.email }}</p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <tr class="hover:bg-gray-50 transition-colors">
 
-                                {# Actions #}
-                                <div class="grid grid-cols-2 gap-2">
-                                    <a href="{{ path('app_contacts_edit', {id: contact.id}) }}" class="flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm">
-                                        <i data-lucide="pencil" class="w-4 h-4"></i>
-                                        <span>Modifier</span>
-                                    </a>
-                                    <form method="post" action="{{ path('app_contacts_delete', {id: contact.id}) }}" onsubmit="return confirm('Supprimer ce contact ?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contact.id) }}">
-                                        <button type="submit" class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition text-sm">
-                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            <span>Supprimer</span>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+                                <td class="px-6 py-4 font-medium text-gray-900">
+                                    {{ contact.lastname }}
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-700">
+                                    {{ contact.firstname }}
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ contact.email }}
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+
+                                        <a href="{{ path('app_contacts_edit', {id: contact.id}) }}" class="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+
+                                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                                            Modifier
+
+                                        </a>
+
+                                        <form method="post" action="{{ path('app_contacts_delete', {id: contact.id}) }}" onsubmit="return confirm('Supprimer ce contact ?');">
+
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contact.id) }}">
+
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-2 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition">
+
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                Supprimer
+
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
+
+                            </tr>
                         {% endfor %}
-                    </div>
+
+                        </tbody>
+                    </table>
                 </div>
             {% endif %}
 
-            <div class="text-center mt-6 sm:mt-8">
-                <a href="{{ path('app_home') }}" class="text-blue-600 hover:text-blue-700 font-medium hover:underline text-sm sm:text-base">
+            <div class="text-center mt-8">
+                <a href="{{ path('app_home') }}" class="text-blue-600 hover:text-blue-700 font-medium hover:underline">
                     ← Retour au dashboard
                 </a>
             </div>

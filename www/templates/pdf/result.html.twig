@@ -22,7 +22,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {# Télécharger #}
                     <a href="{{ path('app_history_download', {id: generation.id}) }}"
-                        class="flex items-center justify-center gap-3 bg-blue-600 text-white px-6 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg">
+                       class="flex items-center justify-center gap-3 bg-blue-600 text-white px-6 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg">
                         <i data-lucide="download" class="w-5 h-5"></i>
                         <span class="font-semibold">Télécharger</span>
                     </a>
@@ -36,17 +36,17 @@
 
                     {# Retour #}
                     <a href="{{ path('app_pdf_index') }}"
-                        class="flex items-center justify-center gap-3 bg-gray-100 text-gray-700 px-6 py-4 rounded-xl hover:bg-gray-200 transition-all">
+                       class="flex items-center justify-center gap-3 bg-gray-100 text-gray-700 px-6 py-4 rounded-xl hover:bg-gray-200 transition-all">
                         <i data-lucide="arrow-left" class="w-5 h-5"></i>
                         <span class="font-semibold">Générer un nouveau PDF</span>
                     </a>
                 </div>
             </div>
 
-            {# Prévisualisation plus Partage #}
+            {# Prévisualisation + Partage #}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                {# Prévisualisation du pdf #}
+                {# Prévisualisation PDF #}
                 <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
                     <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
@@ -61,7 +61,7 @@
                     </div>
                 </div>
 
-                {# Sidebar: infos et partage #}
+                {# Sidebar : Infos + Partage #}
                 <div class="space-y-6">
 
                     {# Informations #}
@@ -92,34 +92,34 @@
                         </dl>
                     </div>
 
-                    {# Partage sur réseaux sociaux #}
+                    {# Partage réseaux sociaux #}
                     <div class="bg-white rounded-2xl shadow-lg p-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <i data-lucide="share-2" class="w-5 h-5 text-blue-600"></i>
                             Partager
                         </h3>
                         <div class="space-y-3">
-                            {# Whatsapp #}
+                            {# WhatsApp #}
                             <a href="https://wa.me/?text={{ 'J\'ai généré un PDF avec PDF Generator !'|url_encode }}"
-                                target="_blank"
-                                class="flex items-center gap-3 p-3 bg-green-50 text-green-700 rounded-xl hover:bg-green-100 transition-all">
+                               target="_blank"
+                               class="flex items-center gap-3 p-3 bg-green-50 text-green-700 rounded-xl hover:bg-green-100 transition-all">
                                 <i data-lucide="message-circle" class="w-5 h-5"></i>
                                 <span class="font-medium">WhatsApp</span>
                             </a>
 
-                            {# X (Twitter) #}
+                            {# Twitter #}
                             <a href="https://twitter.com/intent/tweet?text={{ 'Je viens de générer un PDF facilement !'|url_encode }}"
-                                target="_blank"
-                                class="flex items-center gap-3 p-3 bg-gray-100 text-black-700 rounded-xl hover:bg-black-100 transition-all">
-                                <i data-lucide="thumbs-up" class="w-5 h-5"></i>
-                                <span class="font-medium">X (Twitter)</span>
+                               target="_blank"
+                               class="flex items-center gap-3 p-3 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-all">
+                                <i data-lucide="twitter" class="w-5 h-5"></i>
+                                <span class="font-medium">Twitter</span>
                             </a>
 
-                            {# Linkedin #}
+                            {# LinkedIn #}
                             <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ app.request.uri|url_encode }}"
-                                target="_blank"
-                                class="flex items-center gap-3 p-3 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-all">
-                                <i data-lucide="briefcase" class="w-5 h-5"></i>
+                               target="_blank"
+                               class="flex items-center gap-3 p-3 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-all">
+                                <i data-lucide="linkedin" class="w-5 h-5"></i>
                                 <span class="font-medium">LinkedIn</span>
                             </a>
 
@@ -134,7 +134,7 @@
 
                     {# Historique #}
                     <a href="{{ path('app_history') }}"
-                        class="block bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                       class="block bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all">
                         <div class="flex items-center justify-between">
                             <div>
                                 <h3 class="font-bold text-lg">Voir tous mes PDFs</h3>
@@ -175,7 +175,7 @@
                             Destinataires
                         </label>
                         <a href="{{ path('app_contacts_new', {redirect_to: path('app_pdf_result', {id: generation.id})}) }}"
-                            class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium">
+                           class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium">
                             <i data-lucide="user-plus" class="w-4 h-4"></i>
                             Ajouter un contact
                         </a>
@@ -193,9 +193,9 @@
                             {% for contact in contacts %}
                                 <label class="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-blue-50 cursor-pointer transition-all">
                                     <input type="checkbox"
-                                            name="contacts[]"
-                                            value="{{ contact.id }}"
-                                            class="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500">
+                                           name="contacts[]"
+                                           value="{{ contact.id }}"
+                                           class="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500">
                                     <div class="flex-1">
                                         <div class="font-medium text-gray-900">
                                             {{ contact.firstname }} {{ contact.lastname }}
@@ -261,6 +261,8 @@
                 setTimeout(() => toast.remove(), 3000);
             });
         }
+
+        // Initialise les icônes Lucide
         lucide.createIcons();
     </script>
 {% endblock %}
