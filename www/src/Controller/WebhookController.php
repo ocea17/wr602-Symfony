@@ -52,7 +52,7 @@ class WebhookController extends AbstractController
                 
                 $user->setPlan($plan);
 
-                // ✅ Sauvegarder le Customer ID Stripe
+                // Sauvegarder le customer id stripe
                 if (!$user->getStripeCustomerId() && isset($session->customer)) {
                     $user->setStripeCustomerId($session->customer);
                 }
@@ -62,7 +62,7 @@ class WebhookController extends AbstractController
                 break;
 
             case 'customer.subscription.deleted':
-                // L'abonnement a été annulé
+                // l'abonnement a été annulé
                 $subscription = $event->data->object;
                 $userId = $subscription->metadata->user_id ?? null;
 
