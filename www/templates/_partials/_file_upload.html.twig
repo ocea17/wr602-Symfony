@@ -8,9 +8,9 @@
     </label>
 
     <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-blue-400 transition-all bg-white"
-         ondragover="event.preventDefault(); this.classList.add('border-blue-500', 'bg-blue-50')"
-         ondragleave="this.classList.remove('border-blue-500', 'bg-blue-50')"
-         ondrop="handleDrop(event, '{{ inputId }}'); this.classList.remove('border-blue-500', 'bg-blue-50')">
+        ondragover="event.preventDefault(); this.classList.add('border-blue-500', 'bg-blue-50')"
+        ondragleave="this.classList.remove('border-blue-500', 'bg-blue-50')"
+        ondrop="handleDrop(event, '{{ inputId }}'); this.classList.remove('border-blue-500', 'bg-blue-50')">
 
         {# Icône #}
         <div class="mb-4 flex justify-center">
@@ -22,20 +22,20 @@
             Cliquez pour parcourir ou glissez un fichier ici
         </p>
 
-        {# Formats acceptés #}
+        {# Les formats acceptés #}
         <p class="text-sm text-gray-500">
             Formats acceptés : {{ formats }}
         </p>
 
         {# Input caché #}
         <input type="file"
-               id="{{ inputId }}"
-               name="{{ name }}"
-               accept="{{ accept }}"
-               {% if multiple %}multiple{% endif %}
-                {% if required %}required{% endif %}
-               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-               onchange="displayFileName('{{ inputId }}')">
+            id="{{ inputId }}"
+            name="{{ name }}"
+            accept="{{ accept }}"
+            {% if multiple %}multiple{% endif %}
+            {% if required %}required{% endif %}
+            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            onchange="displayFileName('{{ inputId }}')">
     </div>
 
     {# Nom du fichier sélectionné #}
