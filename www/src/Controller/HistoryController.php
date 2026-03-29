@@ -6,12 +6,11 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use App\Repository\UserContactRepository;
 use App\Repository\GenerationRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class HistoryController extends AbstractController
+class HistoryController extends BaseController
 {
     private GenerationRepository $generationRepository;
     private EntityManagerInterface $em;
@@ -33,7 +32,7 @@ class HistoryController extends AbstractController
         $limit = 10;
         $offset = ($page - 1) * $limit;
 
-        $user = $this->getUser();
+        $user = $this->getAuthenticatedUser();
 
         $totalGenerations = $this->generationRepository->count(['user' => $user]);
 

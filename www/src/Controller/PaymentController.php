@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Plan;
-use App\Entity\User;
 use App\Service\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

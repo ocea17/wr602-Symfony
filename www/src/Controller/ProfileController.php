@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Repository\GenerationRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[IsGranted('ROLE_USER')]
-class ProfileController extends AbstractController
+class ProfileController extends BaseController
 {
     private GenerationRepository $generationRepository;
     private EntityManagerInterface $em;
@@ -29,9 +28,9 @@ class ProfileController extends AbstractController
 
     public function index(): Response
     {
-        $user = $this->getUser();
+        $user = $this->getAuthenticatedUser();
 
-        // Total des PDFs
+        // Total des pdf
         $totalPdfs = $this->generationRepository->count(['user' => $user]);
 
         $todayStart = new \DateTime('today');
@@ -58,7 +57,7 @@ class ProfileController extends AbstractController
         if ($request->isMethod('POST')) {
             $color = $request->request->get('color');
 
-            $user = $this->getUser();
+            $user = $this->getAuthenticatedUser();
             $user->setAvatarColor($color);
 
             $this->em->flush();
@@ -83,7 +82,7 @@ class ProfileController extends AbstractController
                 return $this->redirectToRoute('app_profile');
             }
 
-            $user = $this->getUser();
+            $user = $this->getAuthenticatedUser();
             $user->setFirstname($firstname);
             $user->setLastname($lastname);
 

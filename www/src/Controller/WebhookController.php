@@ -52,7 +52,7 @@ class WebhookController extends AbstractController
                 
                 $user->setPlan($plan);
 
-                // ✅ Sauvegarder le Customer ID Stripe
+                // Sauvegarder le customer id stripe
                 if (!$user->getStripeCustomerId() && isset($session->customer)) {
                     $user->setStripeCustomerId($session->customer);
                 }

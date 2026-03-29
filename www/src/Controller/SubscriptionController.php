@@ -4,20 +4,19 @@ namespace App\Controller;
 
 use App\Repository\PlanRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
-class SubscriptionController extends AbstractController
+class SubscriptionController extends BaseController
 {
     public function change(
         Request $request,
         PlanRepository $planRepository,
         EntityManagerInterface $em
     ): Response {
-        $user = $this->getUser();
+        $user = $this->getAuthenticatedUser();
         $currentPlan = $user->getPlan();
 
         // Récupère tous les plans disponibles

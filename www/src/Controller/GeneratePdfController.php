@@ -3,17 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Generation;
-use App\Entity\Tool;
 use App\Repository\GenerationRepository;
 use App\Repository\ToolRepository;
 use App\Service\PdfGeneratorService;
-use App\Entity\PdfQueue;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class GeneratePdfController extends AbstractController
+class GeneratePdfController extends BaseController
 {
     private PdfGeneratorService $pdfService;
     private EntityManagerInterface $em;
@@ -46,7 +43,7 @@ class GeneratePdfController extends AbstractController
     private function checkDailyLimit(): bool
     {
 
-        $user = $this->getUser();
+        $user = $this->getAuthenticatedUser();
         $plan = $user->getPlan();
 
         if ($plan->getLimitGeneration() === null) {
@@ -68,7 +65,7 @@ class GeneratePdfController extends AbstractController
 
     public function index(): Response
     {
-        $user = $this->getUser();
+        $user = $this->getAuthenticatedUser();
 
         $todayStart = new \DateTime('today');
         $todayPdfs = $this->generationRepository->createQueryBuilder('g')
@@ -105,7 +102,6 @@ class GeneratePdfController extends AbstractController
             }
 
             try {
-                // ✅ Génération immédiate
                 $pdfContent = match ($slug) {
                     'url' => $this->generateFromUrl($request),
                     'html' => $this->generateFromFile($request),
@@ -121,7 +117,7 @@ class GeneratePdfController extends AbstractController
                 $filename = 'pdfgenerator_' . $slug . '_' . time() . '.pdf';
                 $filepath = $this->pdfService->savePdf($pdfContent, $filename);
 
-                $user = $this->getUser();
+                $user = $this->getAuthenticatedUser();
                 $plan = $user->getPlan();
 
                 if ($plan->getLimitStorage() !== null) {
@@ -352,24 +348,6 @@ class GeneratePdfController extends AbstractController
             'contacts' => $contacts,
         ]);
     }
-    private function prepareQueueParameters(string $type, Request $request): array
-    {
-        return match ($type) {
-            'url' => ['url' => $request->request->get('url')],
-            'html' => ['html_content' => file_get_contents($request->files->get('file')->getPathname())],
-            'text' => ['text_file' => $request->files->get('file')->getPathname()],
-            'office' => ['office_file' => $request->files->get('file')->getPathname()],
-            'screenshot' => ['image_path' => $request->files->get('image')->getPathname()],
-            'merge' => ['files' => $this->handleMergeFiles($request)],
-            'split' => [
-                'file' => $request->files->get('file')->getPathname(),
-                'start_page' => (int) $request->request->get('start_page'),
-                'end_page' => (int) $request->request->get('end_page'),
-            ],
-            default => [],
-        };
-    }
-
     private function handleMergeFiles(Request $request): array
     {
         $files = $request->files->get('files');

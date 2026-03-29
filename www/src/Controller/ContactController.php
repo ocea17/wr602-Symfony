@@ -6,13 +6,12 @@ use App\Entity\UserContact;
 use App\Form\UserContactType;
 use App\Repository\UserContactRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
-class ContactController extends AbstractController
+class ContactController extends BaseController
 {
     private EntityManagerInterface $em;
     private UserContactRepository $contactRepository;
@@ -27,7 +26,7 @@ class ContactController extends AbstractController
 
     public function index(): Response
     {
-        $user = $this->getUser();
+        $user = $this->getAuthenticatedUser();
         $contacts = $this->contactRepository->findBy(
             ['user' => $user],
             ['lastname' => 'ASC']
@@ -40,8 +39,11 @@ class ContactController extends AbstractController
 
     public function new(Request $request): Response
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getAuthenticatedUser();
+
         $contact = new UserContact();
-        $contact->setUser($this->getUser());
+        $contact->setUser($user);
         $form = $this->createForm(UserContactType::class, $contact);
         $form->handleRequest($request);
 
