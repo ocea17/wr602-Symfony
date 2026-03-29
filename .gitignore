@@ -45,3 +45,6 @@ public/uploads/pdfs/
 /www/public/uploads/
 
 www/.env
+
+# IDE
+.idea/
