@@ -52,8 +52,7 @@ class SetupIntentService extends \Stripe\Service\AbstractService
      *
      * Otherwise, it will transition to the <code>requires_action</code> status and
      * suggest additional actions via <code>next_action</code>. If setup fails, the
-     * SetupIntent will transition to the <code>requires_payment_method</code> status
-     * or the <code>canceled</code> status if the confirmation limit is reached.
+     * SetupIntent will transition to the <code>requires_payment_method</code> status.
      *
      * @param string $id
      * @param null|array $params

@@ -98,7 +98,7 @@ class CreditNoteService extends \Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection<\Stripe\CreditNoteLineItem>
+     * @return \Stripe\Collection<\Stripe\CreditNote>
      */
     public function previewLines($params = null, $opts = null)
     {

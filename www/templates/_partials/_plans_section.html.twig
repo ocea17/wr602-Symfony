@@ -1,4 +1,4 @@
-{# Section des plans - Réutilisable #}
+{# Section des plans #}
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
     {% for plan in plans %}
         <div class="bg-white rounded-2xl shadow-xl p-8
@@ -11,7 +11,7 @@
         {% endif %}
         hover:shadow-2xl transition transform hover:-translate-y-2">
 
-            {# Badge "Le plus populaire" pour Basic #}
+            {# Badge le plus populaire pour basic #}
             {% if plan.name == 'BASIC' %}
                 <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-full text-xs font-bold shadow-lg">
@@ -20,7 +20,7 @@
                 </div>
             {% endif %}
 
-            {# Badge "Plan actuel" #}
+            {# Badge plan actuel #}
             {% if is_logged_in and user_plan == plan.name %}
                 <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span class="bg-blue-500 text-white px-6 py-2 rounded-full text-xs font-bold shadow-lg">
@@ -29,7 +29,7 @@
                 </div>
             {% endif %}
 
-            {# Icône + Badge plan #}
+            {# Icône et badge plan #}
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
                     {# Icône #}
@@ -41,7 +41,7 @@
                         <i data-lucide="rocket" class="w-6 h-6 text-purple-500"></i>
                     {% endif %}
 
-                    {# Badge nom du plan #}
+                    {# Badge avec nom du plan #}
                     <span class="px-3 py-1 rounded-md text-sm font-semibold
                     {% if plan.name == 'FREE' %}bg-gray-100 text-gray-700
                     {% elseif plan.name == 'BASIC' %}bg-blue-200 text-blue-700
@@ -78,7 +78,7 @@
                 </span>
                 </li>
 
-                {# FREE #}
+                {# Free #}
                 {% if plan.name == 'FREE' %}
                     <li class="flex items-center gap-2 text-gray-400">
                         <span class="text-red-500 font-bold">✗</span>
@@ -118,7 +118,7 @@
                     </li>
                 {% endif %}
 
-                {# BASIC #}
+                {# Basic #}
                 {% if plan.name == 'BASIC' %}
                     <li class="flex items-center gap-2 text-gray-700">
                         <span class="text-green-500 font-bold">✓</span>
@@ -162,7 +162,7 @@
                     </li>
                 {% endif %}
 
-                {# PREMIUM #}
+                {# Premium #}
                 {% if plan.name == 'PREMIUM' %}
                     <li class="flex items-center gap-2 text-gray-700">
                         <span class="text-green-500 font-bold">✓</span>
@@ -210,13 +210,13 @@
             {# Bouton #}
             <div class="mt-8">
                 {% if is_logged_in %}
-                    {# User connecté #}
+                    {# User qui est connecté #}
                     {% if user_plan == plan.name %}
                         <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-500 font-semibold rounded-lg cursor-not-allowed">
                             Plan actuel
                         </button>
                     {% else %}
-                        <a href="{{ path('app_subscription_change') }}" class="block w-full px-6 py-3
+                        <a href="{{ path('app_subscription_subscribe', {planId: plan.id}) }}" class="block w-full px-6 py-3
                         {% if plan.name == 'PREMIUM' %}bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
                         {% elseif plan.name == 'BASIC' %}bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600
                         {% else %}bg-gray-600 hover:bg-gray-700{% endif %}
@@ -225,7 +225,7 @@
                         </a>
                     {% endif %}
                 {% else %}
-                    {# User NON connecté #}
+                    {# User qui n'est pas connecté #}
                     {% if plan.name == 'FREE' %}
                         <a href="{{ path('app_register') }}" class="block w-full px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg text-center transition shadow-lg transform hover:scale-105">
                             Créer un compte

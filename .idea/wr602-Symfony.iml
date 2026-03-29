@@ -6,6 +6,13 @@
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="App\Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/www/src" isTestSource="false" packagePrefix="App\" />
       <sourceFolder url="file://$MODULE_DIR$/www/tests" isTestSource="true" packagePrefix="App\Tests\" />
+      <excludeFolder url="file://$MODULE_DIR$/www/vendor/guzzlehttp/guzzle" />
+      <excludeFolder url="file://$MODULE_DIR$/www/vendor/guzzlehttp/promises" />
+      <excludeFolder url="file://$MODULE_DIR$/www/vendor/guzzlehttp/psr7" />
+      <excludeFolder url="file://$MODULE_DIR$/www/vendor/psr/http-client" />
+      <excludeFolder url="file://$MODULE_DIR$/www/vendor/psr/http-factory" />
+      <excludeFolder url="file://$MODULE_DIR$/www/vendor/psr/http-message" />
+      <excludeFolder url="file://$MODULE_DIR$/www/vendor/ralouphie/getallheaders" />
       <excludeFolder url="file://$MODULE_DIR$/www/vendor/stripe/stripe-php" />
     </content>
     <orderEntry type="inheritedJdk" />
