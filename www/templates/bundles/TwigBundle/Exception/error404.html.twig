@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page non trouvée - PDF Generator{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen flex items-center justify-center px-4 py-16">
+        <div class="max-w-2xl mx-auto text-center">
+            {# Illustration 404 #}
+            <div class="mb-8">
+                <div class="inline-flex items-center justify-center w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mb-6">
+                    <i data-lucide="search-x" class="w-16 h-16 sm:w-20 sm:h-20 text-white"></i>
+                </div>
+            </div>
+
+            {# Titre #}
+            <h1 class="text-6xl sm:text-8xl font-bold text-gray-900 mb-4">404</h1>
+            <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800 mb-4">Page non trouvée</h2>
+            
+            {# Description #}
+            <p class="text-base sm:text-lg text-gray-600 mb-8 max-w-md mx-auto">
+                Désolé, la page que vous recherchez n'existe pas ou a été déplacée.
+            </p>
+
+            {# Boutons d'action #}
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ path('app_home') }}" 
+                   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition transform hover:scale-105">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    <span>Retour à l'accueil</span>
+                </a>
+                
+                <a href="{{ path('app_pdf_index') }}" 
+                   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold rounded-lg transition">
+                    <i data-lucide="file-plus" class="w-5 h-5"></i>
+                    <span>Générer un PDF</span>
+                </a>
+            </div>
+
+            {# Liens utiles #}
+            <div class="mt-12 pt-8 border-t border-gray-200">
+                <p class="text-sm text-gray-500 mb-4">Liens utiles :</p>
+                <div class="flex flex-wrap justify-center gap-4 text-sm">
+                    <a href="{{ path('app_history') }}" class="text-blue-600 hover:underline">Historique</a>
+                    <a href="{{ path('app_contacts_index') }}" class="text-blue-600 hover:underline">Contacts</a>
+                    <a href="{{ path('app_subscription_change') }}" class="text-blue-600 hover:underline">Tarifs</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
