@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accès refusé - PDF Generator{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen flex items-center justify-center px-4 py-16">
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="mb-8">
+                <div class="inline-flex items-center justify-center w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-red-500 to-orange-600 rounded-full mb-6">
+                    <i data-lucide="lock" class="w-16 h-16 sm:w-20 sm:h-20 text-white"></i>
+                </div>
+            </div>
+
+            <h1 class="text-6xl sm:text-8xl font-bold text-gray-900 mb-4">403</h1>
+            <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800 mb-4">Accès refusé</h2>
+            
+            <p class="text-base sm:text-lg text-gray-600 mb-8 max-w-md mx-auto">
+                Vous n'avez pas les permissions nécessaires pour accéder à cette page.
+            </p>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 max-w-md mx-auto">
+                <div class="flex items-start gap-3">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"></i>
+                    <p class="text-sm text-gray-700 text-left">
+                        Cette fonctionnalité nécessite un abonnement <strong>BASIC</strong> ou <strong>PREMIUM</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ path('app_subscription_change') }}" 
+                   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition transform hover:scale-105">
+                    <i data-lucide="credit-card" class="w-5 h-5"></i>
+                    <span>Voir les abonnements</span>
+                </a>
+                
+                <a href="{{ path('app_home') }}" 
+                   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold rounded-lg transition">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    <span>Retour à l'accueil</span>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
