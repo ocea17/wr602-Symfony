@@ -3,93 +3,131 @@
 {% block title %}Connexion - PDF Generator{% endblock %}
 
 {% block body %}
-    <div class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-5">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-12">
+{# Header public #}
+<header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+        <div class="flex justify-between items-center">
             {# Logo #}
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-500 rounded-xl mb-3">
-                    <svg class="w-8 h-8 fill-current text-white"  viewBox="0 0 24 24">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
-                        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
-                    </svg>
+            <a href="{{ path('app_home_public') }}" class="flex items-center gap-2 sm:gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <i data-lucide="file-text" class="w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-900">PDF Generator</h1>
-                <p class="text-sm text-gray-500 mt-1">Convertissez vos documents facilement</p>
-            </div>
+                <span class="text-base sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    PDF Generator
+                </span>
+            </a>
 
-            <h2 class="text-2xl font-semibold text-center text-gray-900 mb-6">Connexion</h2>
-
-            {# Messages d'erreur #}
-            {% if error %}
-                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
-                    {{ error.messageKey|trans(error.messageData, 'security') }}
-                </div>
-            {% endif %}
-
-            {# Messages flash #}
-            {% for message in app.flashes('success') %}
-                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4">
-                    {{ message }}
-                </div>
-            {% endfor %}
-
-            <form method="post">
-                <div class="mb-5">
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value="{{ last_username }}"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                            placeholder="votre@email.com"
-                            required
-                    >
-                </div>
-
-                <div class="mb-5">
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
-                    <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                            placeholder="••••••••"
-                            required
-                    >
-                </div>
-
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                <button
-                        type="submit"
-                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-[1.02]"
-                >
+            {# Navigation #}
+            <div class="flex items-center gap-2 sm:gap-4">
+                <a href="{{ path('app_login') }}" class="text-sm sm:text-base text-gray-700 hover:text-blue-600 font-medium transition px-3 sm:px-0">
                     Se connecter
-                </button>
-
-                <div class="text-center mt-4">
-                    <a href="{{ path('app_forgot_password') }}" class="text-sm text-blue-500 hover:text-blue-600 hover:underline">
-                        Mot de passe oublié ?
-                    </a>
-                </div>
-            </form>
-
-            <div class="relative my-6">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-300"></div>
-                </div>
-                <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-white text-gray-500">ou</span>
-                </div>
-            </div>
-
-            <div class="text-center text-sm text-gray-600">
-                Pas encore de compte ?
-                <a href="{{ path('app_register') }}" class="text-blue-500 font-semibold hover:text-blue-600 hover:underline">
-                    S'inscrire
+                </a>
+                <a href="{{ path('app_register') }}" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-lg sm:rounded-xl transition shadow-lg hover:shadow-xl text-sm sm:text-base">
+                    <span class="hidden sm:inline">Créer un compte</span>
+                    <span class="sm:hidden">Inscription</span>
                 </a>
             </div>
         </div>
     </div>
+</header>
+
+{# Formulaire de connexion #}
+<div class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-5">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+        {# En-tête du formulaire #}
+        <div class="text-center mb-8">
+            <div class="flex justify-center mb-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <i data-lucide="file-text" class="w-7 h-7 text-white"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">PDF Generator</h1>
+            <p class="text-sm text-gray-500 mt-1">Connectez-vous à votre compte</p>
+        </div>
+
+        <h2 class="text-2xl font-semibold text-center text-gray-900 mb-6">Connexion</h2>
+
+        {# Messages flash #}
+        {% if error %}
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+
+        {% if app.user %}
+            <div class="mb-4 text-center text-gray-600">
+                Vous êtes connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>
+                <a href="{{ path('app_logout') }}" class="text-blue-500 hover:underline">Se déconnecter</a>
+            </div>
+        {% endif %}
+
+        <form method="post" action="{{ path('app_login') }}">
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input
+                    type="email"
+                    id="username"
+                    name="_username"
+                    value="{{ last_username }}"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    placeholder="votre@email.com"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="_password"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    placeholder="••••••••"
+                    required
+                >
+            </div>
+
+            <div class="flex items-center justify-between mb-6">
+                <label class="flex items-center">
+                    <input
+                        type="checkbox"
+                        name="_remember_me"
+                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    >
+                    <span class="ml-2 text-sm text-gray-600">Se souvenir de moi</span>
+                </label>
+
+                <a href="{{ path('app_forgot_password') }}" class="text-sm text-blue-500 hover:text-blue-600 hover:underline">
+                    Mot de passe oublié ?
+                </a>
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <button
+                type="submit"
+                class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-[1.02]"
+            >
+                Se connecter
+            </button>
+        </form>
+
+        <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-300"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white text-gray-500">ou</span>
+            </div>
+        </div>
+
+        <div class="text-center text-sm text-gray-600">
+            Pas encore de compte ?
+            <a href="{{ path('app_register') }}" class="text-blue-500 font-semibold hover:text-blue-600 hover:underline">
+                Créer un compte
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}

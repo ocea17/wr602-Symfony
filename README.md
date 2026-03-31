@@ -10,6 +10,8 @@
 
 Application web permettant de générer des PDF à partir de différentes sources : URL, HTML, formulaires, fichiers Office, images, etc. Système d'abonnement avec 3 plans (FREE, BASIC, PREMIUM) et intégration Stripe pour les paiements.
 
+[![Voir PDF Generator en ligne](https://img.shields.io/badge/Accéder%20au%20site-PDF%20Generator-green)](https://pdfgenerator.oceaneleite.fr/)
+
 ## Fonctionnalités
 
 ### Génération de PDF
@@ -222,7 +224,7 @@ docker exec -it symfony-web-2026 composer audit
 -  **Architecture** : BaseController pour type-safe authentication
 -  **Documentation** : SECURITY.md, README.md
 
-## 🔐 Sécurité
+## Sécurité
 
 Voir [SECURITY.md](SECURITY.md) pour les détails complets.
 
