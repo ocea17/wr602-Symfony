@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\UserContact;
@@ -39,28 +38,30 @@ class ContactController extends BaseController
 
     public function new(Request $request): Response
     {
-        /** @var \App\Entity\User $user */
-        $user = $this->getAuthenticatedUser();
-
         $contact = new UserContact();
-        $contact->setUser($user);
         $form = $this->createForm(UserContactType::class, $contact);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getAuthenticatedUser();
+            $contact->setUser($user);
+
             $this->em->persist($contact);
             $this->em->flush();
-            $this->addFlash('success', 'Contact ajouté avec succès !');
 
-            $redirectTo = $request->query->get('redirect_to');
-            if ($redirectTo) {
-                return $this->redirect($redirectTo);
+            $this->addFlash('success', 'Contact ajouté avec succés !');
+
+            // Redirection conditionnelle
+            $redirect = $request->query->get('redirect');
+            if ($redirect) {
+                return $this->redirectToRoute($redirect);
             }
 
             return $this->redirectToRoute('app_contacts_index');
         }
 
         return $this->render('contact/new.html.twig', [
+            'contact' => $contact,
             'form' => $form,
         ]);
     }
@@ -76,9 +77,7 @@ class ContactController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->flush();
-
-            $this->addFlash('success', 'Contact modifié avec succès !');
-
+            $this->addFlash('success', 'Contact modifi� avec succ�s !');
             return $this->redirectToRoute('app_contacts_index');
         }
 
@@ -97,8 +96,7 @@ class ContactController extends BaseController
         if ($this->isCsrfTokenValid('delete'.$contact->getId(), $request->request->get('_token'))) {
             $this->em->remove($contact);
             $this->em->flush();
-
-            $this->addFlash('success', 'Contact supprimé avec succès !');
+            $this->addFlash('success', 'Contact supprim� avec succ�s !');
         }
 
         return $this->redirectToRoute('app_contacts_index');

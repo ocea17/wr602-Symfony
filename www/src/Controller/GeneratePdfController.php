@@ -262,17 +262,21 @@ class GeneratePdfController extends BaseController
     }
 
     private function generateFromScreenshot(Request $request): string
-    {
-        $uploadedFile = $request->files->get('image');
+    {$uploadedFile = $request->files->get('image');
 
-        if (! $uploadedFile) {
-            throw new \Exception('Aucune image uploadée');
-        }
+    if (!$uploadedFile) {
+        throw new \Exception('Aucune image uploadée');
+    }
 
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        if (! in_array($uploadedFile->getMimeType(), $allowedTypes)) {
-            throw new \Exception('Type de fichier non autorisé. Formats acceptés : JPG, PNG, GIF, WEBP');
-        }
+    // ⬇️ AJOUTE CE DEBUG
+    error_log('Image uploaded: ' . $uploadedFile->getClientOriginalName());
+    error_log('Mime type: ' . $uploadedFile->getMimeType());
+    error_log('Size: ' . $uploadedFile->getSize());
+
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!in_array($uploadedFile->getMimeType(), $allowedTypes)) {
+        throw new \Exception('Type de fichier non autorisé. Formats acceptés : JPG, PNG, GIF, WEBP');
+    }
 
         $tempPath = sys_get_temp_dir().'/'.uniqid().'.'.$uploadedFile->guessExtension();
         $uploadedFile->move(dirname($tempPath), basename($tempPath));
