@@ -22,7 +22,7 @@
                 </div>
             {% endfor %}
 
-            {# Bannière limite atteinte #}
+            {# Bannière de limite atteinte #}
             {% if today_pdfs >= (app.user.plan.limitGeneration ?? 999) %}
                 <div class="bg-red-50 border-2 border-red-200 rounded-lg p-6 mb-8 flex items-center gap-4">
                     <div class="text-4xl">⚠️</div>

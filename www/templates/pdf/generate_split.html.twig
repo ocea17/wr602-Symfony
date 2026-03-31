@@ -18,11 +18,11 @@
                 <form method="post" enctype="multipart/form-data" data-turbo="false">
                     <div class="mb-6">
                         {{ include('_partials/_file_upload.html.twig', {
-                            name: 'files[]',
+                            name: 'file',
                             accept: '.pdf',
                             label: 'Sélectionnez plusieurs PDFs',
                             formats: '.pdf',
-                            multiple: true,
+                            multiple: false,
                             required: true
                         }) }}
                     </div>

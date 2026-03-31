@@ -216,12 +216,12 @@
                             Plan actuel
                         </button>
                     {% else %}
-                        <a href="{{ path('app_subscription_change') }}" class="block w-full px-6 py-3
+                        <a href="{{ path('app_payment_checkout', {id: plan.id}) }}" class="block w-full px-6 py-3
                         {% if plan.name == 'PREMIUM' %}bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
                         {% elseif plan.name == 'BASIC' %}bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600
                         {% else %}bg-gray-600 hover:bg-gray-700{% endif %}
                         text-white font-semibold rounded-lg text-center transition shadow-lg transform hover:scale-105">
-                            Changer de plan
+                            S'abonner
                         </a>
                     {% endif %}
                 {% else %}

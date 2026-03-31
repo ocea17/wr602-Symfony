@@ -3,36 +3,33 @@
 {% block title %}Fichier HTML vers PDF - PDF Generator{% endblock %}
 
 {% block body %}
-
-    <div class="py-10">
-        <div class="max-w-2xl mx-auto px-6">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Fichier HTML vers PDF</h1>
-            <p class="text-gray-600 mb-8">Téléverser un fichier HTML pour le convertir</p>
+    <div class="py-6 sm:py-10">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Fichier HTML vers PDF</h1>
+            <p class="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">Téléverser un fichier HTML pour le convertir</p>
 
             {% for message in app.flashes('error') %}
-                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm sm:text-base">
                     {{ message }}
                 </div>
             {% endfor %}
 
-            <div class="bg-white rounded-xl shadow-sm p-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 sm:p-8">
                 <form method="post" enctype="multipart/form-data" data-turbo="false">
                     <div class="mb-6">
-
-                            {{ include('_partials/_file_upload.html.twig', {
-                                name: 'files[]',
-                                accept: '.html,.htm',
-                                label: 'Fichier HTML',
-                                formats: 'Formats acceptés : .html, .htm (max 10 MB)',
-                                multiple: true,
-                                required: true
-                            }) }}
-
+                        {{ include('_partials/_file_upload.html.twig', {
+                            name: 'file',
+                            accept: '.html,.htm',
+                            label: 'Fichier HTML',
+                            formats: 'Formats acceptés : .html, .htm (max 10 MB)',
+                            multiple: false,
+                            required: true
+                        }) }}
                     </div>
 
                     <button
-                            type="submit"
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition transform hover:scale-105"
+                        type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition transform hover:scale-105 text-sm sm:text-base"
                     >
                         Générer le PDF
                     </button>
@@ -42,7 +39,7 @@
             {{ include('_partials/pdf_benefits.html.twig') }}
 
             <div class="text-center mt-6">
-                <a href="{{ path('app_pdf_index') }}" class="text-blue-600 hover:text-blue-700 font-medium hover:underline">
+                <a href="{{ path('app_pdf_index') }}" class="text-sm sm:text-base text-blue-600 hover:text-blue-700 font-medium hover:underline">
                     ← Choisir un autre mode
                 </a>
             </div>

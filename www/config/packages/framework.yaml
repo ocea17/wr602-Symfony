@@ -2,12 +2,17 @@
 framework:
     secret: '%env(APP_SECRET)%'
     default_locale: fr
-
     # Note that the session will be started ONLY if you read or write from it.
     session: true
-
     #esi: true
     #fragments: true
+    
+    # Force HTTPS et trust proxy
+    router:
+        default_uri: 'https://pdfgenerator.oceaneleite.fr'
+    
+    trusted_proxies: '127.0.0.1,REMOTE_ADDR'
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port']
 
 when@test:
     framework:
