@@ -1,0 +1,266 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PDF généré avec succès{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4">
+        <div class="max-w-6xl mx-auto">
+
+            {# Message de succès #}
+            <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                        <i data-lucide="check-circle" class="w-8 h-8 text-green-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">PDF généré avec succès !</h1>
+                        <p class="text-gray-600 mt-1">Votre document est prêt</p>
+                    </div>
+                </div>
+
+                {# Actions principales #}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {# Télécharger #}
+                    <a href="{{ path('app_history_download', {id: generation.id}) }}"
+                        class="flex items-center justify-center gap-3 bg-blue-600 text-white px-6 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg">
+                        <i data-lucide="download" class="w-5 h-5"></i>
+                        <span class="font-semibold">Télécharger</span>
+                    </a>
+
+                    {# Envoyer par email #}
+                    <button onclick="openSendModal({{ generation.id }})"
+                            class="flex items-center justify-center gap-3 bg-indigo-600 text-white px-6 py-4 rounded-xl hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg">
+                        <i data-lucide="mail" class="w-5 h-5"></i>
+                        <span class="font-semibold">Envoyer par email</span>
+                    </button>
+
+                    {# Retour #}
+                    <a href="{{ path('app_pdf_index') }}"
+                        class="flex items-center justify-center gap-3 bg-gray-100 text-gray-700 px-6 py-4 rounded-xl hover:bg-gray-200 transition-all">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        <span class="font-semibold">Générer un nouveau PDF</span>
+                    </a>
+                </div>
+            </div>
+
+            {# Prévisualisation plus Partage #}
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                {# Prévisualisation du pdf #}
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
+                        Prévisualisation
+                    </h2>
+                    <div class="bg-gray-100 rounded-xl overflow-hidden" style="height: 600px;">
+                        <iframe
+                                src="{{ asset(generation.file) }}"
+                                class="w-full h-full"
+                                title="Prévisualisation du PDF"
+                        ></iframe>
+                    </div>
+                </div>
+
+                {# Sidebar: infos et partage #}
+                <div class="space-y-6">
+
+                    {# Informations #}
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
+                            Informations
+                        </h3>
+                        <dl class="space-y-3 text-sm">
+                            <div>
+                                <dt class="text-gray-600 font-medium">Nom du fichier</dt>
+                                <dd class="text-gray-900 mt-1 font-mono text-xs bg-gray-50 px-3 py-2 rounded">
+                                    {{ generation.customName }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-gray-600 font-medium">Type de conversion</dt>
+                                <dd class="text-gray-900 mt-1 capitalize">
+                                    {{ generation.type }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-gray-600 font-medium">Généré le</dt>
+                                <dd class="text-gray-900 mt-1">
+                                    {{ generation.createdAt|date('d/m/Y à H:i') }}
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    {# Partage sur réseaux sociaux #}
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <i data-lucide="share-2" class="w-5 h-5 text-blue-600"></i>
+                            Partager
+                        </h3>
+                        <div class="space-y-3">
+                            {# Whatsapp #}
+                            <a href="https://wa.me/?text={{ 'J\'ai généré un PDF avec PDF Generator !'|url_encode }}"
+                                target="_blank"
+                                class="flex items-center gap-3 p-3 bg-green-50 text-green-700 rounded-xl hover:bg-green-100 transition-all">
+                                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                                <span class="font-medium">WhatsApp</span>
+                            </a>
+
+                            {# X (Twitter) #}
+                            <a href="https://twitter.com/intent/tweet?text={{ 'Je viens de générer un PDF facilement !'|url_encode }}"
+                                target="_blank"
+                                class="flex items-center gap-3 p-3 bg-gray-100 text-black-700 rounded-xl hover:bg-black-100 transition-all">
+                                <i data-lucide="thumbs-up" class="w-5 h-5"></i>
+                                <span class="font-medium">X (Twitter)</span>
+                            </a>
+
+                            {# Linkedin #}
+                            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ app.request.uri|url_encode }}"
+                                target="_blank"
+                                class="flex items-center gap-3 p-3 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-all">
+                                <i data-lucide="briefcase" class="w-5 h-5"></i>
+                                <span class="font-medium">LinkedIn</span>
+                            </a>
+
+                            {# Copier le lien #}
+                            <button onclick="copyLink()"
+                                    class="w-full flex items-center gap-3 p-3 bg-gray-50 text-gray-700 rounded-xl hover:bg-gray-100 transition-all">
+                                <i data-lucide="link" class="w-5 h-5"></i>
+                                <span class="font-medium">Copier le lien</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {# Historique #}
+                    <a href="{{ path('app_history') }}"
+                        class="block bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-bold text-lg">Voir tous mes PDFs</h3>
+                                <p class="text-purple-100 text-sm mt-1">Accéder à l'historique complet</p>
+                            </div>
+                            <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {# Modal d'envoi par email #}
+    <div id="sendModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                        <i data-lucide="mail" class="w-6 h-6 text-blue-600"></i>
+                        Envoyer par email
+                    </h2>
+                    <button onclick="closeSendModal()" class="text-gray-400 hover:text-gray-600">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+
+            <form id="sendPdfForm" method="post" action="" class="p-6">
+                <input type="hidden" name="_token" value="{{ csrf_token('send_pdf') }}">
+
+                {# Sélection contacts #}
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="block text-sm font-medium text-gray-700">
+                            Destinataires
+                        </label>
+                        <a href="{{ path('app_contacts_new', {redirect_to: path('app_pdf_result', {id: generation.id})}) }}"
+                            class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            Ajouter un contact
+                        </a>
+                    </div>
+
+                    {% if contacts is empty %}
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                            <p class="text-yellow-800 text-sm">
+                                <i data-lucide="alert-circle" class="w-4 h-4 inline mr-2"></i>
+                                Vous n'avez pas encore de contacts.
+                            </p>
+                        </div>
+                    {% else %}
+                        <div class="space-y-2 max-h-48 overflow-y-auto bg-gray-50 rounded-xl p-4">
+                            {% for contact in contacts %}
+                                <label class="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-blue-50 cursor-pointer transition-all">
+                                    <input type="checkbox"
+                                            name="contacts[]"
+                                            value="{{ contact.id }}"
+                                            class="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500">
+                                    <div class="flex-1">
+                                        <div class="font-medium text-gray-900">
+                                            {{ contact.firstname }} {{ contact.lastname }}
+                                        </div>
+                                        <div class="text-sm text-gray-600">{{ contact.email }}</div>
+                                    </div>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {# Message personnalisé #}
+                <div class="mb-6">
+                    <label for="message" class="block text-sm font-medium text-gray-700 mb-2">
+                        Message personnalisé (optionnel)
+                    </label>
+                    <textarea
+                            id="message"
+                            name="message"
+                            rows="4"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            placeholder="Ajoutez un message à votre email..."></textarea>
+                </div>
+
+                {# Boutons #}
+                <div class="flex gap-3">
+                    <button type="button"
+                            onclick="closeSendModal()"
+                            class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-medium">
+                        Annuler
+                    </button>
+                    <button type="submit"
+                            class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium flex items-center justify-center gap-2">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                        Envoyer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openSendModal(generationId) {
+            document.getElementById('sendPdfForm').action = '/history/send/' + generationId;
+            document.getElementById('sendModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeSendModal() {
+            document.getElementById('sendModal').classList.add('hidden');
+        }
+
+        function copyLink() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                // Toast notification
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-50';
+                toast.innerHTML = '<i data-lucide="check" class="w-4 h-4 inline mr-2"></i>Lien copié !';
+                document.body.appendChild(toast);
+                lucide.createIcons();
+                setTimeout(() => toast.remove(), 3000);
+            });
+        }
+        lucide.createIcons();
+    </script>
+{% endblock %}

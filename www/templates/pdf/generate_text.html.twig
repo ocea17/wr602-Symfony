@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fichier texte vers PDF - PDF Generator{% endblock %}
+
+{% block body %}
+
+    <div class="py-12 px-6">
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <i data-lucide="file-type" class="w-8 h-8 text-gray-500"></i>
+                    <h1 class="text-3xl font-bold text-gray-900">Fichier texte vers PDF</h1>
+                </div>
+
+                <p class="text-gray-600 mb-8">
+                    Convertissez vos fichiers texte (.txt) en PDF.
+                </p>
+
+                <form method="post" enctype="multipart/form-data" class="space-y-6">
+
+                    {{ include('_partials/_file_upload.html.twig', {
+                        name: 'file',
+                        accept: '.txt',
+                        label: 'Sélectionnez un fichier texte',
+                        formats: 'Format accepté : TXT',
+                        multiple: true,
+                        required: true
+                    }) }}
+
+                    <button
+                            type="submit"
+                            class="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition transform hover:scale-105"
+                    >
+                        Convertir en PDF
+                    </button>
+                </form>
+            </div>
+
+            {{ include('_partials/pdf_benefits.html.twig') }}
+
+            <div class="mt-8 text-center">
+                <a href="{{ path('app_pdf_index') }}" class="text-blue-600 hover:text-blue-700 font-medium">
+                    ← Retour aux outils
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

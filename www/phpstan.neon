@@ -1,0 +1,10 @@
+parameters:
+    level: 5
+    paths:
+        - src
+    excludePaths:
+        - src/Kernel.php
+    ignoreErrors:
+        - '#Property .+::\$id \(int\|null\) is never assigned int#'
+        - '#Access to an undefined property Stripe\\StripeObject::\$object#'
+        - '#Method .+::handleMergeFiles\(\) is unused#'

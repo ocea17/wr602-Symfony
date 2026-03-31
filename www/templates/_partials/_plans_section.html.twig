@@ -1,0 +1,251 @@
+{# Section des plans - Réutilisable #}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+    {% for plan in plans %}
+        <div class="bg-white rounded-2xl shadow-xl p-8
+        {% if is_logged_in and user_plan == plan.name %}
+            border-4 border-blue-500 relative
+        {% elseif plan.name == 'BASIC' and (not is_logged_in or user_plan != 'BASIC') %}
+            border-4 border-purple-600
+        {% else %}
+            border border-gray-200
+        {% endif %}
+        hover:shadow-2xl transition transform hover:-translate-y-2">
+
+            {# Badge "Le plus populaire" pour Basic #}
+            {% if plan.name == 'BASIC' %}
+                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-full text-xs font-bold shadow-lg">
+                    LE PLUS POPULAIRE
+                </span>
+                </div>
+            {% endif %}
+
+            {# Badge "Plan actuel" #}
+            {% if is_logged_in and user_plan == plan.name %}
+                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span class="bg-blue-500 text-white px-6 py-2 rounded-full text-xs font-bold shadow-lg">
+                    PLAN ACTUEL
+                </span>
+                </div>
+            {% endif %}
+
+            {# Icône + Badge plan #}
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    {# Icône #}
+                    {% if plan.name == 'FREE' %}
+                        <i data-lucide="gift" class="w-6 h-6 text-gray-500"></i>
+                    {% elseif plan.name == 'BASIC' %}
+                        <i data-lucide="zap" class="w-6 h-6 text-blue-500"></i>
+                    {% else %}
+                        <i data-lucide="rocket" class="w-6 h-6 text-purple-500"></i>
+                    {% endif %}
+
+                    {# Badge nom du plan #}
+                    <span class="px-3 py-1 rounded-md text-sm font-semibold
+                    {% if plan.name == 'FREE' %}bg-gray-100 text-gray-700
+                    {% elseif plan.name == 'BASIC' %}bg-blue-200 text-blue-700
+                    {% else %}bg-purple-100 text-purple-600{% endif %}">
+                    {{ plan.name }}
+                </span>
+                </div>
+            </div>
+
+            {# Prix #}
+            <div class="mb-6">
+            <span class="text-5xl font-black text-gray-900">
+                {{ plan.price == 0 ? '0' : plan.price }}€
+            </span>
+                <span class="text-lg text-gray-500">/mois</span>
+            </div>
+
+            {# Description #}
+            <p class="text-gray-600 mb-6">{{ plan.description }}</p>
+
+            {# Avantages #}
+            <ul class="space-y-3 mb-8">
+                {# Génération par jour #}
+                <li class="flex items-center gap-2 text-gray-700">
+                    <span class="text-green-500 font-bold">✓</span>
+                    <span>
+                    {% if plan.name == 'FREE' %}
+                        <strong>2</strong> générations par jour
+                    {% elseif plan.name == 'BASIC' %}
+                        <strong>20</strong> générations par jour
+                    {% else %}
+                        <strong>200</strong> générations par jour
+                    {% endif %}
+                </span>
+                </li>
+
+                {# FREE #}
+                {% if plan.name == 'FREE' %}
+                    <li class="flex items-center gap-2 text-gray-400">
+                        <span class="text-red-500 font-bold">✗</span>
+                        <span>Pas d'historique</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-400">
+                        <span class="text-red-500 font-bold">✗</span>
+                        <span>Pas de stockage</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>URL vers PDF</span>
+                    </li>
+                    
+                    <li class="flex items-center gap-2 text-gray-400">
+                        <span class="text-red-500 font-bold">✗</span>
+                        <span>HTML vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Formulaire vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Texte vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-400">
+                        <span class="text-red-500 font-bold">✗</span>
+                        <span>Fusion de PDFs</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-400">
+                        <span class="text-red-500 font-bold">✗</span>
+                        <span>Séparation de PDFs</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-400">
+                        <span class="text-red-500 font-bold">✗</span>
+                        <span>Capture vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-400">
+                        <span class="text-red-500 font-bold">✗</span>
+                        <span>Fichier Office vers PDF</span>
+                    </li>
+                {% endif %}
+
+                {# BASIC #}
+                {% if plan.name == 'BASIC' %}
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Historique des PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Stockage <strong>50</strong> PDFs</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>URL vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>HTML vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Formulaire vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Texte vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Fusion de PDFs</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-400">
+                        <span class="text-red-500 font-bold">✗</span>
+                        <span>Séparation de PDFs</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-400">
+                        <span class="text-red-500 font-bold">✗</span>
+                        <span>Capture vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-400">
+                        <span class="text-red-500 font-bold">✗</span>
+                        <span>Fichier Office vers PDF</span>
+                    </li>
+                {% endif %}
+
+                {# PREMIUM #}
+                {% if plan.name == 'PREMIUM' %}
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Historique des PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Stockage <strong>500</strong> PDFs</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>URL vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>HTML vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Formulaire vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Texte vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Fusion de PDFs</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Séparation de PDFs</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Capture vers PDF</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500 font-bold">✓</span>
+                        <span>Fichier Office vers PDF</span>
+                    </li>
+                {% endif %}
+            </ul>
+
+            {# Bouton #}
+            <div class="mt-8">
+                {% if is_logged_in %}
+                    {# User connecté #}
+                    {% if user_plan == plan.name %}
+                        <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-500 font-semibold rounded-lg cursor-not-allowed">
+                            Plan actuel
+                        </button>
+                    {% else %}
+                        <a href="{{ path('app_payment_checkout', {id: plan.id}) }}" class="block w-full px-6 py-3
+                        {% if plan.name == 'PREMIUM' %}bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
+                        {% elseif plan.name == 'BASIC' %}bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600
+                        {% else %}bg-gray-600 hover:bg-gray-700{% endif %}
+                        text-white font-semibold rounded-lg text-center transition shadow-lg transform hover:scale-105">
+                            S'abonner
+                        </a>
+                    {% endif %}
+                {% else %}
+                    {# User NON connecté #}
+                    {% if plan.name == 'FREE' %}
+                        <a href="{{ path('app_register') }}" class="block w-full px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg text-center transition shadow-lg transform hover:scale-105">
+                            Créer un compte
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_register', {redirect_to: 'subscription'}) }}" class="block w-full px-6 py-3
+                        {% if plan.name == 'PREMIUM' %}bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700
+                        {% else %}bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600{% endif %}
+                        text-white font-semibold rounded-lg text-center transition shadow-lg transform hover:scale-105">
+                            Se connecter pour souscrire
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+        </div>
+    {% endfor %}
+</div>

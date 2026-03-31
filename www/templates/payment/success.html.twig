@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement réussi - PDF Generator{% endblock %}
+
+{% block body %}
+
+    <div class="bg-gray-50 py-20">
+        <div class="max-w-2xl mx-auto px-6 text-center">
+            <div class="bg-white rounded-xl shadow-lg p-12">
+                <div class="flex justify-center mb-6">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                        <i data-lucide="check" class="w-12 h-12 text-green-500"></i>
+                    </div>
+                </div>
+                
+                <h1 class="text-3xl font-bold text-gray-900 mb-4">Paiement réussi !</h1>
+                
+                <p class="text-gray-600 mb-8">
+                    Votre abonnement a été activé avec succès. Vous allez recevoir un email de confirmation.
+                </p>
+                
+                <a href="{{ path('app_home') }}" class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition">
+                    Retour au dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Générer un PDF - PDF Generator{% endblock %}
+
+{% block body %}
+
+    {# Main content #}
+    <div class="py-10">
+        <div class="max-w-7xl mx-auto px-6 mb-10">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Générer un PDF</h1>
+
+            {# Messages flash #}
+            {% for message in app.flashes('success') %}
+                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('error') %}
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {# Bannière de limite atteinte #}
+            {% if today_pdfs >= (app.user.plan.limitGeneration ?? 999) %}
+                <div class="bg-red-50 border-2 border-red-200 rounded-lg p-6 mb-8 flex items-center gap-4">
+                    <div class="text-4xl">⚠️</div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-red-900 mb-1">Limite quotidienne atteinte !</h3>
+                        <p class="text-red-700">Vous avez généré {{ today_pdfs }}/{{ app.user.plan.limitGeneration }} PDFs aujourd'hui.</p>
+                    </div>
+                    <a href="{{ path('app_subscription_change') }}" class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition whitespace-nowrap">
+                        Améliorer mon plan
+                    </a>
+                </div>
+            {% endif %}
+
+            {{ include('_partials/_tools_grid.html.twig', {tools: tools}) }}
+
+            {# Retour #}
+            <div class="text-center mt-8">
+                <a href="{{ path('app_home') }}" class="text-blue-600 hover:text-blue-700 font-medium hover:underline">
+                    ← Retour à l'accueil
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

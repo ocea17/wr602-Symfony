@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Image vers PDF - PDF Generator{% endblock %}
+
+{% block body %}
+
+    <div class="py-10">
+        <div class="max-w-2xl mx-auto px-6">
+            <div class="mb-8">
+                <a href="{{ path('app_pdf_index') }}" class="text-blue-600 hover:text-blue-700 font-medium hover:underline">
+                    ← Retour aux outils
+                </a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <i data-lucide="file-image" class="w-8 h-8 text-purple-500"></i>
+                    <h1 class="text-3xl font-bold text-gray-900">Image vers PDF</h1>
+                </div>
+
+                <p class="text-gray-600 mb-8">
+                    Convertissez une image (JPG, PNG, GIF, WEBP) en document PDF.
+                </p>
+
+                <form method="post" enctype="multipart/form-data" class="space-y-6">
+
+                        {{ include('_partials/_file_upload.html.twig', {
+                            name: 'image',
+                            accept: 'image/jpeg,image/png,image/gif,image/webp',
+                            label: 'Sélectionnez une image',
+                            formats: '.jpg, .png, .gif, .webp (max 10 MB)',
+                            required: true
+                        }) }}
+
+                    <button type="submit" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition flex items-center justify-center gap-2">
+                        <i data-lucide="file-down" class="w-5 h-5"></i>
+                        Convertir en PDF
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

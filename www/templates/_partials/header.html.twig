@@ -1,0 +1,132 @@
+<header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+        <div class="flex justify-between items-center">
+            {# Logo #}
+            <a href="{{ path('app_home') }}" class="flex items-center gap-2 sm:gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <i data-lucide="file-text" class="w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
+                </div>
+                <span class="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    PDF Generator
+                </span>
+            </a>
+
+            {# Desktop: navigation - mobile: caché #}
+            <nav class="hidden lg:flex gap-8">
+                <a href="{{ path('app_home') }}" class="{% if app.request.get('_route') == 'app_home' %}text-blue-700 font-medium border-b-2 border-blue-700 pb-1{% else %}text-gray-600 hover:text-blue-900 font-medium transition{% endif %}">
+                    Accueil
+                </a>
+                <a href="{{ path('app_pdf_index') }}" class="{% if app.request.get('_route') starts with 'app_pdf' %}text-blue-700 font-medium border-b-2 border-blue-700 pb-1{% else %}text-gray-600 hover:text-blue-900 font-medium transition{% endif %}">
+                    Générer PDF
+                </a>
+                <a href="{{ path('app_history') }}" class="{% if app.request.get('_route') == 'app_history' %}text-blue-700 font-medium border-b-2 border-blue-700 pb-1{% else %}text-gray-600 hover:text-blue-900 font-medium transition{% endif %}">
+                    Historique
+                </a>
+                <a href="{{ path('app_subscription_change') }}" class="{% if app.request.get('_route') == 'app_subscription_change' %}text-blue-700 font-medium border-b-2 border-blue-700 pb-1{% else %}text-gray-600 hover:text-blue-900 font-medium transition{% endif %}">
+                    Tarifs
+                </a>
+                <a href="{{ path('app_contacts_index') }}" class="{% if app.request.get('_route') == 'app_contacts_index' %}text-blue-700 font-medium border-b-2 border-blue-700 pb-1{% else %}text-gray-600 hover:text-blue-900 font-medium transition{% endif %}">
+                    Contact
+                </a>
+            </nav>
+
+            {# Desktop: menu user - mobile: caché #}
+            {% if app.user %}
+                <div class="hidden lg:flex items-center gap-3">
+                    <a href="{{ path('app_profile') }}" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm"
+                             style="background-color: {{ app.user.avatarColor }};">
+                            {{ app.user.firstname|first|upper }}{{ app.user.lastname|first|upper }}
+                        </div>
+                        <span class="text-sm font-medium">{{ app.user.firstname }}</span>
+                    </a>
+
+                    <a href="{{ path('app_logout') }}" class="flex items-center gap-2 px-4 py-3 text-red-700 bg-red-100 hover:bg-red-200 rounded-lg transition" title="Déconnexion">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                        <span class="text-sm font-medium">Déconnexion</span>
+                    </a>
+                </div>
+            {% endif %}
+
+            {# Mobile: menu button #}
+            <button id="mobile-menu-button" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition" aria-label="Menu">
+                <i data-lucide="menu" class="w-6 h-6 text-gray-700"></i>
+            </button>
+        </div>
+    </div>
+
+    {# Mobile menu #}
+    <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-200">
+        <nav class="max-w-7xl mx-auto px-4 py-4 space-y-2">
+            <a href="{{ path('app_home') }}" class="block px-4 py-3 rounded-lg {% if app.request.get('_route') == 'app_home' %}bg-blue-50 text-blue-700 font-medium{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    <span>Accueil</span>
+                </div>
+            </a>
+            <a href="{{ path('app_pdf_index') }}" class="block px-4 py-3 rounded-lg {% if app.request.get('_route') starts with 'app_pdf' %}bg-blue-50 text-blue-700 font-medium{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="file-plus" class="w-5 h-5"></i>
+                    <span>Générer PDF</span>
+                </div>
+            </a>
+            <a href="{{ path('app_history') }}" class="block px-4 py-3 rounded-lg {% if app.request.get('_route') == 'app_history' %}bg-blue-50 text-blue-700 font-medium{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="clock" class="w-5 h-5"></i>
+                    <span>Historique</span>
+                </div>
+            </a>
+            <a href="{{ path('app_subscription_change') }}" class="block px-4 py-3 rounded-lg {% if app.request.get('_route') == 'app_subscription_change' %}bg-blue-50 text-blue-700 font-medium{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="credit-card" class="w-5 h-5"></i>
+                    <span>Tarifs</span>
+                </div>
+            </a>
+            <a href="{{ path('app_contacts_index') }}" class="block px-4 py-3 rounded-lg {% if app.request.get('_route') == 'app_contacts_index' %}bg-blue-50 text-blue-700 font-medium{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span>Contact</span>
+                </div>
+            </a>
+
+            {% if app.user %}
+                <div class="border-t border-gray-200 pt-3 mt-3 space-y-2">
+                    <a href="{{ path('app_profile') }}" class="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm"
+                                style="background-color: {{ app.user.avatarColor }};">
+                                {{ app.user.firstname|first|upper }}{{ app.user.lastname|first|upper }}
+                            </div>
+                            <span>{{ app.user.firstname }} - Profil</span>
+                        </div>
+                    </a>
+                    <a href="{{ path('app_logout') }}" class="block px-4 py-3 rounded-lg text-red-700 bg-red-50 hover:bg-red-100">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                            <span>Déconnexion</span>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+<script>
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+
+            const icon = mobileMenuButton.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.setAttribute('data-lucide', 'menu');
+            } else {
+                icon.setAttribute('data-lucide', 'x');
+            }
+            lucide.createIcons();
+        });
+    }
+</script>

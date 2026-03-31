@@ -1,0 +1,219 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue - PDF Generator{% endblock %}
+
+{% block body %}
+    {# Header public #}
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+            <div class="flex justify-between items-center">
+                {# Logo #}
+                <a href="{{ path('app_home_public') }}" class="flex items-center gap-2 sm:gap-3">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i data-lucide="file-text" class="w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
+                    </div>
+                    <span class="text-base sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    PDF Generator
+                </span>
+                </a>
+
+                {# Navigation #}
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <a href="{{ path('app_login') }}" class="text-sm sm:text-base text-gray-700 hover:text-blue-600 font-medium transition px-3 sm:px-0">
+                        Se connecter
+                    </a>
+                    <a href="{{ path('app_register') }}" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-lg sm:rounded-xl transition shadow-lg hover:shadow-xl text-sm sm:text-base">
+                        <span class="hidden sm:inline">Créer un compte</span>
+                        <span class="sm:hidden">Inscription</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {# Hero section #}
+    <div class="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700">
+        {# background #}
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-300 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="relative max-w-7xl mx-auto px-6 py-24 text-center">
+            {# Badge nouveau #}
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium mb-8">
+                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                Nouveau : Convertissez vos documents Office en PDF
+            </div>
+
+            <h1 class="text-6xl font-black text-white mb-6 leading-tight">
+                Créez vos PDF<br/>
+                <span class="bg-gradient-to-r from-yellow-300 to-pink-300 bg-clip-text text-transparent">en quelques clics</span>
+            </h1>
+
+            <p class="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+                Convertissez vos URLs, documents HTML, images et fichiers Office en PDF professionnel. Simple, rapide et sécurisé.
+            </p>
+
+            <div class="flex items-center justify-center gap-4">
+                <a href="{{ path('app_register') }}" class="px-8 py-4 bg-white text-blue-600 font-bold rounded-xl hover:bg-gray-100 transition shadow-2xl hover:shadow-3xl">
+                    Commencer gratuitement
+                </a>
+                <a href="#features" class="px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl hover:bg-white/20 transition border-2 border-white/30">
+                    Découvrir les fonctionnalités
+                </a>
+            </div>
+
+            {# Stats #}
+            <div class="grid grid-cols-3 gap-8 max-w-3xl mx-auto mt-16">
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-white mb-2">8+</div>
+                    <div class="text-blue-200 text-sm">Outils de conversion</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-white mb-2">100%</div>
+                    <div class="text-blue-200 text-sm">Gratuit pour commencer</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-white mb-2">Illimité</div>
+                    <div class="text-blue-200 text-sm">Avec le plan Premium</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Features section - tous les outils #}
+    <div id="features" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Des outils puissants pour tous vos besoins</h2>
+                <p class="text-xl text-gray-600">8 outils professionnels pour convertir vos documents en PDF</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {# URL vers PDF #}
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition relative group">
+                <span class="absolute top-4 right-4 px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-md">
+                    FREE
+                </span>
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="globe" class="w-7 h-7 text-blue-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">URL vers PDF</h3>
+                    <p class="text-gray-600 text-sm">Convertissez n'importe quelle page web en PDF haute qualité</p>
+                </div>
+
+                {# Texte vers PDF #}
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition relative group">
+                <span class="absolute top-4 right-4 px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-md">
+                    FREE
+                </span>
+                    <div class="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="file-type" class="w-7 h-7 text-gray-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Texte vers PDF</h3>
+                    <p class="text-gray-600 text-sm">Convertissez vos fichiers texte (.txt) en PDF formaté</p>
+                </div>
+
+                {# WYSIWYG #}
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition relative group">
+                <span class="absolute top-4 right-4 px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-md">
+                    FREE
+                </span>
+                    <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="pencil" class="w-7 h-7 text-orange-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Formulaire vers PDF</h3>
+                    <p class="text-gray-600 text-sm">Créez vos PDFs avec un éditeur visuel simple et intuitif</p>
+                </div>
+
+                {# HTML vers PDF #}
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition relative group">
+                <span class="absolute top-4 right-4 px-3 py-1 bg-blue-100 text-blue-600 text-xs font-semibold rounded-md">
+                    BASIC
+                </span>
+                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="file-code" class="w-7 h-7 text-green-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">HTML vers PDF</h3>
+                    <p class="text-gray-600 text-sm">Uploadez vos fichiers HTML et obtenez un PDF parfait</p>
+                </div>
+
+                {# Merge #}
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition relative group">
+                <span class="absolute top-4 right-4 px-3 py-1 bg-blue-100 text-blue-600 text-xs font-semibold rounded-md">
+                    BASIC
+                </span>
+                    <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="git-merge" class="w-7 h-7 text-yellow-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Fusionner PDF</h3>
+                    <p class="text-gray-600 text-sm">Combinez plusieurs PDFs en un seul document professionnel</p>
+                </div>
+
+                {# Split #}
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition relative group">
+                <span class="absolute top-4 right-4 px-3 py-1 bg-purple-100 text-purple-600 text-xs font-semibold rounded-md">
+                    PREMIUM
+                </span>
+                    <div class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="scissors" class="w-7 h-7 text-red-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Séparer PDF</h3>
+                    <p class="text-gray-600 text-sm">Extrayez des pages spécifiques de vos documents PDF</p>
+                </div>
+
+                {# Screenshot #}
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition relative group">
+                <span class="absolute top-4 right-4 px-3 py-1 bg-purple-100 text-purple-600 text-xs font-semibold rounded-md">
+                    PREMIUM
+                </span>
+                    <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="image" class="w-7 h-7 text-purple-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Image vers PDF</h3>
+                    <p class="text-gray-600 text-sm">Transformez vos images en documents PDF de haute qualité</p>
+                </div>
+
+                {# Office #}
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition relative group">
+                <span class="absolute top-4 right-4 px-3 py-1 bg-purple-100 text-purple-600 text-xs font-semibold rounded-md">
+                    PREMIUM
+                </span>
+                    <div class="w-14 h-14 bg-sky-100 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="file-text" class="w-7 h-7 text-sky-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Office vers PDF</h3>
+                    <p class="text-gray-600 text-sm">Convertissez Word, Excel, PowerPoint en PDF professionnel</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Section plans #}
+    <div class="py-20 bg-white">
+        <div class="max-w-auto mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Choisissez votre plan</h2>
+                <p class="text-xl text-gray-600">Commencez gratuitement, évoluez selon vos besoins</p>
+            </div>
+
+            {{ include('_partials/_plans_section.html.twig', {
+                plans: plans,
+                is_logged_in: false,
+                user_plan: null
+            }) }}
+        </div>
+    </div>
+
+    {# CTA final #}
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 py-20">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold text-white mb-6">Prêt à créer vos PDFs ?</h2>
+            <p class="text-xl text-blue-100 mb-8">Rejoignez-nous et commencez à générer vos documents dès maintenant</p>
+            <a href="{{ path('app_register') }}" class="inline-block px-10 py-4 bg-white text-blue-600 font-bold rounded-xl hover:bg-gray-100 transition shadow-2xl text-lg">
+                Créer mon compte gratuitement
+            </a>
+        </div>
+    </div>
+{% endblock %}
