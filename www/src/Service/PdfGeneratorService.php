@@ -154,59 +154,77 @@ class PdfGeneratorService
     }
 
     public function generateFromImage(string $imagePath): string
-    {
-        $url = $this->gotenbergUrl . '/forms/chromium/convert/html';
-        
-        // Lit le contenu de l'image
-        $imageContent = file_get_contents($imagePath);
-        $extension = pathinfo($imagePath, PATHINFO_EXTENSION);
-        
-        // Crée un HTML qui affiche l'image en base64
-        $base64Image = base64_encode($imageContent);
-        
-        // Détermine le type MIME
-        $mimeType = match (strtolower($extension)) {
-            'jpg', 'jpeg' => 'image/jpeg',
-            'png' => 'image/png',
-            'gif' => 'image/gif',
-            'webp' => 'image/webp',
-            default => 'image/jpeg'
-        };
-        
-        // HTML avec image en base64 (pas besoin d'envoyer le fichier séparément)
-        $html = '<!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <style>
-            body { 
-                margin: 0; 
-                padding: 0; 
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-            }
-            img { 
-                max-width: 100%; 
-                max-height: 100vh;
-                height: auto; 
-            }
-        </style>
-    </head>
-    <body>
-        <img src="data:' . $mimeType . ';base64,' . $base64Image . '" alt="Image convertie en PDF" />
-    </body>
-    </html>';
+{
+    $url = $this->gotenbergUrl . '/forms/chromium/convert/html';
+    
+    // Lit le contenu de l'image
+    $imageContent = file_get_contents($imagePath);
+    $extension = pathinfo($imagePath, PATHINFO_EXTENSION);
+    
+    // Crée un HTML qui affiche l'image en base64
+    $base64Image = base64_encode($imageContent);
+    
+    // Détermine le type MIME
+    $mimeType = match (strtolower($extension)) {
+        'jpg', 'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif',
+        'webp' => 'image/webp',
+        default => 'image/jpeg'
+    };
+    
+    // HTML avec image en base64
+    $html = '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        img { 
+            max-width: 100%; 
+            max-height: 100vh;
+            height: auto; 
+        }
+    </style>
+</head>
+<body>
+    <img src="data:' . $mimeType . ';base64,' . $base64Image . '" alt="Image" />
+</body>
+</html>';
 
-        $response = $this->httpClient->request('POST', $url, [
-            'body' => [
-                'index.html' => $html,
-            ],
-        ]);
+    // Crée un fichier temporaire
+    $tmpFile = tempnam(sys_get_temp_dir(), 'image_') . '.html';
+    file_put_contents($tmpFile, $html);
 
-        return $response->getContent();
-    }
+    // Utilise FormDataPart comme generateFromHtml()
+    $formData = new FormDataPart([
+        'files' => DataPart::fromPath($tmpFile, 'index.html', 'text/html'),
+    ]);
+
+    $response = $this->httpClient->request('POST', $url, [
+        'headers' => $formData->getPreparedHeaders()->toArray(),
+        'body' => $formData->bodyToIterable(),
+    ]);
+
+    $content = $response->getContent();
+    unlink($tmpFile);
+
+    return $content;
+}
+
+private function createTempFile(string $content, string $filename): string
+{
+    $tempPath = sys_get_temp_dir() . '/' . uniqid() . '_' . $filename;
+    file_put_contents($tempPath, $content);
+    return $tempPath;
+}
 
     public function generateFromOffice(string $filePath): ?string
     {
