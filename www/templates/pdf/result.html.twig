@@ -174,8 +174,8 @@
                         <label class="block text-sm font-medium text-gray-700">
                             Destinataires
                         </label>
-                        <a href="{{ path('app_contacts_new', {redirect_to: path('app_pdf_result', {id: generation.id})}) }}"
-                            class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium">
+                        <a href="{{ path('app_contacts_new', {redirect: 'app_pdf_result', generation_id: generation.id}) }}"
+                        class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium">
                             <i data-lucide="user-plus" class="w-4 h-4"></i>
                             Ajouter un contact
                         </a>

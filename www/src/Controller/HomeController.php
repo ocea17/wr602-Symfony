@@ -35,7 +35,7 @@ class HomeController extends BaseController
             ->getQuery()
             ->getSingleScalarResult();
 
-        $storedPdfs = $this->generationRepository->count(['user' => $user]);
+        $storedPdfs = $this->generationRepository->count(['user' => $user, 'deleted' => false]);
 
         $totalPdfs = $this->generationRepository->count(['user' => $user]);
 
