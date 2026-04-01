@@ -96,7 +96,7 @@ class ContactController extends BaseController
         if ($this->isCsrfTokenValid('delete'.$contact->getId(), $request->request->get('_token'))) {
             $this->em->remove($contact);
             $this->em->flush();
-            $this->addFlash('success', 'Contact supprimé avec succès !');
+            $this->addFlash('success', 'Contact supprimÃ© avec succÃ©s !');
         }
 
         return $this->redirectToRoute('app_contacts_index');
