@@ -43,7 +43,7 @@ class ProfileController extends BaseController
             ->getQuery()
             ->getSingleScalarResult();
 
-        $storedPdfs = $totalPdfs;
+        $storedPdfs = $this->generationRepository->count(['user' => $user, 'deleted' => false]);
 
         return $this->render('profile/index.html.twig', [
             'user' => $user,

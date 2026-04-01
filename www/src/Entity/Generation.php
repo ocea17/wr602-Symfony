@@ -37,6 +37,9 @@ class Generation
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $customName = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $deleted = false;
+
     public function __construct()
     {
         $this->userContacts = new ArrayCollection();
@@ -128,6 +131,17 @@ class Generation
     {
         $this->customName = $customName;
 
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): static
+    {
+        $this->deleted = $deleted;
         return $this;
     }
 }

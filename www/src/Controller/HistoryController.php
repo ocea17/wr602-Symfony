@@ -34,10 +34,10 @@ class HistoryController extends BaseController
 
         $user = $this->getAuthenticatedUser();
 
-        $totalGenerations = $this->generationRepository->count(['user' => $user]);
+        $totalGenerations = $this->generationRepository->count(['user' => $user, 'deleted' => false]);
 
         $generations = $this->generationRepository->findBy(
-            ['user' => $user],
+            ['user' => $user, 'deleted' => false],
             ['createdAt' => 'DESC'],
             $limit,
             $offset
@@ -71,13 +71,14 @@ class HistoryController extends BaseController
             return $this->redirectToRoute('app_history');
         }
 
+        $generation->setDeleted(true);
+        $this->em->flush();
+
+        // Supprime le fichier physique
         $filePath = __DIR__.'/../../public/'.$generation->getFile();
         if (file_exists($filePath)) {
             unlink($filePath);
         }
-
-        $this->em->remove($generation);
-        $this->em->flush();
 
         $this->addFlash('success', 'PDF supprimé avec succès');
 
