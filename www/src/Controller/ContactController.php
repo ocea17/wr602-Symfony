@@ -38,34 +38,41 @@ class ContactController extends BaseController
 
     public function new(Request $request): Response
     {
-        $contact = new UserContact();
-        $form = $this->createForm(UserContactType::class, $contact);
-        $form->handleRequest($request);
+    $contact = new UserContact();
+    $form = $this->createForm(UserContactType::class, $contact);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getAuthenticatedUser();
-            $contact->setUser($user);
+    if ($form->isSubmitted() && $form->isValid()) {
+        $user = $this->getAuthenticatedUser();
+        $contact->setUser($user);
 
-            $this->em->persist($contact);
-            $this->em->flush();
+        $this->em->persist($contact);
+        $this->em->flush();
 
-            $this->addFlash('success', 'Contact ajouté avec succés !');
+        $this->addFlash('success', 'Contact ajouté avec succès !');
 
-            // Redirection conditionnelle
-            $redirect = $request->query->get('redirect');
-            if ($redirect) {
-                return $this->redirectToRoute($redirect);
-            }
+        // Récupère les paramètres de redirection
+        $redirect = $request->query->get('redirect');
+        $generationId = $request->query->get('generation_id');
 
-            return $this->redirectToRoute('app_contacts_index');
+        // Si redirection vers result avec ID
+        if ($redirect === 'app_pdf_result' && $generationId) {
+            return $this->redirectToRoute('app_pdf_result', ['id' => $generationId]);
         }
 
-        return $this->render('contact/new.html.twig', [
-            'contact' => $contact,
-            'form' => $form,
-        ]);
+        // Si redirection vers history
+        if ($redirect === 'app_history') {
+            return $this->redirectToRoute('app_history');
+        }
+
+        return $this->redirectToRoute('app_contacts_index');
     }
 
+    return $this->render('contact/new.html.twig', [
+        'contact' => $contact,
+        'form' => $form,
+    ]);
+    }
     public function edit(Request $request, UserContact $contact): Response
     {
         if ($contact->getUser() !== $this->getUser()) {
@@ -77,7 +84,7 @@ class ContactController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->flush();
-            $this->addFlash('success', 'Contact modifi� avec succ�s !');
+            $this->addFlash('success', 'Contact modifi� avec succ�s !');
             return $this->redirectToRoute('app_contacts_index');
         }
 
